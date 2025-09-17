@@ -1,157 +1,442 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Апартаменты "Большая Терраса" | GrandTerraceApt</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; line-height: 1.6; background: #f8f9fa; color: #333; }
-        header { background: #2c3e50; color: white; padding: 20px; text-align: center; }
-        nav a { color: white; margin: 0 15px; text-decoration: none; font-weight: bold; }
-        nav a:hover { text-decoration: underline; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Апартаменты в аренду Севастополь посуточно вид моря | GrandTerraceApt</title>
+  <style>
+    /* Базовые стили */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+    }
+    body {
+      color: #333;
+      line-height: 1.6;
+      background-color: #f8f9fa;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    h1, h2, h3, h4 {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 1rem;
+    }
+    h1 { font-size: 2.5rem; }
+    h2 {
+      font-size: 2rem;
+      position: relative;
+      padding-bottom: 15px;
+    }
+    h2:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background-color: #c19a6b;
+    }
+    p { margin-bottom: 1.5rem; color: #555; }
 
-        /* Hero */
-        .hero {
-            background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
-                        url("images/hero.png") no-repeat center center/cover;
-            color: white;
-            padding: 100px 20px;
-            text-align: center;
-        }
-        .hero h2 { font-size: 2.5rem; margin-bottom: 15px; }
-        .hero p { font-size: 1.2rem; max-width: 700px; margin: auto; }
+    /* Навигация */
+    header {
+      background-color: #fff;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+    }
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0;
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #2c3e50;
+      text-decoration: none;
+    }
+    .logo span { color: #c19a6b; }
+    .nav-links {
+      display: flex;
+      list-style: none;
+    }
+    .nav-links li { margin-left: 30px; }
+    .nav-links a {
+      text-decoration: none;
+      color: #2c3e50;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: #c19a6b; }
 
-        /* Sections */
-        .section { padding: 50px 20px; max-width: 1100px; margin: auto; background: white; margin-top: 20px; border-radius: 10px; }
-        h2 { color: #2c3e50; border-bottom: 2px solid #c19a6b; display: inline-block; margin-bottom: 20px; }
-        .highlight { background: #fff3e0; padding: 15px 20px; border-left: 4px solid #c19a6b; margin: 20px 0; font-weight: bold; }
-        ul, ol { margin: 15px 0 20px 20px; }
-        li { margin-bottom: 8px; }
+    /* Герой */
+    .hero {
+      height: 100vh;
+      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                  url("images/living-room.png") no-repeat center center/cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #fff;
+      margin-top: 80px;
+    }
+    .hero h1 { font-size: 3rem; margin-bottom: 20px; }
+    .hero p { font-size: 1.2rem; margin-bottom: 30px; }
+    .btn {
+      display: inline-block;
+      background-color: #c19a6b;
+      color: #fff;
+      padding: 12px 30px;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: 500;
+      transition: background-color 0.3s;
+    }
+    .btn:hover { background-color: #a5825d; }
 
-        /* Gallery */
-        .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 20px; }
-        .gallery img { width: 100%; border-radius: 10px; }
+    /* Секции */
+    section { padding: 80px 0; }
+    .section-title {
+      text-align: center;
+      margin-bottom: 50px;
+    }
 
-        /* Rules */
-        .rules { background: #f0f4f8; padding: 20px; border-radius: 8px; margin: 30px 0; }
-        .rules h3 { margin-top: 0; }
+    /* О нас */
+    .about-content {
+      display: flex;
+      align-items: center;
+      gap: 50px;
+    }
+    .about-text { flex: 1; }
+    .about-image {
+      flex: 1;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .about-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.5s;
+    }
+    .about-image:hover img { transform: scale(1.05); }
 
-        footer { background: #2c3e50; color: white; text-align: center; padding: 20px; margin-top: 40px; font-size: 0.9rem; }
-        .signature { margin-top: 30px; font-style: italic; text-align: right; color: #555; }
-    </style>
+    /* Особенности */
+    .features { background-color: #fff; }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
+    .feature-item {
+      text-align: center;
+      padding: 30px;
+      border-radius: 8px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .feature-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .feature-icon {
+      font-size: 2.5rem;
+      color: #c19a6b;
+      margin-bottom: 20px;
+    }
+
+    /* Галерея */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .gallery-item {
+      height: 250px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s;
+    }
+    .gallery-item:hover img { transform: scale(1.1); }
+
+    /* Контакты */
+    .contact-wrapper { display: flex; gap: 50px; }
+    .contact-info, .contact-form { flex: 1; }
+    .info-item { display: flex; align-items: center; margin-bottom: 20px; }
+    .info-icon {
+      width: 50px;
+      height: 50px;
+      background-color: #f8f9fa;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      color: #c19a6b;
+      font-size: 1.2rem;
+    }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    textarea.form-control { min-height: 150px; resize: vertical; }
+
+    /* Футер */
+    footer {
+      background-color: #2c3e50;
+      color: #fff;
+      padding: 50px 0 20px;
+    }
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+    .footer-column { flex: 1; min-width: 250px; margin-bottom: 30px; }
+    .footer-column h3 {
+      color: #fff;
+      margin-bottom: 20px;
+      position: relative;
+      padding-bottom: 10px;
+    }
+    .footer-column h3:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 40px;
+      height: 2px;
+      background-color: #c19a6b;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { margin-bottom: 10px; }
+    .footer-links a {
+      color: #bbb;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: #c19a6b; }
+    .copyright {
+      text-align: center;
+      padding-top: 20px;
+      border-top: 1px solid #394b5d;
+      color: #bbb;
+    }
+
+    /* Адаптивность */
+    @media (max-width: 992px) {
+      .about-content, .contact-wrapper { flex-direction: column; }
+      .hero h1 { font-size: 2.5rem; }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hero h1 { font-size: 2rem; }
+      h1 { font-size: 2rem; }
+      h2 { font-size: 1.8rem; }
+    }
+  </style>
 </head>
 <body>
-
-    <!-- Шапка -->
-    <header>
-        <h1>Апартаменты "Большая Терраса"</h1>
-        <nav>
-            <a href="#about">О проекте</a>
-            <a href="#gallery">Галерея</a>
-            <a href="#contact">Контакты</a>
-        </nav>
-    </header>
-
-    <!-- Hero -->
-    <section class="hero">
-        <h2>GrandTerraceApt в Севастополе</h2>
-        <p>Апартаменты с самой большой террасой и панорамным видом на Севастопольскую бухту</p>
-    </section>
-
-    <!-- О проекте -->
-    <section id="about" class="section">
-        <div class="highlight">
-            Убегите от повседневности в апартаменты с самой большой террасой и видом на Севастопольскую бухту — символ города, памятник затопленным кораблям!
-        </div>
-
-        <h2>Добро пожаловать</h2>
-        <p>Апартаменты "Большая Терраса" (GrandTerraceApt) расположены в уникальном месте — Мыс Хрустальный. 
-        Это ваш идеальный побег на отдых, сочетающий комфорт и захватывающие виды.</p>
-
-        <h2>Что вас ждёт</h2>
-        <ol>
-            <li><strong>Большая терраса:</strong> просторная и впечатляющая, словно персональная смотровая площадка.</li>
-            <li><strong>Великолепный вид:</strong> панорама 180° на бухту, символы города и морские парады прямо с вашего балкона.</li>
-            <li><strong>Отличный отдых:</strong> просторные апартаменты с панорамным остеклением.</li>
-            <li><strong>Удачное расположение:</strong> шаговая доступность до всей инфраструктуры и достопримечательностей.</li>
-            <li><strong>Побег от суеты:</strong> атмосфера спокойствия и умиротворения с самыми красивыми закатами.</li>
-        </ol>
-
-        <h2>Представьте</h2>
-        <p>Вы просыпаетесь и выходите на террасу с чашкой кофе. Перед вами открывается картина, от которой захватывает дух:</p>
-        <ul>
-            <li>Легендарный памятник затопленным кораблям.</li>
-            <li>Величественный Михайловский равелин.</li>
-            <li>Живописная набережная Корнилова.</li>
-            <li>Севастопольская и Артиллерийская бухты.</li>
-            <li>Салюты и морской парад ВМФ России — лучшие места для просмотра прямо у вас!</li>
+  <!-- Шапка -->
+  <header>
+    <div class="container">
+      <nav>
+        <a href="#" class="logo">Grand<span>TerraceApt</span></a>
+        <ul class="nav-links">
+          <li><a href="#">Главная</a></li>
+          <li><a href="#about">О апартаментах</a></li>
+          <li><a href="#features">Особенности</a></li>
+          <li><a href="#gallery">Галерея</a></li>
+          <li><a href="#contact">Контакты</a></li>
         </ul>
+      </nav>
+    </div>
+  </header>
 
-        <h2>Почему именно "Большая Терраса"?</h2>
-        <p>Это идеальное место для завтраков на свежем воздухе и романтических вечеров. 
-        Автоматическая раздвижная маркиза подарит прохладу даже в самый жаркий день.</p>
+  <!-- Герой -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <h1>Элитные апартаменты для вашего комфорта</h1>
+        <p>Премиум апартаменты в центре города с панорамным видом и высококлассным обслуживанием</p>
+        <a href="#contact" class="btn">Забронировать</a>
+      </div>
+    </div>
+  </section>
 
-        <h2>Рядом с вами</h2>
-        <ul>
-            <li>Памятник матросу и солдату — 400 м.</li>
-            <li>Обелиск Севастополю — 100 м.</li>
-            <li>Мемориал обороны — 500 м.</li>
-            <li>Михайловская батарея — 600 м.</li>
-            <li>Приморский бульвар, Графская пристань, музеи — до 1 км.</li>
-            <li>Античный заповедник "Херсонес" — 2 км (объект ЮНЕСКО).</li>
-            <li>Рестораны, кафе, прогулочные катера и паромы — рядом.</li>
-        </ul>
-
-        <h2>Апартаменты</h2>
-        <p>Общая площадь: <strong>94 м²</strong> (жилая — 53 м², терраса — 41 м²).  
-        Для вашего комфорта: кондиционер, Wi-Fi, ТВ, стиральная и посудомоечная машины, полностью оборудованная кухня.  
-        Вместимость: до 4 гостей. Бесключевой доступ и мощная система кондиционирования.</p>
-
-        <div class="rules">
-            <h3>Правила проживания</h3>
-            <ul>
-                <li>Заезд: 14:00 | Выезд: 11:00.</li>
-                <li>Гости: до 4 человек (с детьми).</li>
-                <li>Животные и вечеринки: не разрешены.</li>
-                <li>Курение: только на террасе (чувствительная противопожарная система внутри).</li>
-                <li>Залог: 10 000 ₽.</li>
-                <li>Минимальный срок: от 2 суток.</li>
-                <li>Помесячная аренда не предусмотрена.</li>
-            </ul>
-            <p>При заселении подписывается договор. Предоставляется чек об оплате.  
-            Все фото и описание — 100% реальные.</p>
+  <!-- О нас -->
+  <section id="about">
+    <div class="container">
+      <div class="section-title">
+        <h2>О наших апартаментах</h2>
+      </div>
+      <div class="about-content">
+        <div class="about-text">
+          <p>Наши апартаменты сочетают в себе современный дизайн, высокий комфорт и выгодное расположение в самом сердце города. Просторные помещения с панорамными окнами открывают удивительный вид на городские достопримечательности.</p>
+          <p>Каждый элемент интерьера был тщательно подобран для создания атмосферы уюта и роскоши. Мы уделили внимание каждой детали, чтобы обеспечить нашим гостям незабываемые впечатления от проживания.</p>
+          <p>Апартаменты идеально подходят как для короткого отдыха, так и для длительного проживания. Мы предлагаем полный спектр услуг для вашего комфорта.</p>
         </div>
-
-        <p><strong>Узнайте цену проживания</strong> на ваши даты и забронируйте для себя этот захватывающий вид и незабываемую атмосферу.</p>
-
-        <div class="signature">
-            С любовью, команда <br> «Большая Терраса» ❤️
+        <div class="about-image">
+          <img src="images/living-room.png" alt="Интерьер апартаментов">
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <!-- Галерея -->
-    <section id="gallery" class="section">
+  <!-- Особенности -->
+  <section id="features" class="features">
+    <div class="container">
+      <div class="section-title">
+        <h2>Наши преимущества</h2>
+      </div>
+      <div class="features-grid">
+        <div class="feature-item">
+          <div class="feature-icon">📍</div>
+          <h3>Идеальное расположение</h3>
+          <p>Центр города, в шаге от основных достопримечательностей и деловых районов</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🛌</div>
+          <h3>Премиум комфорт</h3>
+          <p>Качественная мебель, ортопедические матрасы и дизайнерский интерьер</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🌇</div>
+          <h3>Панорамный вид</h3>
+          <p>Вид на город с высоты, который захватывает дух в любое время суток</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🛁</div>
+          <h3>Полное оснащение</h3>
+          <p>Всё необходимое для комфортного проживания, от техники до средств гигиены</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Галерея -->
+  <section id="gallery">
+    <div class="container">
+      <div class="section-title">
         <h2>Галерея</h2>
-        <div class="gallery">
-            <img src="images/gallery-1.png" alt="Фото 1">
-            <img src="images/gallery-2.png" alt="Фото 2">
-            <img src="images/gallery-3.png" alt="Фото 3">
-            <img src="images/gallery-4.png" alt="Фото 4">
-        </div>
-    </section>
+      </div>
+      <div class="gallery-grid">
+        <div class="gallery-item"><img src="images/gallery1.png" alt="Гостиная"></div>
+        <div class="gallery-item"><img src="images/gallery2.png" alt="Спальня"></div>
+        <div class="gallery-item"><img src="images/gallery3.png" alt="Кухня"></div>
+        <div class="gallery-item"><img src="images/gallery4.png" alt="Ванная"></div>
+        <div class="gallery-item"><img src="images/gallery5.png" alt="Вид из окна"></div>
+        <div class="gallery-item"><img src="images/gallery6.png" alt="Зона отдыха"></div>
+      </div>
+    </div>
+  </section>
 
-    <!-- Контакты -->
-    <section id="contact" class="section">
+  <!-- Контакты -->
+  <section id="contact" class="contact">
+    <div class="container">
+      <div class="section-title">
         <h2>Контакты</h2>
-        <p><strong>Адрес:</strong> Набережная Адмирала Перелешина, 3. Мыс Хрустальный, Севастополь</p>
-        <p><strong>Телефон:</strong> +7 (900) 123-45-67</p>
-        <p><strong>Email:</strong> info@grand-terrace.ru</p>
-    </section>
+      </div>
+      <div class="contact-wrapper">
+        <div class="contact-form">
+          <h3>Форма бронирования</h3>
+          <form>
+            <div class="form-group">
+              <label for="name">Ваше имя</label>
+              <input type="text" id="name" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="phone">Телефон</label>
+              <input type="tel" id="phone" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="dates">Даты проживания</label>
+              <input type="text" id="dates" class="form-control" placeholder="с - по">
+            </div>
+            <div class="form-group">
+              <label for="message">Сообщение</label>
+              <textarea id="message" class="form-control"></textarea>
+            </div>
+            <button type="submit" class="btn">Отправить запрос</button>
+          </form>
+        </div>
+        <div class="contact-info">
+          <h3>Свяжитесь с нами</h3>
+          <div class="info-item">
+            <div class="info-icon">📍</div>
+            <div>Севастополь, ул. Приморская, 10</div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon">📞</div>
+            <div>+7 (978) 123-45-67</div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon">✉️</div>
+            <div>info@grandterraceapt.ru</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <!-- Футер -->
-    <footer>
-        © 2025 Апартаменты "Большая Терраса" | GrandTerraceApt
-    </footer>
-
+  <!-- Футер -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-column">
+          <h3>GrandTerraceApt</h3>
+          <p>Элитные апартаменты в центре Севастополя с видом на море.</p>
+        </div>
+        <div class="footer-column">
+          <h3>Навигация</h3>
+          <ul class="footer-links">
+            <li><a href="#">Главная</a></li>
+            <li><a href="#about">О нас</a></li>
+            <li><a href="#features">Особенности</a></li>
+            <li><a href="#gallery">Галерея</a></li>
+            <li><a href="#contact">Контакты</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Контакты</h3>
+          <ul class="footer-links">
+            <li>📍 Севастополь, ул. Приморская, 10</li>
+            <li>📞 +7 (978) 123-45-67</li>
+            <li>✉️ info@grandterraceapt.ru</li>
+          </ul>
+        </div>
+      </div>
+      <div class="copyright">
+        © 2025 GrandTerraceApt. Все права защищены.
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
