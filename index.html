@@ -827,14 +827,7 @@
           </div>
         </div>
         <div class="contact-map">
-          <div id="map">
-            <div class="map-placeholder">
-              <div>
-                <h4>Карта загружается...</h4>
-                <p>Если карта не отображается, проверьте подключение к интернету</p>
-              </div>
-            </div>
-          </div>
+          <div id="map"></div>
         </div>
       </div>
     </div>
@@ -1110,16 +1103,6 @@
         // Проверяем, загрузился ли API Яндекс.Карт
         if (typeof ymaps === 'undefined') {
           console.error('Yandex Maps API не загрузился');
-          const mapPlaceholder = document.querySelector('.map-placeholder');
-          if (mapPlaceholder) {
-            mapPlaceholder.innerHTML = `
-              <div>
-                <h4>Ошибка загрузки карты</h4>
-                <p>Проверьте подключение к интернету или обновите страницу</p>
-                <button onclick="location.reload()" class="btn" style="margin-top: 10px;">Обновить страницу</button>
-              </div>
-            `;
-          }
           return;
         }
         
@@ -1163,18 +1146,6 @@
             
           } catch (error) {
             console.error('Ошибка при создании карты:', error);
-            const mapContainer = document.getElementById('map');
-            if (mapContainer) {
-              mapContainer.innerHTML = `
-                <div class="map-placeholder">
-                  <div>
-                    <h4>Ошибка инициализации карты</h4>
-                    <p>Попробуйте обновить страницу или зайти позже</p>
-                    <button onclick="location.reload()" class="btn" style="margin-top: 10px;">Обновить страницу</button>
-                  </div>
-                </div>
-              `;
-            }
           }
         });
       }
@@ -1247,7 +1218,7 @@
         }
       }
       
-      // Функция отправки email
+      // Функция отправки email через Formspree
       function sendEmail(formData) {
         // Формируем тело письма
         const subject = 'Новая заявка на бронирование';
@@ -1261,8 +1232,7 @@
           Сообщение: ${formData.message || 'Не указано'}
         `;
         
-        // Используем Formspree или аналогичный сервис для отправки email
-        // Вместо этого можно настроить отправку через PHP или другой серверный язык
+        // Используем Formspree для отправки email
         fetch('https://formspree.io/f/xjvnzzwz', {
           method: 'POST',
           headers: {
@@ -1276,7 +1246,8 @@
             checkout: formData.checkout,
             guests: formData.guests,
             message: formData.message,
-            _subject: subject
+            _subject: subject,
+            _replyto: formData.email
           })
         })
         .then(response => {
