@@ -125,11 +125,17 @@
       transition: all 0.3s;
       font-size: 1.1rem;
       border: 2px solid #c19a6b;
+      cursor: pointer;
     }
     .btn:hover {
       background-color: transparent;
       color: #fff;
       border-color: #fff;
+    }
+    .btn:disabled {
+      background-color: #cccccc;
+      border-color: #cccccc;
+      cursor: not-allowed;
     }
 
     /* Секции */
@@ -402,6 +408,20 @@
     #map {
       width: 100%;
       height: 100%;
+      min-height: 300px;
+    }
+    .map-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f8f9fa;
+      color: #555;
+      text-align: center;
+      padding: 20px;
+      border-radius: 12px;
+      border: 2px dashed #ccc;
     }
     .info-item { display: flex; align-items: center; margin-bottom: 20px; }
     .info-icon {
@@ -426,6 +446,34 @@
       font-size: 1rem;
     }
     textarea.form-control { min-height: 150px; resize: vertical; }
+    .date-inputs {
+      display: flex;
+      gap: 15px;
+    }
+    .date-inputs .form-group {
+      flex: 1;
+    }
+
+    /* Сообщения об ошибках и успехе */
+    .form-message {
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .form-message.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .form-message.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .form-message.visible {
+      display: block;
+    }
 
     /* Футер */
     footer {
@@ -481,6 +529,10 @@
       .contact-map {
         order: 3; /* Перемещаем карту вниз на мобильных */
         margin-top: 30px;
+      }
+      .date-inputs {
+        flex-direction: column;
+        gap: 0;
       }
     }
     @media (max-width: 768px) {
@@ -713,28 +765,46 @@
       <div class="contact-wrapper">
         <div class="contact-form">
           <h3>Форма бронирования</h3>
-          <form>
+          <div id="formMessage" class="form-message"></div>
+          <form id="bookingForm">
             <div class="form-group">
-              <label for="name">Ваше имя</label>
+              <label for="name">Ваше имя *</label>
               <input type="text" id="name" class="form-control" required>
             </div>
             <div class="form-group">
-              <label for="email">Email</label>
+              <label for="email">Email *</label>
               <input type="email" id="email" class="form-control" required>
             </div>
             <div class="form-group">
-              <label for="phone">Телефон</label>
+              <label for="phone">Телефон *</label>
               <input type="tel" id="phone" class="form-control" required>
             </div>
+            <div class="date-inputs">
+              <div class="form-group">
+                <label for="checkin">Заезд *</label>
+                <input type="date" id="checkin" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="checkout">Выезд *</label>
+                <input type="date" id="checkout" class="form-control" required>
+              </div>
+            </div>
             <div class="form-group">
-              <label for="dates">Даты проживания</label>
-              <input type="text" id="dates" class="form-control" placeholder="с - по">
+              <label for="guests">Количество гостей</label>
+              <select id="guests" class="form-control">
+                <option value="1">1 гость</option>
+                <option value="2" selected>2 гостя</option>
+                <option value="3">3 гостя</option>
+                <option value="4">4 гостя</option>
+                <option value="5">5 гостей</option>
+                <option value="6">6 гостей</option>
+              </select>
             </div>
             <div class="form-group">
               <label for="message">Сообщение</label>
-              <textarea id="message" class="form-control"></textarea>
+              <textarea id="message" class="form-control" placeholder="Дополнительные пожелания или вопросы"></textarea>
             </div>
-            <button type="submit" class="btn">Отправить запрос</button>
+            <button type="submit" class="btn" id="submitBtn">Отправить запрос</button>
           </form>
         </div>
         <div class="contact-info">
@@ -757,7 +827,14 @@
           </div>
         </div>
         <div class="contact-map">
-          <div id="map" style="width: 100%; height: 100%"></div>
+          <div id="map">
+            <div class="map-placeholder">
+              <div>
+                <h4>Карта загружается...</h4>
+                <p>Если карта не отображается, проверьте подключение к интернету</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1029,36 +1106,196 @@
       }
 
       // Инициализация Яндекс.Карт
-      ymaps.ready(initMap);
-      
       function initMap() {
-        // Координаты апартаментов (набережная Адмирала Перелешина, 3, Севастополь)
-        var apartmentCoords = [44.616622961342124, 33.517859032692016];
+        // Проверяем, загрузился ли API Яндекс.Карт
+        if (typeof ymaps === 'undefined') {
+          console.error('Yandex Maps API не загрузился');
+          const mapPlaceholder = document.querySelector('.map-placeholder');
+          if (mapPlaceholder) {
+            mapPlaceholder.innerHTML = `
+              <div>
+                <h4>Ошибка загрузки карты</h4>
+                <p>Проверьте подключение к интернету или обновите страницу</p>
+                <button onclick="location.reload()" class="btn" style="margin-top: 10px;">Обновить страницу</button>
+              </div>
+            `;
+          }
+          return;
+        }
         
-        // Создание карты
-        var myMap = new ymaps.Map('map', {
-          center: apartmentCoords,
-          zoom: 16,
-          controls: ['zoomControl', 'fullscreenControl']
+        ymaps.ready(function() {
+          // Координаты апартаментов (набережная Адмирала Перелешина, 3, Севастополь)
+          var apartmentCoords = [44.616622961342124, 33.517859032692016];
+          
+          try {
+            // Создание карты
+            var myMap = new ymaps.Map('map', {
+              center: apartmentCoords,
+              zoom: 16,
+              controls: ['zoomControl', 'fullscreenControl']
+            });
+            
+            // Создание метки
+            var myPlacemark = new ymaps.Placemark(apartmentCoords, {
+              hintContent: 'Апартаменты "Большая Терраса"',
+              balloonContent: 'Апартаменты "Большая Терраса"<br>набережная Адмирала Перелешина, 3<br>Севастополь'
+            }, {
+              // Опции метки
+              iconLayout: 'default#image',
+              iconImageHref: 'https://docs.yandex.ru/docs/view?url=ya-disk-public%3A%2F%2F5n5o%2Fx%2Fdzkkqk7y6n6k7n6k7n6k%2Fmap-marker.png',
+              iconImageSize: [40, 40],
+              iconImageOffset: [-20, -40]
+            });
+            
+            // Добавление метки на карту
+            myMap.geoObjects.add(myPlacemark);
+            
+            // Открываем балун при загрузке
+            myPlacemark.balloon.open();
+            
+            // Адаптация карты для мобильных устройств
+            myMap.behaviors.disable('scrollZoom');
+            
+            // Обработчик изменения размера карты
+            setTimeout(function() {
+              myMap.container.fitToViewport();
+            }, 100);
+            
+          } catch (error) {
+            console.error('Ошибка при создании карты:', error);
+            const mapContainer = document.getElementById('map');
+            if (mapContainer) {
+              mapContainer.innerHTML = `
+                <div class="map-placeholder">
+                  <div>
+                    <h4>Ошибка инициализации карты</h4>
+                    <p>Попробуйте обновить страницу или зайти позже</p>
+                    <button onclick="location.reload()" class="btn" style="margin-top: 10px;">Обновить страницу</button>
+                  </div>
+                </div>
+              `;
+            }
+          }
+        });
+      }
+
+      // Инициализация карты
+      initMap();
+
+      // Обработка формы бронирования
+      const bookingForm = document.getElementById('bookingForm');
+      const formMessage = document.getElementById('formMessage');
+      const submitBtn = document.getElementById('submitBtn');
+      
+      if (bookingForm) {
+        // Установка минимальной даты (сегодня)
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('checkin').setAttribute('min', today);
+        document.getElementById('checkout').setAttribute('min', today);
+        
+        // Обновление минимальной даты для выезда при изменении даты заезда
+        document.getElementById('checkin').addEventListener('change', function() {
+          const checkinDate = this.value;
+          document.getElementById('checkout').setAttribute('min', checkinDate);
+          
+          // Если дата выезда раньше даты заезда, устанавливаем дату выезда = дате заезда
+          if (document.getElementById('checkout').value < checkinDate) {
+            document.getElementById('checkout').value = checkinDate;
+          }
         });
         
-        // Создание метки
-        var myPlacemark = new ymaps.Placemark(apartmentCoords, {
-          hintContent: 'Апартаменты "Большая Терраса"',
-          balloonContent: 'Апартаменты "Большая Терраса"<br>набережная Адмирала Перелешина, 3<br>Севастополь'
-        }, {
-          // Опции метки
-          iconLayout: 'default#image',
-          iconImageHref: 'https://docs.yandex.ru/docs/view?url=ya-disk-public%3A%2F%2F5n5o%2Fx%2Fdzkkqk7y6n6k7n6k7n6k%2Fmap-marker.png', // Можно заменить на свою иконку
-          iconImageSize: [40, 40],
-          iconImageOffset: [-20, -40]
+        // Отправка формы
+        bookingForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          // Получаем данные формы
+          const formData = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            checkin: document.getElementById('checkin').value,
+            checkout: document.getElementById('checkout').value,
+            guests: document.getElementById('guests').value,
+            message: document.getElementById('message').value
+          };
+          
+          // Валидация
+          if (!formData.name || !formData.email || !formData.phone || !formData.checkin || !formData.checkout) {
+            showMessage('Пожалуйста, заполните все обязательные поля', 'error');
+            return;
+          }
+          
+          // Блокируем кнопку отправки
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Отправка...';
+          
+          // Отправляем данные
+          sendEmail(formData);
         });
+      }
+      
+      // Функция показа сообщения
+      function showMessage(text, type) {
+        if (formMessage) {
+          formMessage.textContent = text;
+          formMessage.className = `form-message ${type} visible`;
+          
+          // Автоматическое скрытие через 5 секунд
+          setTimeout(() => {
+            formMessage.classList.remove('visible');
+          }, 5000);
+        }
+      }
+      
+      // Функция отправки email
+      function sendEmail(formData) {
+        // Формируем тело письма
+        const subject = 'Новая заявка на бронирование';
+        const body = `
+          Имя: ${formData.name}
+          Email: ${formData.email}
+          Телефон: ${formData.phone}
+          Заезд: ${formData.checkin}
+          Выезд: ${formData.checkout}
+          Количество гостей: ${formData.guests}
+          Сообщение: ${formData.message || 'Не указано'}
+        `;
         
-        // Добавление метки на карту
-        myMap.geoObjects.add(myPlacemark);
-        
-        // Открываем балун при загрузке
-        myPlacemark.balloon.open();
+        // Используем Formspree или аналогичный сервис для отправки email
+        // Вместо этого можно настроить отправку через PHP или другой серверный язык
+        fetch('https://formspree.io/f/xjvnzzwz', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            checkin: formData.checkin,
+            checkout: formData.checkout,
+            guests: formData.guests,
+            message: formData.message,
+            _subject: subject
+          })
+        })
+        .then(response => {
+          if (response.ok) {
+            showMessage('Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.', 'success');
+            bookingForm.reset();
+          } else {
+            throw new Error('Ошибка отправки формы');
+          }
+        })
+        .catch(error => {
+          console.error('Ошибка:', error);
+          showMessage('Произошла ошибка при отправке. Пожалуйста, попробуйте еще раз или свяжитесь с нами по телефону.', 'error');
+        })
+        .finally(() => {
+          // Разблокируем кнопку отправки
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Отправить запрос';
+        });
       }
     });
   </script>
