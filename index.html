@@ -183,10 +183,10 @@
       margin-bottom: 20px;
     }
 
-    /* Обновленная Галерея */
+    /* Обновленная Галерея с 12 изображениями */
     .gallery-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 15px;
     }
     .gallery-item {
@@ -278,11 +278,20 @@
       opacity: 1;
       z-index: 1;
     }
+    .lightbox-image-container {
+      position: relative;
+      max-width: 100%;
+      max-height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
     .lightbox-slide img {
       max-width: 100%;
       max-height: 80vh;
       object-fit: contain;
       border-radius: 8px;
+      transition: transform 0.3s ease;
     }
     .lightbox-caption {
       color: #fff;
@@ -348,6 +357,28 @@
       color: white;
       font-size: 1rem;
       z-index: 2001;
+    }
+    .lightbox-zoom-controls {
+      position: fixed;
+      bottom: 70px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 2001;
+    }
+    .lightbox-zoom-button {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     /* Контакты - ОБНОВЛЕНО С КАРТОЙ */
@@ -492,6 +523,15 @@
         bottom: 10px;
         font-size: 0.9rem;
       }
+      .lightbox-zoom-controls {
+        bottom: 60px;
+        right: 10px;
+      }
+      .lightbox-zoom-button {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+      }
     }
     @media (max-width: 480px) {
       .hero h1 { font-size: 1.8rem; }
@@ -586,7 +626,7 @@
     </div>
   </section>
 
-  <!-- Галерея -->
+  <!-- Галерея с 12 изображениями -->
   <section id="gallery">
     <div class="container">
       <div class="section-title">
@@ -617,6 +657,31 @@
           <img src="images/gallery6.jpg" alt="Зона отдыха">
           <div class="gallery-caption">Большая терраса для отдыха и наслаждения видом</div>
         </div>
+        <!-- Дополнительные 6 фото -->
+        <div class="gallery-item">
+          <img src="images/gallery7.jpg" alt="Вид на город">
+          <div class="gallery-caption">Панорамный вид на город с террасы</div>
+        </div>
+        <div class="gallery-item">
+          <img src="images/gallery8.jpg" alt="Спальня 2">
+          <div class="gallery-caption">Вторая спальня с комфортной кроватью</div>
+        </div>
+        <div class="gallery-item">
+          <img src="images/gallery9.jpg" alt="Обеденная зона">
+          <div class="gallery-caption">Уютная обеденная зона с видом на море</div>
+        </div>
+        <div class="gallery-item">
+          <img src="images/gallery10.jpg" alt="Рабочая зона">
+          <div class="gallery-caption">Комфортная рабочая зона с высокоскоростным интернетом</div>
+        </div>
+        <div class="gallery-item">
+          <img src="images/gallery11.jpg" alt="Ванная 2">
+          <div class="gallery-caption">Вторая ванная комната с современной сантехникой</div>
+        </div>
+        <div class="gallery-item">
+          <img src="images/gallery12.jpg" alt="Вид ночью">
+          <div class="gallery-caption">Ночной вид на освещенную Севастопольскую бухту</div>
+        </div>
       </div>
     </div>
   </section>
@@ -632,6 +697,11 @@
       <div class="lightbox-slides" id="lightboxSlides"></div>
     </div>
     <div class="lightbox-counter" id="lightboxCounter"></div>
+    <div class="lightbox-zoom-controls">
+      <button class="lightbox-zoom-button" id="zoomIn">+</button>
+      <button class="lightbox-zoom-button" id="zoomOut">-</button>
+      <button class="lightbox-zoom-button" id="resetZoom">↺</button>
+    </div>
   </div>
 
   <!-- Контакты - ОБНОВЛЕНО С КАРТОЙ -->
@@ -738,12 +808,18 @@
       const prevButton = document.getElementById('prevButton');
       const nextButton = document.getElementById('nextButton');
       const lightboxCounter = document.getElementById('lightboxCounter');
+      const zoomInButton = document.getElementById('zoomIn');
+      const zoomOutButton = document.getElementById('zoomOut');
+      const resetZoomButton = document.getElementById('resetZoom');
       const galleryItems = document.querySelectorAll('.gallery-item');
       
       let currentImageIndex = 0;
       let startX = 0;
       let currentX = 0;
       let isDragging = false;
+      let currentScale = 1;
+      let currentTranslate = { x: 0, y: 0 };
+      let initialTouchesDistance = 0;
       
       // Создаем слайды для lightbox
       function createSlides() {
@@ -753,25 +829,41 @@
           slide.className = 'lightbox-slide';
           if (index === currentImageIndex) slide.classList.add('active');
           
+          const imageContainer = document.createElement('div');
+          imageContainer.className = 'lightbox-image-container';
+          
           const img = document.createElement('img');
           img.src = item.querySelector('img').src;
           img.alt = item.querySelector('img').alt;
+          img.dataset.initialTransform = 'scale(1) translate(0, 0)';
           
           const caption = document.createElement('div');
           caption.className = 'lightbox-caption';
           caption.textContent = item.querySelector('.gallery-caption').textContent;
           
-          slide.appendChild(img);
+          imageContainer.appendChild(img);
+          slide.appendChild(imageContainer);
           slide.appendChild(caption);
           lightboxSlides.appendChild(slide);
         });
         
         updateCounter();
+        resetImageTransform();
       }
       
       // Обновление счетчика
       function updateCounter() {
         lightboxCounter.textContent = `${currentImageIndex + 1} / ${galleryItems.length}`;
+      }
+      
+      // Сброс трансформации изображения
+      function resetImageTransform() {
+        currentScale = 1;
+        currentTranslate = { x: 0, y: 0 };
+        const activeImage = document.querySelector('.lightbox-slide.active img');
+        if (activeImage) {
+          activeImage.style.transform = `scale(1) translate(0, 0)`;
+        }
       }
       
       // Показать определенный слайд
@@ -787,6 +879,7 @@
         }
         
         slides[currentImageIndex].classList.add('active');
+        resetImageTransform();
         updateCounter();
       }
       
@@ -817,6 +910,32 @@
         showSlide(currentImageIndex + 1);
       });
       
+      // Управление масштабированием
+      zoomInButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        zoomImage(1.2);
+      });
+      
+      zoomOutButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        zoomImage(0.8);
+      });
+      
+      resetZoomButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        resetImageTransform();
+      });
+      
+      function zoomImage(factor) {
+        const activeImage = document.querySelector('.lightbox-slide.active img');
+        if (activeImage) {
+          currentScale *= factor;
+          // Ограничиваем масштаб
+          currentScale = Math.max(0.5, Math.min(currentScale, 5));
+          activeImage.style.transform = `scale(${currentScale}) translate(${currentTranslate.x}px, ${currentTranslate.y}px)`;
+        }
+      }
+      
       // Навигация с клавиатуры
       document.addEventListener('keydown', (e) => {
         if (!lightbox.classList.contains('open')) return;
@@ -838,35 +957,74 @@
       lightbox.addEventListener('touchend', handleTouchEnd, false);
       
       function handleTouchStart(e) {
-        startX = e.touches[0].clientX;
-        isDragging = true;
-      }
-      
-      function handleTouchMove(e) {
-        if (!isDragging) return;
-        currentX = e.touches[0].clientX;
-        
-        // Предотвращаем скролл страницы при горизонтальном свайпе
-        if (Math.abs(currentX - startX) > 10) {
+        if (e.touches.length === 1) {
+          startX = e.touches[0].clientX;
+          isDragging = true;
+        } else if (e.touches.length === 2) {
+          // Масштабирование двумя пальцами
           e.preventDefault();
+          initialTouchesDistance = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          isDragging = false;
         }
       }
       
-      function handleTouchEnd() {
-        if (!isDragging) return;
-        isDragging = false;
-        
-        const diffX = currentX - startX;
-        
-        // Определяем направление свайпа
-        if (Math.abs(diffX) > 50) { // Минимальная дистанция для свайпа
-          if (diffX > 0) {
-            // Свайп вправо - предыдущее изображение
-            showSlide(currentImageIndex - 1);
-          } else {
-            // Свайп влево - следующее изображение
-            showSlide(currentImageIndex + 1);
+      function handleTouchMove(e) {
+        if (e.touches.length === 1 && isDragging) {
+          currentX = e.touches[0].clientX;
+          
+          // Предотвращаем скролл страницы при горизонтальном свайпе
+          if (Math.abs(currentX - startX) > 10) {
+            e.preventDefault();
           }
+        } else if (e.touches.length === 2) {
+          // Масштабирование двумя пальцами
+          e.preventDefault();
+          const currentDistance = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          
+          if (initialTouchesDistance > 0) {
+            const zoomFactor = currentDistance / initialTouchesDistance;
+            const activeImage = document.querySelector('.lightbox-slide.active img');
+            
+            if (activeImage) {
+              currentScale *= zoomFactor;
+              // Ограничиваем масштаб
+              currentScale = Math.max(0.5, Math.min(currentScale, 5));
+              activeImage.style.transform = `scale(${currentScale}) translate(${currentTranslate.x}px, ${currentTranslate.y}px)`;
+              
+              initialTouchesDistance = currentDistance;
+            }
+          }
+        }
+      }
+      
+      function handleTouchEnd(e) {
+        if (e.touches.length < 1) {
+          isDragging = false;
+          
+          if (e.changedTouches.length === 1) {
+            const diffX = currentX - startX;
+            
+            // Определяем направление свайпа
+            if (Math.abs(diffX) > 50) { // Минимальная дистанция для свайпа
+              if (diffX > 0) {
+                // Свайп вправо - предыдущее изображение
+                showSlide(currentImageIndex - 1);
+              } else {
+                // Свайп влево - следующее изображение
+                showSlide(currentImageIndex + 1);
+              }
+            }
+          }
+        }
+        
+        if (e.touches.length < 2) {
+          initialTouchesDistance = 0;
         }
       }
 
