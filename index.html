@@ -80,10 +80,10 @@
     }
     .nav-links a:hover { color: #c19a6b; }
 
-    /* Герой */
+    /* Обновленный Герой */
     .hero {
       height: 100vh;
-      background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0)),
+      background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0)), 
                   url("images/living-room-back.jpg") no-repeat center center/cover;
       display: flex;
       align-items: center;
@@ -92,19 +92,44 @@
       color: #fff;
       margin-top: 80px;
     }
-    .hero h1 { font-size: 3rem; margin-bottom: 20px; }
-    .hero p { font-size: 1.2rem; margin-bottom: 30px; }
+    .hero-content {
+      text-align: center;
+      max-width: 900px;
+      padding: 0 20px;
+    }
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #fff;
+      margin-bottom: 20px;
+      line-height: 1.2;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    }
+    .hero p {
+      font-size: 1.5rem;
+      color: #fff;
+      font-weight: 400;
+      margin-bottom: 35px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
     .btn {
       display: inline-block;
       background-color: #c19a6b;
       color: #fff;
-      padding: 12px 30px;
+      padding: 15px 40px;
       text-decoration: none;
       border-radius: 4px;
       font-weight: 500;
-      transition: background-color 0.3s;
+      transition: all 0.3s;
+      font-size: 1.1rem;
+      border: 2px solid #c19a6b;
     }
-    .btn:hover { background-color: #a5825d; }
+    .btn:hover {
+      background-color: transparent;
+      color: #fff;
+      border-color: #fff;
+    }
 
     /* Секции */
     section { padding: 80px 0; }
@@ -345,20 +370,30 @@
     /* Адаптивность */
     @media (max-width: 992px) {
       .about-content, .contact-wrapper { flex-direction: column; }
-      .hero h1 { font-size: 2.5rem; }
+      .hero h1 { font-size: 2.8rem; }
+      .hero p { font-size: 1.3rem; }
       .gallery-grid {
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
       }
     }
     @media (max-width: 768px) {
       .nav-links { display: none; }
-      .hero h1 { font-size: 2rem; }
+      .hero h1 { font-size: 2.2rem; }
+      .hero p { font-size: 1.1rem; }
       h1 { font-size: 2rem; }
       h2 { font-size: 1.8rem; }
       .gallery-grid {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 10px;
       }
+      .btn {
+        padding: 12px 30px;
+        font-size: 1rem;
+      }
+    }
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 1.8rem; }
+      .hero p { font-size: 1rem; }
     }
   </style>
 </head>
@@ -383,7 +418,7 @@
   <section class="hero">
     <div class="container">
       <div class="hero-content">
-        <h1>Апартаменты в самом сердце Севастополя!</h1>
+        <h1>Апартаменты в самом центре Севастополя</h1>
         <p>Апартаменты "Большая Терраса" в центре города с панорамным видом на Севастопольскую бухту</p>
         <a href="#contact" class="btn">Забронировать</a>
       </div>
