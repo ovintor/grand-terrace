@@ -796,8 +796,6 @@
                 <option value="2" selected>2 гостя</option>
                 <option value="3">3 гостя</option>
                 <option value="4">4 гостя</option>
-                <option value="5">5 гостей</option>
-                <option value="6">6 гостей</option>
               </select>
             </div>
             <div class="form-group">
@@ -868,6 +866,9 @@
 
   <!-- Подключение API Яндекс.Карт -->
   <script src="https://api-maps.yandex.ru/2.1/?apikey=ВАШ_API_КЛЮЧ&lang=ru_RU" type="text/javascript"></script>
+  
+  <!-- Подключение EmailJS SDK -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   
   <script>
     // Lightbox функционал с улучшениями для мобильных
@@ -1158,6 +1159,9 @@
       const formMessage = document.getElementById('formMessage');
       const submitBtn = document.getElementById('submitBtn');
       
+      // Инициализация EmailJS с вашим публичным ключом
+      emailjs.init("j6uiHE1LE26li3uuj");
+      
       if (bookingForm) {
         // Установка минимальной даты (сегодня)
         const today = new Date().toISOString().split('T')[0];
@@ -1200,8 +1204,8 @@
           submitBtn.disabled = true;
           submitBtn.textContent = 'Отправка...';
           
-          // Отправляем данные
-          sendEmail(formData);
+          // Отправляем данные через EmailJS
+          sendEmailWithEmailJS(formData);
         });
       }
       
@@ -1218,55 +1222,67 @@
         }
       }
       
-      // Функция отправки email через Formspree
-      function sendEmail(formData) {
-        // Формируем тело письма
-        const subject = 'Новая заявка на бронирование';
-        const body = `
-          Имя: ${formData.name}
-          Email: ${formData.email}
-          Телефон: ${formData.phone}
-          Заезд: ${formData.checkin}
-          Выезд: ${formData.checkout}
-          Количество гостей: ${formData.guests}
-          Сообщение: ${formData.message || 'Не указано'}
-        `;
+      // Функция отправки email через EmailJS
+      function sendEmailWithEmailJS(formData) {
+        // Параметры для отправки
+        const templateParams = {
+          to_email: 'grandterrace@yandex.ru',
+          from_name: formData.name,
+          from_email: formData.email,
+          phone: formData.phone,
+          checkin: formData.checkin,
+          checkout: formData.checkout,
+          guests: formData.guests,
+          message: formData.message || 'Не указано',
+          subject: 'Новая заявка на бронирование апартаментов "Большая Терраса"'
+        };
         
-        // Используем Formspree для отправки email
-        fetch('https://formspree.io/f/xjvnzzwz', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            checkin: formData.checkin,
-            checkout: formData.checkout,
-            guests: formData.guests,
-            message: formData.message,
-            _subject: subject,
-            _replyto: formData.email
-          })
-        })
-        .then(response => {
-          if (response.ok) {
+        // Отправка через EmailJS с service_tl5smna и template_06dy3rj
+        emailjs.send('service_tl5smna', 'template_06dy3rj', templateParams)
+          .then(function(response) {
+            console.log('SUCCESS!', response.status, response.text);
             showMessage('Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.', 'success');
             bookingForm.reset();
-          } else {
-            throw new Error('Ошибка отправки формы');
-          }
-        })
-        .catch(error => {
-          console.error('Ошибка:', error);
-          showMessage('Произошла ошибка при отправке. Пожалуйста, попробуйте еще раз или свяжитесь с нами по телефону.', 'error');
-        })
-        .finally(() => {
+          }, function(error) {
+            console.log('FAILED...', error);
+            // Если EmailJS не сработал, используем резервный метод
+            sendEmailFallback(formData);
+          })
+          .finally(() => {
+            // Разблокируем кнопку отправки
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Отправить запрос';
+          });
+      }
+      
+      // Резервный метод отправки через mailto
+      function sendEmailFallback(formData) {
+        const subject = 'Новая заявка на бронирование апартаментов "Большая Терраса"';
+        const body = `
+Имя: ${formData.name}
+Email: ${formData.email}
+Телефон: ${formData.phone}
+Дата заезда: ${formData.checkin}
+Дата выезда: ${formData.checkout}
+Количество гостей: ${formData.guests}
+Сообщение: ${formData.message || 'Не указано'}
+        `;
+        
+        const mailtoLink = `mailto:grandterrace@yandex.ru?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        
+        showMessage('Пожалуйста, нажмите OK чтобы открыть почтовый клиент и отправьте письмо.', 'success');
+        
+        if (confirm('Открыть почтовый клиент для отправки заявки?')) {
+          window.location.href = mailtoLink;
+          setTimeout(() => {
+            bookingForm.reset();
+            showMessage('Не забудьте отправить письмо в открывшемся почтовом клиенте.', 'success');
+          }, 1000);
+        } else {
           // Разблокируем кнопку отправки
           submitBtn.disabled = false;
           submitBtn.textContent = 'Отправить запрос';
-        });
+        }
       }
     });
   </script>
