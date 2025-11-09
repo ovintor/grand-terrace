@@ -1,0 +1,59 @@
+User-agent: *
+Allow: /
+
+# Основные директории
+Disallow: /admin/
+Disallow: /cgi-bin/
+Disallow: /includes/
+Disallow: /tmp/
+Disallow: /private/
+
+# Файлы
+Disallow: /search/
+Disallow: /?search=*
+Disallow: /*.pdf$
+Disallow: /*.doc$
+Disallow: /*.docx$
+
+# Параметры URL, которые могут создавать дублирующий контент
+Disallow: /*?sort=
+Disallow: /*?filter=
+Disallow: /*?page=
+Disallow: /*?view=
+
+# Разрешаем индексацию изображений для поиска картинок
+Allow: /images/
+
+# Указываем путь к карте сайта (Punycode)
+Sitemap: https://xn--80aac1acnf1b4a.xn--p1ai/sitemap.xml
+
+# Дублирующая запись для кириллического домена (на всякий случай)
+Sitemap: https://большаятерраса.рф/sitemap.xml
+
+# Для поисковых систем Яндекс и Google
+User-agent: Yandex
+Allow: /
+Crawl-delay: 1
+
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# Для агрессивных ботов
+User-agent: MJ12bot
+Crawl-delay: 3
+
+User-agent: AhrefsBot
+Crawl-delay: 5
+Disallow: /
+
+User-agent: SemrushBot
+Crawl-delay: 5
+Disallow: /
+
+User-agent: DotBot
+Crawl-delay: 3
+
+User-agent: MegaIndex
+Crawl-delay: 5
+Disallow: /

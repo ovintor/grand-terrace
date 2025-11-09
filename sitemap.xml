@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  
+  <!-- Главная страница -->
+  <url>
+    <loc>https://xn--80aac1acnf1b4a.xn--p1ai/</loc>
+    <!-- Альтернативная кириллическая версия -->
+    <xhtml:link rel="alternate" hreflang="ru" href="https://большаятерраса.рф/" />
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    
+    <!-- Изображения главной страницы -->
+    <image:image>
+      <image:loc>https://xn--80aac1acnf1b4a.xn--p1ai/images/living-room-back.jpg</image:loc>
+      <image:title>Апартаменты Большая Терраса в Севастополе</image:title>
+      <image:caption>Роскошные апартаменты с видом на море в центре Севастополя</image:caption>
+    </image:image>
+    
+    <image:image>
+      <image:loc>https://xn--80aac1acnf1b4a.xn--p1ai/images/living-room.png</image:loc>
+      <image:title>Интерьер апартаментов</image:title>
+      <image:caption>Современный интерьер гостиной с панорамными окнами</image:caption>
+    </image:image>
+  </url>
+  
+  <!-- Страница с информацией об апартаментах -->
+  <url>
+    <loc>https://xn--80aac1acnf1b4a.xn--p1ai/#about</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://большаятерраса.рф/#about" />
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Страница преимуществ -->
+  <url>
+    <loc>https://xn--80aac1acnf1b4a.xn--p1ai/#features</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://большаятерраса.рф/#features" />
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Галерея -->
+  <url>
+    <loc>https://xn--80aac1acnf1b4a.xn--p1ai/#gallery</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://большаятерраса.рф/#gallery" />
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    
+    <!-- Изображения галереи -->
+    <image:image>
+      <image:loc>https://xn--80aac1acnf1b4a.xn--p1ai/images/gallery1.jpg</image:loc>
+      <image:title>Гостиная апартаментов</image:title>
+      <image:caption>Просторная гостиная с панорамными окнами</image:caption>
+    </image:image>
+    
+    <image:image>
+      <image:loc>https://xn--80aac1acnf1b4a.xn--p1ai/images/gallery2.jpg</image:loc>
+      <image:title>Спальное пространство</image:title>
+      <image:caption>Основная кровать особо широкая (king size)</image:caption>
+    </image:image>
+    
+    <image:image>
+      <image:loc>https://xn--80aac1acnf1b4a.xn--p1ai/images/gallery3.jpg</image:loc>
+      <image:title>Дополнительное спальное пространство</image:title>
+      <image:caption>Вторая полноразмерная кровать. Раскладывается при необходимости</image:caption>
+    </image:image>
+    
+    <image:image>
+      <image:loc>https://xn--80aac1acnf1b4a.xn--p1ai/images/gallery4.jpg</image:loc>
+      <image:title>Кухня</image:title>
+      <image:caption>Современная полностью оборудованная кухня</image:caption>
+    </image:image>
+    
+    <image:image>
+      <image:loc>https://xn--80aac1acnf1b4a.xn--p1ai/images/gallery5.jpg</image:loc>
+      <image:title>Кухня</image:title>
+      <image:caption>Современная полностью оборудованная кухня с посудомоечной машиной</image:caption>
+    </image:image>
+    
+    <image:image>
+      <image:loc>https://xn--80aac1acnf1b4a.xn--p1ai/images/gallery6.jpg</image:loc>
+      <image:title>Кухня</image:title>
+      <image:caption>Современная полностью оборудованная кухня</image:caption>
+    </image:image>
+    
+    <image:image>
+      <image:loc>https://xn--80aac1acnf1b4a.xn--p1ai/images/gallery7.jpg</image:loc>
+      <image:title>Ванная комната</image:title>
+      <image:caption>Ванная комната с душевой кабиной, стиральной машиной</image:caption>
+    </image:image>
+    
+    <image:image>
+      <image:loc>https://xn--80aac1acnf1b4a.xn--p1ai/images/gallery8.jpg</image:loc>
+      <image:title>Большая терраса</image:title>
+      <image:caption>Большая терраса с зоной отдыха и видом на море и город</image:caption>
+    </image:image>
+    
+    <image:image>
+      <image:loc>https://xn--80aac1acnf1b4a.xn--p1ai/images/gallery9.jpg</image:loc>
+      <image:title>Большая терраса</image:title>
+      <image:caption>Большая терраса с зоной отдыха и видом на море и город</image:caption>
+    </image:image>
+    
+    <image:image>
+      <image:loc>https://xn--80aac1acnf1b4a.xn--p1ai/images/gallery10.jpg</image:loc>
+      <image:title>Большая терраса</image:title>
+      <image:caption>Вечерний вид с террасы</image:caption>
+    </image:image>
+    
+    <image:image>
+      <image:loc>https://xn--80aac1acnf1b4a.xn--p1ai/images/gallery11.jpg</image:loc>
+      <image:title>Большая терраса</image:title>
+      <image:caption>Ночной вид с террасы на освещенную Севастопольскую бухту</image:caption>
+    </image:image>
+    
+    <image:image>
+      <image:loc>https://xn--80aac1acnf1b4a.xn--p1ai/images/gallery12.jpg</image:loc>
+      <image:title>Большая терраса</image:title>
+      <image:caption>Ночной вид на освещенную Севастопольскую бухту</image:caption>
+    </image:image>
+  </url>
+  
+  <!-- Контакты и бронирование -->
+  <url>
+    <loc>https://xn--80aac1acnf1b4a.xn--p1ai/#contact</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://большаятерраса.рф/#contact" />
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+</urlset>
