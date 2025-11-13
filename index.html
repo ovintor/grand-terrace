@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Апартаменты в аренду Севастополь посуточно вид моря | Большая Терраса GrandTerraceApt | Квартира Севастополь аренда посуточно</title>
   <style>
     /* Базовые стили */
@@ -12,16 +12,24 @@
       box-sizing: border-box;
       font-family: 'Helvetica Neue', Arial, sans-serif;
     }
+    html {
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
     body {
       color: #333;
       line-height: 1.6;
       background-color: #f8f9fa;
       overflow-x: hidden;
+      width: 100%;
+      -webkit-overflow-scrolling: touch;
     }
     .container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 0 20px;
+      width: 100%;
     }
     h1, h2, h3, h4 {
       font-weight: 600;
@@ -84,6 +92,7 @@
     /* Обновленный Герой */
     .hero {
       height: 100vh;
+      min-height: 600px;
       background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.3)), 
                   url("images/living-room-back.jpg") no-repeat center center/cover;
       display: flex;
@@ -97,6 +106,7 @@
       text-align: center;
       max-width: 900px;
       padding: 0 20px;
+      width: 100%;
     }
     .hero h1 {
       font-size: 3.5rem;
@@ -139,7 +149,10 @@
     }
 
     /* Секции */
-    section { padding: 80px 0; }
+    section { 
+      padding: 80px 0; 
+      width: 100%;
+    }
     .section-title {
       text-align: center;
       margin-bottom: 50px;
@@ -150,13 +163,18 @@
       display: flex;
       align-items: center;
       gap: 50px;
+      width: 100%;
     }
-    .about-text { flex: 1; }
+    .about-text { 
+      flex: 1; 
+      min-width: 0; /* Предотвращает переполнение flex-контейнера */
+    }
     .about-image {
       flex: 1;
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      min-width: 0; /* Предотвращает переполнение flex-контейнера */
     }
     .about-image img {
       width: 100%;
@@ -172,6 +190,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 30px;
+      width: 100%;
     }
     .feature-item {
       text-align: center;
@@ -194,6 +213,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 15px;
+      width: 100%;
     }
     .gallery-item {
       position: relative;
@@ -245,7 +265,7 @@
       z-index: 2000;
       opacity: 0;
       transition: opacity 0.3s ease;
-      touch-action: none; /* Для обработки свайпов */
+      touch-action: none;
     }
     .lightbox.open {
       display: flex;
@@ -392,6 +412,7 @@
       display: flex; 
       gap: 50px; 
       flex-wrap: wrap;
+      width: 100%;
     }
     .contact-info, .contact-form { 
       flex: 1; 
@@ -480,12 +501,14 @@
       background-color: #2c3e50;
       color: #fff;
       padding: 50px 0 20px;
+      width: 100%;
     }
     .footer-content {
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;
       margin-bottom: 30px;
+      width: 100%;
     }
     .footer-column { flex: 1; min-width: 250px; margin-bottom: 30px; }
     .footer-column h3 {
@@ -518,7 +541,7 @@
       color: #bbb;
     }
 
-    /* Адаптивность */
+    /* Адаптивность - УЛУЧШЕНА ДЛЯ ОРИЕНТАЦИИ */
     @media (max-width: 992px) {
       .about-content, .contact-wrapper { flex-direction: column; }
       .hero h1 { font-size: 2.8rem; }
@@ -527,7 +550,7 @@
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
       }
       .contact-map {
-        order: 3; /* Перемещаем карту вниз на мобильных */
+        order: 3;
         margin-top: 30px;
       }
       .date-inputs {
@@ -593,6 +616,42 @@
       }
       .contact-map {
         height: 300px;
+      }
+    }
+    
+    /* Специальные медиа-запросы для ориентации */
+    @media (orientation: portrait) and (max-width: 768px) {
+      .hero {
+        height: 100vh;
+        min-height: 500px;
+      }
+      .hero h1 {
+        font-size: 2rem;
+      }
+      .hero p {
+        font-size: 1.1rem;
+      }
+    }
+    
+    @media (orientation: landscape) and (max-height: 500px) {
+      .hero {
+        height: auto;
+        min-height: 100vh;
+        padding: 100px 0;
+      }
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      .hero p {
+        font-size: 1.2rem;
+      }
+    }
+    
+    /* Фикс для iOS Safari */
+    @supports (-webkit-touch-callout: none) {
+      .hero {
+        /* iOS фикс для vh единиц */
+        height: -webkit-fill-available;
       }
     }
   </style>
@@ -870,6 +929,43 @@
   <script src="https://api-maps.yandex.ru/2.1/?apikey=ВАШ_API_КЛЮЧ&lang=ru_RU" type="text/javascript"></script>
   
   <script>
+    // Функция для предотвращения проблем с масштабированием при изменении ориентации
+    function handleOrientationChange() {
+      // Сбрасываем масштаб и пересчитываем размеры
+      const viewport = document.querySelector('meta[name="viewport"]');
+      if (viewport) {
+        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+      }
+      
+      // Принудительно вызываем событие resize для пересчета layout
+      window.dispatchEvent(new Event('resize'));
+      
+      // Перерисовываем карту, если она существует
+      if (typeof myMap !== 'undefined') {
+        setTimeout(function() {
+          myMap.container.fitToViewport();
+        }, 300);
+      }
+    }
+
+    // Обработчик изменения ориентации
+    window.addEventListener('orientationchange', function() {
+      // Даем время на завершение анимации поворота
+      setTimeout(handleOrientationChange, 300);
+    });
+
+    // Обработчик изменения размера окна
+    window.addEventListener('resize', function() {
+      // Дебаунсим вызов, чтобы избежать множественных перерисовок
+      clearTimeout(window.resizeTimer);
+      window.resizeTimer = setTimeout(function() {
+        // Перерисовываем карту, если она существует
+        if (typeof myMap !== 'undefined') {
+          myMap.container.fitToViewport();
+        }
+      }, 250);
+    });
+
     // Lightbox функционал с улучшениями для мобильных
     document.addEventListener('DOMContentLoaded', function() {
       const lightbox = document.getElementById('lightbox');
