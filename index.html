@@ -167,14 +167,14 @@
     }
     .about-text { 
       flex: 1; 
-      min-width: 0; /* Предотвращает переполнение flex-контейнера */
+      min-width: 0;
     }
     .about-image {
       flex: 1;
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      min-width: 0; /* Предотвращает переполнение flex-контейнера */
+      min-width: 0;
     }
     .about-image img {
       width: 100%;
@@ -253,7 +253,7 @@
       opacity: 1;
     }
 
-    /* Lightbox стили - ОБНОВЛЕНО ДЛЯ МОБИЛЬНЫХ */
+    /* Lightbox стили */
     .lightbox {
       display: none;
       position: fixed;
@@ -407,7 +407,7 @@
       justify-content: center;
     }
 
-    /* Контакты - ОБНОВЛЕНО С КАРТОЙ */
+    /* Контакты */
     .contact-wrapper { 
       display: flex; 
       gap: 50px; 
@@ -541,7 +541,7 @@
       color: #bbb;
     }
 
-    /* Адаптивность - УЛУЧШЕНА ДЛЯ ОРИЕНТАЦИИ */
+    /* Адаптивность */
     @media (max-width: 992px) {
       .about-content, .contact-wrapper { flex-direction: column; }
       .hero h1 { font-size: 2.8rem; }
@@ -650,7 +650,6 @@
     /* Фикс для iOS Safari */
     @supports (-webkit-touch-callout: none) {
       .hero {
-        /* iOS фикс для vh единиц */
         height: -webkit-fill-available;
       }
     }
@@ -797,7 +796,7 @@
     </div>
   </section>
 
-  <!-- Lightbox - ОБНОВЛЕНО ДЛЯ МОБИЛЬНЫХ -->
+  <!-- Lightbox -->
   <div class="lightbox" id="lightbox">
     <button class="lightbox-close" id="lightboxClose">&times;</button>
     <div class="lightbox-nav">
@@ -815,7 +814,7 @@
     </div>
   </div>
 
-  <!-- Контакты - ОБНОВЛЕНО С КАРТОЙ -->
+  <!-- Контакты -->
   <section id="contact" class="contact">
     <div class="container">
       <div class="section-title">
@@ -929,6 +928,9 @@
   <script src="https://api-maps.yandex.ru/2.1/?apikey=ВАШ_API_КЛЮЧ&lang=ru_RU" type="text/javascript"></script>
   
   <script>
+    // Глобальная переменная для хранения экземпляра карты
+    let myMap = null;
+
     // Функция для предотвращения проблем с масштабированием при изменении ориентации
     function handleOrientationChange() {
       // Сбрасываем масштаб и пересчитываем размеры
@@ -940,11 +942,27 @@
       // Принудительно вызываем событие resize для пересчета layout
       window.dispatchEvent(new Event('resize'));
       
-      // Перерисовываем карту, если она существует
-      if (typeof myMap !== 'undefined') {
-        setTimeout(function() {
+      // Перерисовываем карту с задержкой, чтобы дать время на обновление layout
+      setTimeout(updateMapSize, 300);
+    }
+
+    // Функция для обновления размера карты
+    function updateMapSize() {
+      if (myMap) {
+        try {
           myMap.container.fitToViewport();
-        }, 300);
+          
+          // Дополнительные попытки обновления размера карты
+          setTimeout(() => {
+            if (myMap) myMap.container.fitToViewport();
+          }, 500);
+          
+          setTimeout(() => {
+            if (myMap) myMap.container.fitToViewport();
+          }, 1000);
+        } catch (error) {
+          console.error('Ошибка при обновлении карты:', error);
+        }
       }
     }
 
@@ -960,7 +978,7 @@
       clearTimeout(window.resizeTimer);
       window.resizeTimer = setTimeout(function() {
         // Перерисовываем карту, если она существует
-        if (typeof myMap !== 'undefined') {
+        if (myMap) {
           myMap.container.fitToViewport();
         }
       }, 250);
@@ -1199,6 +1217,8 @@
         // Проверяем, загрузился ли API Яндекс.Карт
         if (typeof ymaps === 'undefined') {
           console.error('Yandex Maps API не загрузился');
+          // Показываем заглушку вместо карты
+          document.getElementById('map').innerHTML = '<div class="map-placeholder">Карта временно недоступна</div>';
           return;
         }
         
@@ -1208,7 +1228,7 @@
           
           try {
             // Создание карты
-            var myMap = new ymaps.Map('map', {
+            myMap = new ymaps.Map('map', {
               center: apartmentCoords,
               zoom: 16,
               controls: ['zoomControl', 'fullscreenControl']
@@ -1221,7 +1241,7 @@
             }, {
               // Опции метки
               iconLayout: 'default#image',
-              iconImageHref: 'https://docs.yandex.ru/docs/view?url=ya-disk-public%3A%2F%2F5n5o%2Fx%2Fdzkkqk7y6n6k7n6k7n6k%2Fmap-marker.png',
+              iconImageHref: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMTgiIGZpbGw9IiNjMTlhNmIiIHN0cm9rZT0iIzJjM2U1MCIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjgiIGZpbGw9IiMyYzNlNTAiLz4KPC9zdmc+',
               iconImageSize: [40, 40],
               iconImageOffset: [-20, -40]
             });
@@ -1237,7 +1257,9 @@
             
             // Обработчик изменения размера карты
             setTimeout(function() {
-              myMap.container.fitToViewport();
+              if (myMap) {
+                myMap.container.fitToViewport();
+              }
             }, 100);
             
           } catch (error) {
