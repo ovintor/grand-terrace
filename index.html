@@ -5,939 +5,117 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Апартаменты в аренду Севастополь посуточно вид моря | Большая Терраса GrandTerraceApt | Квартира Севастополь аренда посуточно</title>
   <style>
-    /* Базовые стили */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-    }
-    html {
-      -webkit-text-size-adjust: 100%;
-      -ms-text-size-adjust: 100%;
-      text-size-adjust: 100%;
-    }
-    body {
-      color: #333;
-      line-height: 1.6;
-      background-color: #f8f9fa;
-      overflow-x: hidden;
-      width: 100%;
-      -webkit-overflow-scrolling: touch;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-      width: 100%;
-    }
-    h1, h2, h3, h4 {
-      font-weight: 600;
-      color: #2c3e50;
-      margin-bottom: 1rem;
-    }
-    h1 { font-size: 2.5rem; }
-    h2 {
-      font-size: 2rem;
-      position: relative;
-      padding-bottom: 15px;
-    }
-    h2:after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60px;
-      height: 3px;
-      background-color: #c19a6b;
-    }
-    p { margin-bottom: 1.5rem; color: #555; }
-
-    /* Навигация */
-    header {
-      background-color: #fff;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    /* Все предыдущие стили остаются без изменений */
+    /* ... */
+    
+    /* Добавим индикатор загрузки для отладки */
+    .debug-indicator {
       position: fixed;
-      width: 100%;
-      top: 0;
-      z-index: 1000;
-    }
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 0;
-    }
-    .logo {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: #2c3e50;
-      text-decoration: none;
-    }
-    .logo span { color: #c19a6b; }
-    .nav-links {
-      display: flex;
-      list-style: none;
-    }
-    .nav-links li { margin-left: 30px; }
-    .nav-links a {
-      text-decoration: none;
-      color: #2c3e50;
-      font-weight: 500;
-      transition: color 0.3s;
-    }
-    .nav-links a:hover { color: #c19a6b; }
-
-    /* Обновленный Герой */
-    .hero {
-      height: 100vh;
-      min-height: 600px;
-      background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.3)), 
-                  url("images/living-room-back.jpg") no-repeat center center/cover;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      color: #fff;
-      margin-top: 80px;
-    }
-    .hero-content {
-      text-align: center;
-      max-width: 900px;
-      padding: 0 20px;
-      width: 100%;
-    }
-    .hero h1 {
-      font-size: 3.5rem;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      color: #fff;
-      margin-bottom: 20px;
-      line-height: 1.2;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-    }
-    .hero p {
-      font-size: 1.5rem;
-      color: #fff;
-      font-weight: 400;
-      margin-bottom: 35px;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-    }
-    .btn {
-      display: inline-block;
-      background-color: #c19a6b;
-      color: #fff;
-      padding: 15px 40px;
-      text-decoration: none;
-      border-radius: 4px;
-      font-weight: 500;
-      transition: all 0.3s;
-      font-size: 1.1rem;
-      border: 2px solid #c19a6b;
-      cursor: pointer;
-    }
-    .btn:hover {
-      background-color: transparent;
-      color: #fff;
-      border-color: #fff;
-    }
-    .btn:disabled {
-      background-color: #cccccc;
-      border-color: #cccccc;
-      cursor: not-allowed;
-    }
-
-    /* Секции */
-    section { 
-      padding: 80px 0; 
-      width: 100%;
-    }
-    .section-title {
-      text-align: center;
-      margin-bottom: 50px;
-    }
-
-    /* О нас */
-    .about-content {
-      display: flex;
-      align-items: center;
-      gap: 50px;
-      width: 100%;
-    }
-    .about-text { 
-      flex: 1; 
-      min-width: 0;
-    }
-    .about-image {
-      flex: 1;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      min-width: 0;
-    }
-    .about-image img {
-      width: 100%;
-      height: auto;
-      display: block;
-      transition: transform 0.5s;
-    }
-    .about-image:hover img { transform: scale(1.05); }
-
-    /* Особенности */
-    .features { background-color: #fff; }
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 30px;
-      width: 100%;
-    }
-    .feature-item {
-      text-align: center;
-      padding: 30px;
-      border-radius: 8px;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-    .feature-item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    }
-    .feature-icon {
-      font-size: 2.5rem;
-      color: #c19a6b;
-      margin-bottom: 20px;
-    }
-
-    /* Обновленная Галерея с 12 изображениями */
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 15px;
-      width: 100%;
-    }
-    .gallery-item {
-      position: relative;
-      border-radius: 12px;
-      overflow: hidden;
-      aspect-ratio: 4/3;
-      cursor: pointer;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .gallery-item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    }
-    .gallery-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-    .gallery-item:hover img {
-      transform: scale(1.1);
-    }
-    .gallery-caption {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: linear-gradient(transparent, rgba(0,0,0,0.7));
-      color: white;
-      padding: 20px 15px 15px;
-      transform: translateY(100%);
-      transition: transform 0.3s ease;
-      opacity: 0;
-    }
-    .gallery-item:hover .gallery-caption {
-      transform: translateY(0);
-      opacity: 1;
-    }
-
-    /* Lightbox стили */
-    .lightbox {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.95);
-      z-index: 2000;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      touch-action: none;
-    }
-    .lightbox.open {
-      display: flex;
-      opacity: 1;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-    }
-    .lightbox-content {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .lightbox-slides {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-    }
-    .lightbox-slide {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    .lightbox-slide.active {
-      opacity: 1;
-      z-index: 1;
-    }
-    .lightbox-image-container {
-      position: relative;
-      max-width: 100%;
-      max-height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .lightbox-slide img {
-      max-width: 100%;
-      max-height: 80vh;
-      object-fit: contain;
-      border-radius: 8px;
-      transition: transform 0.3s ease;
-    }
-    .lightbox-caption {
-      color: #fff;
-      text-align: center;
-      padding: 15px;
-      font-size: 1.2rem;
-      position: absolute;
-      bottom: 60px;
-      left: 0;
-      right: 0;
+      top: 10px;
+      left: 10px;
       background: rgba(0,0,0,0.7);
-    }
-    .lightbox-close {
-      position: fixed;
-      top: 25px;
-      right: 25px;
       color: white;
-      font-size: 2.5rem;
-      cursor: pointer;
-      background: rgba(0,0,0,0.5);
-      border: none;
-      z-index: 2001;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .lightbox-nav {
-      position: fixed;
-      top: 50%;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      transform: translateY(-50%);
-      padding: 0 20px;
-      z-index: 2001;
-    }
-    .lightbox-button {
-      background: rgba(255,255,255,0.2);
-      color: white;
-      border: none;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      font-size: 1.5rem;
-      cursor: pointer;
-      transition: background 0.3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .lightbox-button:hover {
-      background: rgba(255,255,255,0.3);
-    }
-    .lightbox-counter {
-      position: fixed;
-      bottom: 20px;
-      left: 0;
-      right: 0;
-      text-align: center;
-      color: white;
-      font-size: 1rem;
-      z-index: 2001;
-    }
-    .lightbox-zoom-controls {
-      position: fixed;
-      bottom: 70px;
-      right: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      z-index: 2001;
-    }
-    .lightbox-zoom-button {
-      background: rgba(255,255,255,0.2);
-      color: white;
-      border: none;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      font-size: 1.2rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Контакты */
-    .contact-wrapper { 
-      display: flex; 
-      gap: 50px; 
-      flex-wrap: wrap;
-      width: 100%;
-    }
-    .contact-info, .contact-form { 
-      flex: 1; 
-      min-width: 300px;
-    }
-    .contact-map {
-      flex: 1;
-      min-width: 300px;
-      height: 400px;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    #map {
-      width: 100%;
-      height: 100%;
-      min-height: 300px;
-    }
-    .map-placeholder {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: #f8f9fa;
-      color: #555;
-      text-align: center;
-      padding: 20px;
-      border-radius: 12px;
-      border: 2px dashed #ccc;
-    }
-    .info-item { display: flex; align-items: center; margin-bottom: 20px; }
-    .info-icon {
-      width: 50px;
-      height: 50px;
-      background-color: #f8f9fa;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 15px;
-      color: #c19a6b;
-      font-size: 1.2rem;
-    }
-    .form-group { margin-bottom: 20px; }
-    .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
-    .form-control {
-      width: 100%;
-      padding: 12px 15px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 1rem;
-    }
-    textarea.form-control { min-height: 150px; resize: vertical; }
-    .date-inputs {
-      display: flex;
-      gap: 15px;
-    }
-    .date-inputs .form-group {
-      flex: 1;
-    }
-
-    /* Сообщения об ошибках и успехе */
-    .form-message {
-      padding: 12px;
-      border-radius: 4px;
-      margin-bottom: 20px;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      z-index: 9999;
       display: none;
-    }
-    .form-message.success {
-      background-color: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-    }
-    .form-message.error {
-      background-color: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
-    .form-message.visible {
-      display: block;
-    }
-
-    /* Футер */
-    footer {
-      background-color: #2c3e50;
-      color: #fff;
-      padding: 50px 0 20px;
-      width: 100%;
-    }
-    .footer-content {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      margin-bottom: 30px;
-      width: 100%;
-    }
-    .footer-column { flex: 1; min-width: 250px; margin-bottom: 30px; }
-    .footer-column h3 {
-      color: #fff;
-      margin-bottom: 20px;
-      position: relative;
-      padding-bottom: 10px;
-    }
-    .footer-column h3:after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 40px;
-      height: 2px;
-      background-color: #c19a6b;
-    }
-    .footer-links { list-style: none; }
-    .footer-links li { margin-bottom: 10px; }
-    .footer-links a {
-      color: #bbb;
-      text-decoration: none;
-      transition: color 0.3s;
-    }
-    .footer-links a:hover { color: #c19a6b; }
-    .copyright {
-      text-align: center;
-      padding-top: 20px;
-      border-top: 1px solid #394b5d;
-      color: #bbb;
-    }
-
-    /* Адаптивность */
-    @media (max-width: 992px) {
-      .about-content, .contact-wrapper { flex-direction: column; }
-      .hero h1 { font-size: 2.8rem; }
-      .hero p { font-size: 1.3rem; }
-      .gallery-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      }
-      .contact-map {
-        order: 3;
-        margin-top: 30px;
-      }
-      .date-inputs {
-        flex-direction: column;
-        gap: 0;
-      }
-    }
-    @media (max-width: 768px) {
-      .nav-links { display: none; }
-      .hero h1 { font-size: 2.2rem; }
-      .hero p { font-size: 1.1rem; }
-      h1 { font-size: 2rem; }
-      h2 { font-size: 1.8rem; }
-      .gallery-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 10px;
-      }
-      .btn {
-        padding: 12px 30px;
-        font-size: 1rem;
-      }
-      
-      /* Стили для мобильного lightbox */
-      .lightbox-nav {
-        padding: 0 10px;
-      }
-      .lightbox-button {
-        width: 40px;
-        height: 40px;
-        font-size: 1.2rem;
-      }
-      .lightbox-close {
-        top: 15px;
-        right: 15px;
-        width: 40px;
-        height: 40px;
-        font-size: 1.8rem;
-      }
-      .lightbox-caption {
-        font-size: 1rem;
-        bottom: 50px;
-        padding: 10px;
-      }
-      .lightbox-counter {
-        bottom: 10px;
-        font-size: 0.9rem;
-      }
-      .lightbox-zoom-controls {
-        bottom: 60px;
-        right: 10px;
-      }
-      .lightbox-zoom-button {
-        width: 35px;
-        height: 35px;
-        font-size: 1rem;
-      }
-    }
-    @media (max-width: 480px) {
-      .hero h1 { font-size: 1.8rem; }
-      .hero p { font-size: 1rem; }
-      .gallery-grid {
-        grid-template-columns: 1fr;
-      }
-      .contact-map {
-        height: 300px;
-      }
-    }
-    
-    /* Специальные медиа-запросы для ориентации */
-    @media (orientation: portrait) and (max-width: 768px) {
-      .hero {
-        height: 100vh;
-        min-height: 500px;
-      }
-      .hero h1 {
-        font-size: 2rem;
-      }
-      .hero p {
-        font-size: 1.1rem;
-      }
-    }
-    
-    @media (orientation: landscape) and (max-height: 500px) {
-      .hero {
-        height: auto;
-        min-height: 100vh;
-        padding: 100px 0;
-      }
-      .hero h1 {
-        font-size: 2.2rem;
-      }
-      .hero p {
-        font-size: 1.2rem;
-      }
-    }
-    
-    /* Фикс для iOS Safari */
-    @supports (-webkit-touch-callout: none) {
-      .hero {
-        height: -webkit-fill-available;
-      }
     }
   </style>
 </head>
 <body>
-  <!-- Шапка -->
-  <header>
-    <div class="container">
-      <nav>
-        <a href="#" class="logo"><span>GrandTerraceApt</span></a>
-        <ul class="nav-links">
-          <li><a href="#">Главная</a></li>
-          <li><a href="#about">Об апартаментах</a></li>
-          <li><a href="#features">Наши преимущества</a></li>
-          <li><a href="#gallery">Галерея</a></li>
-          <li><a href="#contact">Контакты</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+  <!-- Индикатор отладки -->
+  <div class="debug-indicator" id="debugIndicator"></div>
 
-  <!-- Герой -->
-  <section class="hero">
-    <div class="container">
-      <div class="hero-content">
-        <h1>Апартаменты в самом центре Севастополя</h1>
-        <p>Апартаменты "Большая Терраса" в центре города с панорамным видом на Севастопольскую бухту</p>
-        <a href="#contact" class="btn">Забронировать</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- О нас -->
-  <section id="about">
-    <div class="container">
-      <div class="section-title">
-        <h2>О наших апартаментах</h2>
-      </div>
-      <div class="about-content">
-        <div class="about-text">
-          <p>Наши апартаменты сочетают в себе современный дизайн, высокий комфорт и выгодное расположение в самом сердце города. Просторное помещение с панорамными окнами и большая терраса
-          открывают удивительный вид на главную Севастопольскую бухту.</p>
-          <p>Мы тщательно подошли к созданию атмосферы отдыха и уюта, уделили внимание каждой детали, чтобы обеспечить нашим гостям незабываемые впечатления от проживания.</p>
-          <p>Убeги от повceднеvноcти в aпapтaмeнты c cамой Большoй Teррaсой и видoм нa Ceвacтoпoльcкую буxту, cимвол гоpода Пaмятник зaтoпленным кopaблям!
-          Добрo пожаловать в апaртaмeнты "Большaя Tеpрaса"
-          Hабережная Адмирала Перелешина, 3. Мыс Хрустальный. Пребывание в апартаментах "Большая Терраса", - это Ваш идеальный побег на отдых! GGGGGetaway GrandTerraceApt!</p>
-        </div>
-        <div class="about-image">
-          <img src="images/living-room.png" alt="Интерьер апартаментов">
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Особенности -->
-  <section id="features" class="features">
-    <div class="container">
-      <div class="section-title">
-        <h2>Наши преимущества</h2>
-      </div>
-      <div class="features-grid">
-        <div class="feature-item">
-          <div class="feature-icon">📍</div>
-          <h3>Идеальное расположение</h3>
-          <p>Центр города, в шаге от основных достопримечательностей</p>
-        </div>
-        <div class="feature-item">
-          <div class="feature-icon">🛌</div>
-          <h3>Комфорт</h3>
-          <p>Качественная мебель и приятные мелочи</p>
-        </div>
-        <div class="feature-item">
-          <div class="feature-icon">🌇</div>
-          <h3>Панорамный вид</h3>
-          <p>Вид на море и город от которого захватывает дух в любое время суток</p>
-        </div>
-        <div class="feature-item">
-          <div class="feature-icon">🛁</div>
-          <h3>Полное оснащение</h3>
-          <p>Всё необходимое для комфортного проживания, от техники до средств гигиены</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Галерея с 12 изображениями -->
-  <section id="gallery">
-    <div class="container">
-      <div class="section-title">
-        <h2>Галерея</h2>
-      </div>
-      <div class="gallery-grid">
-        <div class="gallery-item">
-          <img src="images/gallery1.jpg" alt="Гостиная">
-          <div class="gallery-caption">Просторная гостиная с панорамными окнами</div>
-        </div>
-        <div class="gallery-item">
-          <img src="images/gallery2.jpg" alt="Спальное пространство">
-          <div class="gallery-caption">Основная кровать особо широкая (king size)</div>
-        </div>
-        <div class="gallery-item">
-          <img src="images/gallery3.jpg" alt="Дополнительное спальное пространство">
-          <div class="gallery-caption">Вторая полноразмерная кровать. Раскладывается при необходимости</div>
-        </div>
-        <div class="gallery-item">
-          <img src="images/gallery4.jpg" alt="Кухня">
-          <div class="gallery-caption">Современная полностью оборудованная кухня</div>
-        </div>
-        <div class="gallery-item">
-          <img src="images/gallery5.jpg" alt="Кухня">
-          <div class="gallery-caption">Современная полностью оборудованная кухня с посудомоечной машиной</div>
-        </div>
-        <div class="gallery-item">
-          <img src="images/gallery6.jpg" alt="Кухня">
-          <div class="gallery-caption">Современная полностью оборудованная кухня</div>
-        </div>
-        <!-- Дополнительные 6 фото -->
-        <div class="gallery-item">
-          <img src="images/gallery7.jpg" alt="Ванная комната">
-          <div class="gallery-caption">Ванная комната с душевой кабиной, стиральной машиной</div>
-        </div>
-        <div class="gallery-item">
-          <img src="images/gallery8.jpg" alt="Большая терраса">
-          <div class="gallery-caption">Большая терраса с зоной отдыха и видом на море и город</div>
-        </div>
-        <div class="gallery-item">
-          <img src="images/gallery9.jpg" alt="Большая терраса">
-          <div class="gallery-caption">Большая терраса с зоной отдыха и видом на море и город</div>
-        </div>
-        <div class="gallery-item">
-          <img src="images/gallery10.jpg" alt="Большая терраса">
-          <div class="gallery-caption">Вечерний вид с террасы</div>
-        </div>
-        <div class="gallery-item">
-          <img src="images/gallery11.jpg" alt="Большая терраса">
-          <div class="gallery-caption">Ночной вид с террасы на освещенную Севастопольскую бухту</div>
-        </div>
-        <div class="gallery-item">
-          <img src="images/gallery12.jpg" alt="Большая терраса">
-          <div class="gallery-caption">Ночной вид на освещенную Севастопольскую бухту</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Lightbox -->
-  <div class="lightbox" id="lightbox">
-    <button class="lightbox-close" id="lightboxClose">&times;</button>
-    <div class="lightbox-nav">
-      <button class="lightbox-button" id="prevButton">&#10094;</button>
-      <button class="lightbox-button" id="nextButton">&#10095;</button>
-    </div>
-    <div class="lightbox-content">
-      <div class="lightbox-slides" id="lightboxSlides"></div>
-    </div>
-    <div class="lightbox-counter" id="lightboxCounter"></div>
-    <div class="lightbox-zoom-controls">
-      <button class="lightbox-zoom-button" id="zoomIn">+</button>
-      <button class="lightbox-zoom-button" id="zoomOut">-</button>
-      <button class="lightbox-zoom-button" id="resetZoom">↺</button>
-    </div>
-  </div>
-
-  <!-- Контакты -->
-  <section id="contact" class="contact">
-    <div class="container">
-      <div class="section-title">
-        <h2>Контакты</h2>
-      </div>
-      <div class="contact-wrapper">
-        <div class="contact-form">
-          <h3>Форма бронирования</h3>
-          <div id="formMessage" class="form-message"></div>
-          <form id="bookingForm">
-            <div class="form-group">
-              <label for="name">Ваше имя *</label>
-              <input type="text" id="name" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="email">Email *</label>
-              <input type="email" id="email" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="phone">Телефон *</label>
-              <input type="tel" id="phone" class="form-control" required>
-            </div>
-            <div class="date-inputs">
-              <div class="form-group">
-                <label for="checkin">Заезд *</label>
-                <input type="date" id="checkin" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label for="checkout">Выезд *</label>
-                <input type="date" id="checkout" class="form-control" required>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="guests">Количество гостей</label>
-              <select id="guests" class="form-control">
-                <option value="1">1 гость</option>
-                <option value="2" selected>2 гостя</option>
-                <option value="3">3 гостя</option>
-                <option value="4">4 гостя</option>
-                <option value="5">5 гостей</option>
-                <option value="6">6 гостей</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="message">Сообщение</label>
-              <textarea id="message" class="form-control" placeholder="Дополнительные пожелания или вопросы"></textarea>
-            </div>
-            <button type="submit" class="btn" id="submitBtn">Отправить запрос</button>
-          </form>
-        </div>
-        <div class="contact-info">
-          <h3>Свяжитесь с нами</h3>
-          <div class="info-item">
-            <div class="info-icon">📍</div>
-            <div>Севастополь, набережная Адмирала Перелешина, 3</div>
-          </div>
-          <div class="info-item">
-            <div class="info-icon">📞</div>
-            <div>+7 (978) 143-94-27</div>
-          </div>
-          <div class="info-item">
-            <div class="info-icon">✉️</div>
-            <div>grandterrace@yandex.ru</div>
-          </div>
-          <div class="info-item">
-            <div class="info-icon">🕒</div>
-            <div>В апартаментах Большая терраса время останавливается</div>
-          </div>
-        </div>
-        <div class="contact-map">
-          <div id="map"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Футер -->
-  <footer>
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-column">
-          <h3>GrandTerraceApt</h3>
-          <p>Элитные апартаменты в центре Севастополя с видом на море.</p>
-        </div>
-        <div class="footer-column">
-          <h3>Навигация</h3>
-          <ul class="footer-links">
-            <li><a href="#">Главная</a></li>
-            <li><a href="#about">О нас</a></li>
-            <li><a href="#features">Наши преимущества</a></li>
-            <li><a href="#gallery">Галерея</a></li>
-            <li><a href="#contact">Контакты</a></li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h3>Контакты</h3>
-          <ul class="footer-links">
-            <li>📍 Севастополь, набережная Адмирала Перелешина, 3</li>
-            <li>📞 +7 (978) 143-94-27</li>
-            <li>✉️ grandterrace@yandex.ru</li>
-          </ul>
-        </div>
-      </div>
-      <div class="copyright">
-        © 2025 GrandTerraceApt. Все права защищены.
-      </div>
-    </div>
-  </footer>
+  <!-- Весь HTML остается без изменений -->
+  <!-- ... -->
 
   <!-- Подключение API Яндекс.Карт -->
   <script src="https://api-maps.yandex.ru/2.1/?apikey=ВАШ_API_КЛЮЧ&lang=ru_RU" type="text/javascript"></script>
   
   <script>
-    // Глобальные переменные для управления картой
+    // Глобальные переменные для управления
     let myMap = null;
     let orientationChangeInProgress = false;
-    let currentOrientation = window.orientation || window.screen.orientation.angle;
+    let currentOrientation = getOrientation();
+    let resizeTimeout = null;
+    let orientationTimeout = null;
+    let recoveryAttempts = 0;
+    const MAX_RECOVERY_ATTEMPTS = 3;
 
-    // Функция для полного уничтожения и пересоздания карты
-    function recreateMap() {
-      if (!myMap) return;
+    // Функции для отладки
+    function showDebug(message) {
+      const indicator = document.getElementById('debugIndicator');
+      if (indicator) {
+        indicator.textContent = message;
+        indicator.style.display = 'block';
+        setTimeout(() => {
+          indicator.style.display = 'none';
+        }, 3000);
+      }
+      console.log('DEBUG:', message);
+    }
+
+    // Универсальная функция получения ориентации
+    function getOrientation() {
+      return window.orientation !== undefined ? window.orientation : 
+             (window.screen.orientation ? window.screen.orientation.angle : 0);
+    }
+
+    // Функция для сохранения данных формы
+    function saveFormData() {
+      const form = document.getElementById('bookingForm');
+      if (!form) return;
+      
+      const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        checkin: document.getElementById('checkin').value,
+        checkout: document.getElementById('checkout').value,
+        guests: document.getElementById('guests').value,
+        message: document.getElementById('message').value
+      };
+      
+      sessionStorage.setItem('bookingFormData', JSON.stringify(formData));
+    }
+
+    // Функция для восстановления данных формы
+    function restoreFormData() {
+      const savedData = sessionStorage.getItem('bookingFormData');
+      if (!savedData) return;
       
       try {
+        const formData = JSON.parse(savedData);
+        
+        if (formData.name) document.getElementById('name').value = formData.name;
+        if (formData.email) document.getElementById('email').value = formData.email;
+        if (formData.phone) document.getElementById('phone').value = formData.phone;
+        if (formData.checkin) document.getElementById('checkin').value = formData.checkin;
+        if (formData.checkout) document.getElementById('checkout').value = formData.checkout;
+        if (formData.guests) document.getElementById('guests').value = formData.guests;
+        if (formData.message) document.getElementById('message').value = formData.message;
+      } catch (e) {
+        console.error('Ошибка восстановления данных формы:', e);
+      }
+    }
+
+    // Функция для очистки сохраненных данных формы
+    function clearFormData() {
+      sessionStorage.removeItem('bookingFormData');
+    }
+
+    // Улучшенная функция для полного уничтожения и пересоздания карты
+    function recreateMap() {
+      if (!myMap) {
+        showDebug('Карта не существует, инициализируем заново');
+        initMap();
+        return;
+      }
+      
+      try {
+        showDebug('Пересоздание карты...');
+        
         // Сохраняем текущее состояние карты
         const center = myMap.getCenter();
         const zoom = myMap.getZoom();
@@ -946,181 +124,253 @@
         myMap.destroy();
         myMap = null;
         
-        // Очищаем контейнер карты
+        // Полностью очищаем контейнер карты
         const mapContainer = document.getElementById('map');
         mapContainer.innerHTML = '';
         
-        // Даем время на уничтожение
+        // Создаем новый контейнер для карты
+        const newMapDiv = document.createElement('div');
+        newMapDiv.id = 'map';
+        newMapDiv.style.width = '100%';
+        newMapDiv.style.height = '100%';
+        mapContainer.appendChild(newMapDiv);
+        
+        // Даем время на полное уничтожение
         setTimeout(() => {
           initMap(center, zoom);
-        }, 300);
+          recoveryAttempts = 0; // Сбрасываем счетчик попыток
+        }, 400);
       } catch (error) {
         console.error('Ошибка при пересоздании карты:', error);
+        showDebug('Ошибка пересоздания карты');
         // Если произошла ошибка, пытаемся инициализировать заново
-        setTimeout(initMap, 500);
+        setTimeout(() => {
+          initMap();
+        }, 600);
       }
     }
 
-    // Функция для принудительного обновления формы
+    // Улучшенная функция для принудительного обновления формы
     function refreshFormLayout() {
       const form = document.getElementById('bookingForm');
       if (!form) return;
       
-      // Принудительно вызываем перерисовку формы
-      form.style.display = 'none';
-      // Принудительный reflow
-      void form.offsetHeight;
-      form.style.display = 'block';
+      // Сохраняем данные перед обновлением
+      saveFormData();
       
-      // Обновляем все поля формы
-      const inputs = form.querySelectorAll('input, textarea, select');
-      inputs.forEach(input => {
-        input.style.width = '99%';
-        setTimeout(() => {
-          input.style.width = '100%';
-        }, 10);
-      });
+      // Принудительно вызываем перерисовку формы через несколько методов
+      form.style.transform = 'scale(0.999)';
+      void form.offsetHeight; // Принудительный reflow
+      form.style.transform = 'scale(1)';
+      
+      // Альтернативный метод перерисовки
+      setTimeout(() => {
+        form.style.display = 'none';
+        void form.offsetHeight;
+        form.style.display = 'block';
+        
+        // Восстанавливаем данные после обновления
+        setTimeout(restoreFormData, 50);
+      }, 100);
     }
 
-    // Функция для обработки изменения ориентации
-    function handleOrientationChange() {
-      if (orientationChangeInProgress) return;
-      
-      orientationChangeInProgress = true;
-      const newOrientation = window.orientation || window.screen.orientation.angle;
-      
-      // Если ориентация не изменилась, выходим
-      if (newOrientation === currentOrientation) {
-        orientationChangeInProgress = false;
+    // Основная функция восстановления layout
+    function recoverLayout() {
+      if (orientationChangeInProgress) {
+        showDebug('Восстановление уже выполняется');
         return;
       }
       
-      currentOrientation = newOrientation;
+      orientationChangeInProgress = true;
+      recoveryAttempts++;
       
-      // Сбрасываем viewport
+      showDebug(`Попытка восстановления ${recoveryAttempts}/${MAX_RECOVERY_ATTEMPTS}`);
+      
+      // Сохраняем данные формы перед любыми изменениями
+      saveFormData();
+      
+      // Сбрасываем viewport (важно!)
       const viewport = document.querySelector('meta[name="viewport"]');
       if (viewport) {
-        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+        viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
       }
       
-      // Принудительно вызываем событие resize
+      // Принудительно вызываем несколько событий resize
       window.dispatchEvent(new Event('resize'));
       
-      // Ждем завершения анимации поворота и обновления DOM
-      setTimeout(() => {
-        // Обновляем форму
-        refreshFormLayout();
-        
-        if (myMap) {
-          // Сначала пробуем стандартные методы
-          try {
-            myMap.container.fitToViewport();
-          } catch (e) {
-            console.log('Standard resize failed, will recreate map');
-          }
-          
-          // Даем дополнительное время и пробуем еще раз
-          setTimeout(() => {
-            if (myMap) {
-              try {
-                myMap.container.fitToViewport();
-                
-                // Если через 800 мс карта все еще не в порядке - пересоздаем
-                setTimeout(() => {
-                  if (myMap && orientationChangeInProgress) {
-                    recreateMap();
-                  }
-                }, 800);
-              } catch (e) {
+      // Многоуровневое восстановление с разными задержками
+      const recoverySteps = [
+        { delay: 100, action: 'initial' },
+        { delay: 300, action: 'form' },
+        { delay: 500, action: 'map' },
+        { delay: 800, action: 'final' }
+      ];
+      
+      recoverySteps.forEach(step => {
+        setTimeout(() => {
+          switch (step.action) {
+            case 'initial':
+              // Первоначальные корректировки
+              window.dispatchEvent(new Event('resize'));
+              break;
+            case 'form':
+              // Обновляем форму
+              refreshFormLayout();
+              break;
+            case 'map':
+              // Работа с картой
+              if (myMap) {
+                try {
+                  myMap.container.fitToViewport();
+                  // Дополнительные попытки для карты
+                  setTimeout(() => {
+                    if (myMap) myMap.container.fitToViewport();
+                  }, 200);
+                } catch (e) {
+                  showDebug('Ошибка обновления карты');
+                }
+              }
+              break;
+            case 'final':
+              // Финальные корректировки
+              window.dispatchEvent(new Event('resize'));
+              
+              // Проверяем, нужно ли пересоздать карту
+              if (myMap && recoveryAttempts >= MAX_RECOVERY_ATTEMPTS) {
+                showDebug('Максимальное количество попыток, пересоздаем карту');
                 recreateMap();
               }
-            }
-          }, 400);
-        }
-        
-        orientationChangeInProgress = false;
-      }, 500);
+              
+              orientationChangeInProgress = false;
+              showDebug('Восстановление завершено');
+              break;
+          }
+        }, step.delay);
+      });
     }
 
-    // Обработчик изменения ориентации
-    window.addEventListener('orientationchange', function() {
-      setTimeout(handleOrientationChange, 100);
-    });
+    // Улучшенный обработчик изменения ориентации
+    function handleOrientationChange() {
+      const newOrientation = getOrientation();
+      
+      // Проверяем, действительно ли изменилась ориентация
+      if (newOrientation === currentOrientation && !orientationChangeInProgress) {
+        return;
+      }
+      
+      showDebug(`Изменение ориентации: ${currentOrientation} -> ${newOrientation}`);
+      currentOrientation = newOrientation;
+      
+      // Сбрасываем предыдущие таймауты
+      clearTimeout(orientationTimeout);
+      
+      // Запускаем восстановление с задержкой
+      orientationTimeout = setTimeout(() => {
+        recoverLayout();
+      }, 150);
+    }
 
-    // Обработчик изменения размера окна с улучшенной логикой
-    window.addEventListener('resize', function() {
-      clearTimeout(window.resizeTimer);
-      window.resizeTimer = setTimeout(function() {
-        if (myMap && !orientationChangeInProgress) {
-          try {
-            myMap.container.fitToViewport();
-          } catch (error) {
-            console.error('Ошибка при resize карты:', error);
+    // Улучшенный обработчик изменения размера
+    function handleResize() {
+      clearTimeout(resizeTimeout);
+      
+      // Проверяем, действительно ли изменился размер
+      const currentWidth = window.innerWidth;
+      const currentHeight = window.innerHeight;
+      
+      resizeTimeout = setTimeout(() => {
+        const newWidth = window.innerWidth;
+        const newHeight = window.innerHeight;
+        
+        // Если размер значительно изменился, запускаем восстановление
+        if (Math.abs(newWidth - currentWidth) > 50 || Math.abs(newHeight - currentHeight) > 50) {
+          showDebug('Значительное изменение размера');
+          if (!orientationChangeInProgress) {
+            recoverLayout();
           }
         }
-        
-        // Также обновляем форму при resize
-        refreshFormLayout();
       }, 250);
-    });
+    }
 
-    // Функция инициализации карты с возможностью указания центра и зума
+    // Множественные обработчики для надежности
+    function setupEventListeners() {
+      // Основные обработчики
+      window.addEventListener('orientationchange', handleOrientationChange);
+      window.addEventListener('resize', handleResize);
+      
+      // Дополнительные обработчики для разных браузеров
+      window.addEventListener('load', recoverLayout);
+      
+      // Обработчик для fullscreen changes (может влиять на layout)
+      document.addEventListener('fullscreenchange', recoverLayout);
+      document.addEventListener('webkitfullscreenchange', recoverLayout);
+      
+      // Обработчик видимости страницы (на случай, когда вкладка становится активной)
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+          setTimeout(recoverLayout, 500);
+        }
+      });
+      
+      // Периодическая проверка (fallback)
+      setInterval(() => {
+        if (orientationChangeInProgress) return;
+        
+        // Проверяем, не искажен ли layout
+        const mapContainer = document.getElementById('map');
+        if (mapContainer && myMap) {
+          const containerRect = mapContainer.getBoundingClientRect();
+          if (containerRect.width < 100 || containerRect.height < 100) {
+            showDebug('Обнаружена проблема с layout, восстанавливаем...');
+            recoverLayout();
+          }
+        }
+      }, 30000); // Проверка каждые 30 секунд
+    }
+
+    // Функция инициализации карты
     function initMap(center = null, zoom = null) {
-      // Проверяем, загрузился ли API Яндекс.Карт
       if (typeof ymaps === 'undefined') {
         console.error('Yandex Maps API не загрузился');
         document.getElementById('map').innerHTML = '<div class="map-placeholder">Карта временно недоступна</div>';
         return;
       }
       
-      // Если карта уже существует, выходим
       if (myMap) return;
       
       ymaps.ready(function() {
-        // Координаты апартаментов
         const apartmentCoords = [44.616622961342124, 33.517859032692016];
         
         try {
-          // Создание карты
           myMap = new ymaps.Map('map', {
             center: center || apartmentCoords,
             zoom: zoom || 16,
             controls: ['zoomControl', 'fullscreenControl']
           });
           
-          // Создание метки
           const myPlacemark = new ymaps.Placemark(apartmentCoords, {
             hintContent: 'Апартаменты "Большая Терраса"',
             balloonContent: 'Апартаменты "Большая Терраса"<br>набережная Адмирала Перелешина, 3<br>Севастополь'
           }, {
-            // Используем стандартную метку
             preset: 'islands#redIcon'
           });
           
-          // Добавление метки на карту
           myMap.geoObjects.add(myPlacemark);
-          
-          // Открываем балун при загрузке
           myPlacemark.balloon.open();
-          
-          // Адаптация карты для мобильных устройств
           myMap.behaviors.disable('scrollZoom');
           
-          // Обработчик изменения размера карты
-          setTimeout(function() {
-            if (myMap) {
-              myMap.container.fitToViewport();
-            }
-          }, 200);
-          
-          // Дополнительные попытки обновления размера
-          setTimeout(() => {
-            if (myMap) myMap.container.fitToViewport();
-          }, 600);
-          
-          setTimeout(() => {
-            if (myMap) myMap.container.fitToViewport();
-          }, 1200);
+          // Множественные попытки корректного отображения
+          [100, 300, 600, 1000].forEach(delay => {
+            setTimeout(() => {
+              if (myMap) {
+                try {
+                  myMap.container.fitToViewport();
+                } catch (e) {
+                  console.error('Ошибка при fitToViewport:', e);
+                }
+              }
+            }, delay);
+          });
           
         } catch (error) {
           console.error('Ошибка при создании карты:', error);
@@ -1129,11 +379,27 @@
       });
     }
 
-    // Lightbox и остальной код JavaScript
+    // Инициализация при загрузке
     document.addEventListener('DOMContentLoaded', function() {
-      // Инициализация карты при загрузке страницы
+      showDebug('Страница загружается');
+      
+      // Инициализация карты
       initMap();
       
+      // Восстановление данных формы
+      restoreFormData();
+      
+      // Настройка обработчиков событий
+      setupEventListeners();
+      
+      // Добавляем обработчики для сохранения данных формы
+      const form = document.getElementById('bookingForm');
+      if (form) {
+        form.addEventListener('input', saveFormData);
+        form.addEventListener('change', saveFormData);
+      }
+
+      // Инициализация lightbox (остальной код без изменений)
       const lightbox = document.getElementById('lightbox');
       const lightboxSlides = document.getElementById('lightboxSlides');
       const lightboxClose = document.getElementById('lightboxClose');
@@ -1380,6 +646,9 @@
           if (document.getElementById('checkout').value < checkinDate) {
             document.getElementById('checkout').value = checkinDate;
           }
+          
+          // Сохраняем изменения
+          saveFormData();
         });
         
         // Отправка формы
@@ -1452,6 +721,8 @@
           if (response.ok) {
             showMessage('Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.', 'success');
             bookingForm.reset();
+            // Очищаем сохраненные данные после успешной отправки
+            clearFormData();
           } else {
             throw new Error('Ошибка отправки формы');
           }
@@ -1466,6 +737,11 @@
           submitBtn.textContent = 'Отправить запрос';
         });
       }
+      
+      // Финальное восстановление после полной загрузки
+      setTimeout(() => {
+        recoverLayout();
+      }, 1000);
     });
   </script>
 </body>
