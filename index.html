@@ -931,6 +931,7 @@
     // Глобальные переменные для управления картой
     let myMap = null;
     let orientationChangeInProgress = false;
+    let currentOrientation = window.orientation || window.screen.orientation.angle;
 
     // Функция для полного уничтожения и пересоздания карты
     function recreateMap() {
@@ -945,15 +946,40 @@
         myMap.destroy();
         myMap = null;
         
+        // Очищаем контейнер карты
+        const mapContainer = document.getElementById('map');
+        mapContainer.innerHTML = '';
+        
         // Даем время на уничтожение
         setTimeout(() => {
           initMap(center, zoom);
-        }, 100);
+        }, 300);
       } catch (error) {
         console.error('Ошибка при пересоздании карты:', error);
         // Если произошла ошибка, пытаемся инициализировать заново
-        setTimeout(initMap, 200);
+        setTimeout(initMap, 500);
       }
+    }
+
+    // Функция для принудительного обновления формы
+    function refreshFormLayout() {
+      const form = document.getElementById('bookingForm');
+      if (!form) return;
+      
+      // Принудительно вызываем перерисовку формы
+      form.style.display = 'none';
+      // Принудительный reflow
+      void form.offsetHeight;
+      form.style.display = 'block';
+      
+      // Обновляем все поля формы
+      const inputs = form.querySelectorAll('input, textarea, select');
+      inputs.forEach(input => {
+        input.style.width = '99%';
+        setTimeout(() => {
+          input.style.width = '100%';
+        }, 10);
+      });
     }
 
     // Функция для обработки изменения ориентации
@@ -961,6 +987,15 @@
       if (orientationChangeInProgress) return;
       
       orientationChangeInProgress = true;
+      const newOrientation = window.orientation || window.screen.orientation.angle;
+      
+      // Если ориентация не изменилась, выходим
+      if (newOrientation === currentOrientation) {
+        orientationChangeInProgress = false;
+        return;
+      }
+      
+      currentOrientation = newOrientation;
       
       // Сбрасываем viewport
       const viewport = document.querySelector('meta[name="viewport"]');
@@ -973,12 +1008,15 @@
       
       // Ждем завершения анимации поворота и обновления DOM
       setTimeout(() => {
+        // Обновляем форму
+        refreshFormLayout();
+        
         if (myMap) {
           // Сначала пробуем стандартные методы
           try {
             myMap.container.fitToViewport();
           } catch (e) {
-            console.log('Standard resize failed, recreating map');
+            console.log('Standard resize failed, will recreate map');
           }
           
           // Даем дополнительное время и пробуем еще раз
@@ -987,21 +1025,21 @@
               try {
                 myMap.container.fitToViewport();
                 
-                // Если через 500 мс карта все еще не в порядке - пересоздаем
+                // Если через 800 мс карта все еще не в порядке - пересоздаем
                 setTimeout(() => {
                   if (myMap && orientationChangeInProgress) {
                     recreateMap();
                   }
-                }, 500);
+                }, 800);
               } catch (e) {
                 recreateMap();
               }
             }
-          }, 300);
+          }, 400);
         }
         
         orientationChangeInProgress = false;
-      }, 350);
+      }, 500);
     }
 
     // Обработчик изменения ориентации
@@ -1020,6 +1058,9 @@
             console.error('Ошибка при resize карты:', error);
           }
         }
+        
+        // Также обновляем форму при resize
+        refreshFormLayout();
       }, 250);
     });
 
@@ -1070,16 +1111,16 @@
             if (myMap) {
               myMap.container.fitToViewport();
             }
-          }, 100);
+          }, 200);
           
           // Дополнительные попытки обновления размера
           setTimeout(() => {
             if (myMap) myMap.container.fitToViewport();
-          }, 500);
+          }, 600);
           
           setTimeout(() => {
             if (myMap) myMap.container.fitToViewport();
-          }, 1000);
+          }, 1200);
           
         } catch (error) {
           console.error('Ошибка при создании карты:', error);
