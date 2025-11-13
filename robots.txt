@@ -25,7 +25,7 @@ Disallow: /*?view=
 Allow: /images/
 
 # Указываем путь к карте сайта (Punycode)
-Sitemap: https://xn--80aac1acnf1b4a.xn--p1ai/sitemap.xml
+Sitemap: https://xn--80aaabv8autalg4e8b4b.xn--p1ai/sitemap.xml
 
 # Дублирующая запись для кириллического домена (на всякий случай)
 Sitemap: https://большаятерраса.рф/sitemap.xml
