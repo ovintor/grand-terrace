@@ -928,31 +928,151 @@
   <script src="https://api-maps.yandex.ru/2.1/?apikey=ВАШ_API_КЛЮЧ&lang=ru_RU" type="text/javascript"></script>
   
   <script>
-    // Глобальная переменная для хранения экземпляра карты
+    // Глобальные переменные для управления картой
     let myMap = null;
+    let orientationChangeInProgress = false;
 
-    // Функция для предотвращения проблем с масштабированием при изменении ориентации
+    // Функция для полного уничтожения и пересоздания карты
+    function recreateMap() {
+      if (!myMap) return;
+      
+      try {
+        // Сохраняем текущее состояние карты
+        const center = myMap.getCenter();
+        const zoom = myMap.getZoom();
+        
+        // Уничтожаем старую карту
+        myMap.destroy();
+        myMap = null;
+        
+        // Даем время на уничтожение
+        setTimeout(() => {
+          initMap(center, zoom);
+        }, 100);
+      } catch (error) {
+        console.error('Ошибка при пересоздании карты:', error);
+        // Если произошла ошибка, пытаемся инициализировать заново
+        setTimeout(initMap, 200);
+      }
+    }
+
+    // Функция для обработки изменения ориентации
     function handleOrientationChange() {
-      // Сбрасываем масштаб и пересчитываем размеры
+      if (orientationChangeInProgress) return;
+      
+      orientationChangeInProgress = true;
+      
+      // Сбрасываем viewport
       const viewport = document.querySelector('meta[name="viewport"]');
       if (viewport) {
         viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
       }
       
-      // Принудительно вызываем событие resize для пересчета layout
+      // Принудительно вызываем событие resize
       window.dispatchEvent(new Event('resize'));
       
-      // Перерисовываем карту с задержкой, чтобы дать время на обновление layout
-      setTimeout(updateMapSize, 300);
+      // Ждем завершения анимации поворота и обновления DOM
+      setTimeout(() => {
+        if (myMap) {
+          // Сначала пробуем стандартные методы
+          try {
+            myMap.container.fitToViewport();
+          } catch (e) {
+            console.log('Standard resize failed, recreating map');
+          }
+          
+          // Даем дополнительное время и пробуем еще раз
+          setTimeout(() => {
+            if (myMap) {
+              try {
+                myMap.container.fitToViewport();
+                
+                // Если через 500 мс карта все еще не в порядке - пересоздаем
+                setTimeout(() => {
+                  if (myMap && orientationChangeInProgress) {
+                    recreateMap();
+                  }
+                }, 500);
+              } catch (e) {
+                recreateMap();
+              }
+            }
+          }, 300);
+        }
+        
+        orientationChangeInProgress = false;
+      }, 350);
     }
 
-    // Функция для обновления размера карты
-    function updateMapSize() {
-      if (myMap) {
+    // Обработчик изменения ориентации
+    window.addEventListener('orientationchange', function() {
+      setTimeout(handleOrientationChange, 100);
+    });
+
+    // Обработчик изменения размера окна с улучшенной логикой
+    window.addEventListener('resize', function() {
+      clearTimeout(window.resizeTimer);
+      window.resizeTimer = setTimeout(function() {
+        if (myMap && !orientationChangeInProgress) {
+          try {
+            myMap.container.fitToViewport();
+          } catch (error) {
+            console.error('Ошибка при resize карты:', error);
+          }
+        }
+      }, 250);
+    });
+
+    // Функция инициализации карты с возможностью указания центра и зума
+    function initMap(center = null, zoom = null) {
+      // Проверяем, загрузился ли API Яндекс.Карт
+      if (typeof ymaps === 'undefined') {
+        console.error('Yandex Maps API не загрузился');
+        document.getElementById('map').innerHTML = '<div class="map-placeholder">Карта временно недоступна</div>';
+        return;
+      }
+      
+      // Если карта уже существует, выходим
+      if (myMap) return;
+      
+      ymaps.ready(function() {
+        // Координаты апартаментов
+        const apartmentCoords = [44.616622961342124, 33.517859032692016];
+        
         try {
-          myMap.container.fitToViewport();
+          // Создание карты
+          myMap = new ymaps.Map('map', {
+            center: center || apartmentCoords,
+            zoom: zoom || 16,
+            controls: ['zoomControl', 'fullscreenControl']
+          });
           
-          // Дополнительные попытки обновления размера карты
+          // Создание метки
+          const myPlacemark = new ymaps.Placemark(apartmentCoords, {
+            hintContent: 'Апартаменты "Большая Терраса"',
+            balloonContent: 'Апартаменты "Большая Терраса"<br>набережная Адмирала Перелешина, 3<br>Севастополь'
+          }, {
+            // Используем стандартную метку
+            preset: 'islands#redIcon'
+          });
+          
+          // Добавление метки на карту
+          myMap.geoObjects.add(myPlacemark);
+          
+          // Открываем балун при загрузке
+          myPlacemark.balloon.open();
+          
+          // Адаптация карты для мобильных устройств
+          myMap.behaviors.disable('scrollZoom');
+          
+          // Обработчик изменения размера карты
+          setTimeout(function() {
+            if (myMap) {
+              myMap.container.fitToViewport();
+            }
+          }, 100);
+          
+          // Дополнительные попытки обновления размера
           setTimeout(() => {
             if (myMap) myMap.container.fitToViewport();
           }, 500);
@@ -960,32 +1080,19 @@
           setTimeout(() => {
             if (myMap) myMap.container.fitToViewport();
           }, 1000);
+          
         } catch (error) {
-          console.error('Ошибка при обновлении карты:', error);
+          console.error('Ошибка при создании карты:', error);
+          document.getElementById('map').innerHTML = '<div class="map-placeholder">Ошибка загрузки карты</div>';
         }
-      }
+      });
     }
 
-    // Обработчик изменения ориентации
-    window.addEventListener('orientationchange', function() {
-      // Даем время на завершение анимации поворота
-      setTimeout(handleOrientationChange, 300);
-    });
-
-    // Обработчик изменения размера окна
-    window.addEventListener('resize', function() {
-      // Дебаунсим вызов, чтобы избежать множественных перерисовок
-      clearTimeout(window.resizeTimer);
-      window.resizeTimer = setTimeout(function() {
-        // Перерисовываем карту, если она существует
-        if (myMap) {
-          myMap.container.fitToViewport();
-        }
-      }, 250);
-    });
-
-    // Lightbox функционал с улучшениями для мобильных
+    // Lightbox и остальной код JavaScript
     document.addEventListener('DOMContentLoaded', function() {
+      // Инициализация карты при загрузке страницы
+      initMap();
+      
       const lightbox = document.getElementById('lightbox');
       const lightboxSlides = document.getElementById('lightboxSlides');
       const lightboxClose = document.getElementById('lightboxClose');
@@ -1212,65 +1319,6 @@
         }
       }
 
-      // Инициализация Яндекс.Карт
-      function initMap() {
-        // Проверяем, загрузился ли API Яндекс.Карт
-        if (typeof ymaps === 'undefined') {
-          console.error('Yandex Maps API не загрузился');
-          // Показываем заглушку вместо карты
-          document.getElementById('map').innerHTML = '<div class="map-placeholder">Карта временно недоступна</div>';
-          return;
-        }
-        
-        ymaps.ready(function() {
-          // Координаты апартаментов (набережная Адмирала Перелешина, 3, Севастополь)
-          var apartmentCoords = [44.616622961342124, 33.517859032692016];
-          
-          try {
-            // Создание карты
-            myMap = new ymaps.Map('map', {
-              center: apartmentCoords,
-              zoom: 16,
-              controls: ['zoomControl', 'fullscreenControl']
-            });
-            
-            // Создание метки
-            var myPlacemark = new ymaps.Placemark(apartmentCoords, {
-              hintContent: 'Апартаменты "Большая Терраса"',
-              balloonContent: 'Апартаменты "Большая Терраса"<br>набережная Адмирала Перелешина, 3<br>Севастополь'
-            }, {
-              // Опции метки
-              iconLayout: 'default#image',
-              iconImageHref: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMTgiIGZpbGw9IiNjMTlhNmIiIHN0cm9rZT0iIzJjM2U1MCIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjgiIGZpbGw9IiMyYzNlNTAiLz4KPC9zdmc+',
-              iconImageSize: [40, 40],
-              iconImageOffset: [-20, -40]
-            });
-            
-            // Добавление метки на карту
-            myMap.geoObjects.add(myPlacemark);
-            
-            // Открываем балун при загрузке
-            myPlacemark.balloon.open();
-            
-            // Адаптация карты для мобильных устройств
-            myMap.behaviors.disable('scrollZoom');
-            
-            // Обработчик изменения размера карты
-            setTimeout(function() {
-              if (myMap) {
-                myMap.container.fitToViewport();
-              }
-            }, 100);
-            
-          } catch (error) {
-            console.error('Ошибка при создании карты:', error);
-          }
-        });
-      }
-
-      // Инициализация карты
-      initMap();
-
       // Обработка формы бронирования
       const bookingForm = document.getElementById('bookingForm');
       const formMessage = document.getElementById('formMessage');
@@ -1340,15 +1388,6 @@
       function sendEmail(formData) {
         // Формируем тело письма
         const subject = 'Новая заявка на бронирование';
-        const body = `
-          Имя: ${formData.name}
-          Email: ${formData.email}
-          Телефон: ${formData.phone}
-          Заезд: ${formData.checkin}
-          Выезд: ${formData.checkout}
-          Количество гостей: ${formData.guests}
-          Сообщение: ${formData.message || 'Не указано'}
-        `;
         
         // Используем Formspree для отправки email
         fetch('https://formspree.io/f/xjvnzzwz', {
