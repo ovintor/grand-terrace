@@ -1435,24 +1435,24 @@ if (parseInt(formData.guests) > 4) {
         // Формируем тело письма
         const subject = 'Новая заявка на бронирование';
         
-        // Используем Formspree для отправки email
-        fetch('https://formspree.io/f/xjvnzzwz', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            checkin: formData.checkin,
-            checkout: formData.checkout,
-            guests: formData.guests,
-            message: formData.message,
-            _subject: subject,
-            _replyto: formData.email
-          })
-        })
+       // Используем Formspree для отправки email
+fetch('https://formspree.io/f/mjgblolk', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: formData.name,
+    email: formData.email,
+    phone: formData.phone,
+    checkin: formData.checkin,
+    checkout: formData.checkout,
+    guests: formData.guests,
+    message: formData.message,
+    _subject: subject,
+    _replyto: formData.email
+  })
+})
         .then(response => {
           if (response.ok) {
             showMessage('Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.', 'success');
@@ -1476,3 +1476,4 @@ if (parseInt(formData.guests) > 4) {
 </body>
 
 </html>
+
