@@ -71,19 +71,42 @@
       position: relative;
     }
     .logo {
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       font-weight: 700;
       color: #2c3e50;
       text-decoration: none;
       display: flex;
       align-items: center;
+      white-space: nowrap;
     }
     .logo span { 
       color: #c19a6b;
       font-weight: 600;
     }
-    .logo-main {
+    
+    /* Логотип для десктопа */
+    .logo-full {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+    .logo-primary {
+      font-size: 1.1rem;
+      font-weight: 600;
       color: #2c3e50;
+    }
+    .logo-secondary {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #c19a6b;
+    }
+    
+    /* Логотип для мобильных */
+    .logo-mobile {
+      display: none;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #c19a6b;
     }
     
     /* Десктопное меню */
@@ -114,6 +137,24 @@
     }
     .nav-links a:hover:after {
       width: 100%;
+    }
+    
+    /* Специальная кнопка "Забронировать" в меню */
+    .nav-links .book-now {
+      background-color: #c19a6b;
+      color: #fff !important;
+      padding: 8px 20px !important;
+      border-radius: 4px;
+      margin-left: 20px;
+      transition: all 0.3s ease;
+    }
+    .nav-links .book-now:hover {
+      background-color: #b08c5f;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(193, 154, 107, 0.3);
+    }
+    .nav-links .book-now:after {
+      display: none;
     }
     
     /* Кнопка бургер-меню */
@@ -147,7 +188,14 @@
     }
     
     /* Мобильное меню */
-    @media (max-width: 768px) {
+    @media (max-width: 992px) {
+      .logo-full {
+        display: none;
+      }
+      .logo-mobile {
+        display: block;
+      }
+      
       .menu-toggle {
         display: flex;
       }
@@ -181,7 +229,7 @@
         margin: 0;
         width: 100%;
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
       }
       
       .nav-links li:last-child {
@@ -206,6 +254,23 @@
         display: none;
       }
       
+      /* Специальная кнопка "Забронировать" в мобильном меню */
+      .nav-links .book-now {
+        background-color: #c19a6b;
+        color: #fff !important;
+        padding: 15px 20px !important;
+        border-radius: 8px;
+        margin: 10px 0 0 0;
+        font-weight: 600;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+      }
+      .nav-links .book-now:hover {
+        background-color: #b08c5f;
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(193, 154, 107, 0.3);
+      }
+      
       /* Анимация для пунктов меню */
       .nav-links li {
         opacity: 0;
@@ -224,6 +289,7 @@
       .nav-links.active li:nth-child(4) { transition-delay: 0.25s; }
       .nav-links.active li:nth-child(5) { transition-delay: 0.3s; }
       .nav-links.active li:nth-child(6) { transition-delay: 0.35s; }
+      .nav-links.active li:nth-child(7) { transition-delay: 0.4s; }
       
       /* Затемнение фона при открытом меню */
       .menu-overlay {
@@ -1177,8 +1243,8 @@
       .play-button::before {
         border-width: 10px 0 10px 16px;
       }
-      .logo {
-        font-size: 1.5rem;
+      .logo-mobile {
+        font-size: 1.3rem;
       }
     }
     
@@ -1239,7 +1305,13 @@
   <header>
     <div class="container">
       <nav>
-        <a href="#" class="logo">Апартаменты <span>"Большая Терраса"</span></a>
+        <a href="#" class="logo">
+          <div class="logo-full">
+            <div class="logo-primary">Апартаменты</div>
+            <div class="logo-secondary">"Большая Терраса"</div>
+          </div>
+          <div class="logo-mobile">"Большая Терраса"</div>
+        </a>
         <button class="menu-toggle" id="menuToggle" aria-label="Открыть меню">
           <span></span>
           <span></span>
@@ -1251,6 +1323,7 @@
           <li><a href="#features">Наши преимущества</a></li>
           <li><a href="#gallery">Галерея</a></li>
           <li><a href="#" id="priceLink">Стоимость</a></li>
+          <li><a href="#contact" class="book-now">Забронировать</a></li>
           <li><a href="#contact">Контакты</a></li>
         </ul>
         <div class="menu-overlay" id="menuOverlay"></div>
@@ -1593,6 +1666,7 @@
             <li><a href="#features">Наши преимущества</a></li>
             <li><a href="#gallery">Галерея</a></li>
             <li><a href="#" id="priceLinkFooter">Стоимость</a></li>
+            <li><a href="#contact" class="book-now-footer">Забронировать</a></li>
             <li><a href="#contact">Контакты</a></li>
           </ul>
         </div>
@@ -1655,7 +1729,7 @@
       
       // Закрытие меню при изменении размера окна на десктоп
       window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
+        if (window.innerWidth > 992) {
           menuToggle.classList.remove('active');
           navLinks.classList.remove('active');
           menuOverlay.classList.remove('active');
