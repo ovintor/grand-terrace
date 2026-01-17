@@ -508,6 +508,7 @@
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      background: #000;
     }
     .video-modal-video video {
       width: 100%;
@@ -935,9 +936,9 @@
       <button class="video-modal-close" id="videoModalClose">&times;</button>
       <div class="video-modal-video">
         <video controls id="apartmentVideo">
-          <!-- Укажите здесь правильную raw ссылку на видео на GitHub -->
+          <!-- Ссылка на видео с GitHub -->
           <source src="https://raw.githubusercontent.com/ovintor/grand-terrace/main/living-room-video.mp4" type="video/mp4">
-          Ваш браузер не поддерживает видео. Скачайте <a href="https://raw.githubusercontent.com/ВАШ_ЛОГИН/ВАШ_РЕПОЗИТОРИЙ/main/living-room-video.mp4">его по ссылке</a>.
+          Ваш браузер не поддерживает видео. Скачайте <a href="https://raw.githubusercontent.com/ovintor/grand-terrace/main/living-room-video.mp4">его по ссылке</a>.
         </video>
       </div>
     </div>
@@ -1296,6 +1297,8 @@
         setTimeout(() => {
           apartmentVideo.play().catch(error => {
             console.log('Автовоспроизведение не удалось:', error);
+            // В случае ошибки автовоспроизведения показываем сообщение
+            apartmentVideo.controls = true;
           });
         }, 300);
       }
