@@ -463,33 +463,35 @@
       z-index: 3000;
       opacity: 0;
       transition: opacity 0.3s ease;
+      align-items: center;
+      justify-content: center;
     }
     .video-modal.open {
       display: flex;
       opacity: 1;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
     }
     .video-modal-content {
       position: relative;
-      width: 90%;
-      max-width: 800px;
-      margin: 0 auto;
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
       animation: fadeIn 0.3s ease;
+      max-width: 95vw;
+      max-height: 95vh;
     }
     @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.9); }
+      from { opacity: 0; transform: scale(0.95); }
       to { opacity: 1; transform: scale(1); }
     }
     .video-modal-close {
       position: absolute;
-      top: 15px;
-      right: 15px;
+      top: 10px;
+      right: 10px;
       color: white;
-      font-size: 2rem;
+      font-size: 1.8rem;
       cursor: pointer;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0,0,0,0.6);
       border: none;
       z-index: 3001;
       width: 40px;
@@ -501,19 +503,18 @@
       transition: background 0.3s;
     }
     .video-modal-close:hover {
-      background: rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.9);
     }
     .video-modal-video {
       width: 100%;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      background: #000;
+      height: 100%;
+      display: block;
     }
     .video-modal-video video {
       width: 100%;
-      height: auto;
+      height: 100%;
       display: block;
+      background: #000;
     }
 
     /* Контакты */
@@ -670,9 +671,6 @@
         width: 70px;
         height: 70px;
       }
-      .video-modal-content {
-        width: 95%;
-      }
     }
     @media (max-width: 768px) {
       .nav-links { display: none; }
@@ -694,6 +692,13 @@
       }
       .play-button::before {
         border-width: 12px 0 12px 20px;
+      }
+      .video-modal-close {
+        width: 35px;
+        height: 35px;
+        font-size: 1.5rem;
+        top: 5px;
+        right: 5px;
       }
       
       /* Стили для мобильного lightbox */
@@ -932,7 +937,7 @@
 
   <!-- Модальное окно для видео -->
   <div class="video-modal" id="videoModal">
-    <div class="video-modal-content">
+    <div class="video-modal-content" id="videoModalContent">
       <button class="video-modal-close" id="videoModalClose">&times;</button>
       <div class="video-modal-video">
         <video controls id="apartmentVideo">
@@ -1283,13 +1288,32 @@
       
       // Элементы для управления видео
       const videoPreview = document.getElementById('videoPreview');
+      const previewImage = videoPreview.querySelector('img');
       const playButton = document.getElementById('playButton');
       const videoModal = document.getElementById('videoModal');
+      const videoModalContent = document.getElementById('videoModalContent');
       const videoModalClose = document.getElementById('videoModalClose');
       const apartmentVideo = document.getElementById('apartmentVideo');
       
+      // Функция для получения размеров изображения
+      function getImageSize() {
+        const rect = previewImage.getBoundingClientRect();
+        return {
+          width: rect.width,
+          height: rect.height
+        };
+      }
+      
       // Открытие модального окна с видео
       function openVideoModal() {
+        // Получаем размеры изображения
+        const imageSize = getImageSize();
+        
+        // Устанавливаем размеры модального окна равными размерам изображения
+        videoModalContent.style.width = imageSize.width + 'px';
+        videoModalContent.style.height = imageSize.height + 'px';
+        
+        // Открываем модальное окно
         videoModal.classList.add('open');
         document.body.style.overflow = 'hidden';
         
@@ -1309,6 +1333,10 @@
         document.body.style.overflow = '';
         apartmentVideo.pause();
         apartmentVideo.currentTime = 0;
+        
+        // Сбрасываем размеры модального окна
+        videoModalContent.style.width = '';
+        videoModalContent.style.height = '';
       }
       
       // Обработчики событий для видео
@@ -1329,6 +1357,16 @@
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && videoModal.classList.contains('open')) {
           closeVideoModal();
+        }
+      });
+      
+      // Обработка изменения размера окна
+      window.addEventListener('resize', function() {
+        if (videoModal.classList.contains('open')) {
+          // Обновляем размеры модального окна при изменении размера окна
+          const imageSize = getImageSize();
+          videoModalContent.style.width = imageSize.width + 'px';
+          videoModalContent.style.height = imageSize.height + 'px';
         }
       });
       
