@@ -525,13 +525,14 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0,0,0,0.85);
+      background-color: rgba(255, 255, 255, 0.95); /* Прозрачный белый фон */
       z-index: 4000;
       opacity: 0;
       transition: opacity 0.3s ease;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 15px;
+      backdrop-filter: blur(3px); /* Легкое размытие фона */
     }
     .price-modal.open {
       display: flex;
@@ -542,29 +543,30 @@
       background: #ffffff;
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
       animation: modalFadeIn 0.4s ease;
-      max-width: 900px;
+      max-width: 850px;
       width: 100%;
       max-height: 90vh;
       overflow-y: auto;
+      border: 1px solid #e0e0e0;
     }
     @keyframes modalFadeIn {
-      from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+      from { opacity: 0; transform: translateY(-15px) scale(0.98); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
     .price-modal-close {
       position: absolute;
-      top: 15px;
-      right: 15px;
-      color: #333;
+      top: 12px;
+      right: 12px;
+      color: #555;
       font-size: 1.8rem;
       cursor: pointer;
-      background: rgba(255,255,255,0.9);
-      border: none;
+      background: rgba(255,255,255,0.95);
+      border: 1px solid #e0e0e0;
       z-index: 4001;
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -576,27 +578,31 @@
       background: #ffffff;
       transform: rotate(90deg);
       color: #c19a6b;
+      border-color: #c19a6b;
     }
     .price-modal-header {
-      padding: 25px 30px 15px;
+      padding: 20px 25px 15px;
       text-align: center;
       border-bottom: 1px solid #eee;
     }
     .price-modal-header h3 {
-      font-size: 1.8rem;
+      font-size: 1.6rem; /* Уменьшен размер шрифта */
       color: #2c3e50;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       font-weight: 600;
+      line-height: 1.3;
+      word-wrap: break-word; /* Перенос длинных слов */
+      hyphens: auto; /* Автоматические переносы */
     }
     .price-modal-body {
-      padding: 20px 30px;
+      padding: 18px 25px;
     }
     .price-modal-footer {
-      padding: 20px 30px;
+      padding: 18px 25px;
       background: #f8f9fa;
       border-top: 1px solid #eee;
-      font-size: 0.95rem;
-      line-height: 1.6;
+      font-size: 0.92rem;
+      line-height: 1.5;
       color: #555;
     }
     .price-modal-footer p {
@@ -604,6 +610,14 @@
     }
     .price-modal-footer strong {
       color: #2c3e50;
+    }
+    .phone-highlight {
+      font-weight: 700;
+      color: #2c3e50;
+      background-color: #fff9e6;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #ffcc80;
     }
 
     /* Календарь цен */
@@ -614,39 +628,84 @@
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin: 20px 0;
+      gap: 10px;
+      margin: 15px 0;
     }
     @media (max-width: 768px) {
       .calendar-grid {
         grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
       }
     }
     @media (max-width: 480px) {
       .calendar-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+      }
+      .price-modal-header h3 {
+        font-size: 1.4rem; /* Еще меньше на очень маленьких экранах */
+        padding: 0 5px;
+      }
+    }
+    /* Для вертикальной ориентации на мобильных */
+    @media (max-width: 768px) and (orientation: portrait) {
+      .price-modal-content {
+        max-width: 95%;
+        margin: 0 auto;
+      }
+      .price-modal-header {
+        padding: 15px 15px 10px;
+      }
+      .price-modal-header h3 {
+        font-size: 1.5rem;
+        line-height: 1.3;
+      }
+      .price-modal-body {
+        padding: 12px 15px;
+      }
+      .price-modal-footer {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+      }
+    }
+    /* Для горизонтальной ориентации на мобильных */
+    @media (max-width: 900px) and (orientation: landscape) {
+      .price-modal-content {
+        max-width: 90%;
+        max-height: 85vh;
+      }
+      .price-modal-header h3 {
+        font-size: 1.5rem;
+      }
+      .calendar-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
       }
     }
     .month-box {
       border: 2px solid #e0e0e0;
-      border-radius: 10px;
-      padding: 18px 10px;
+      border-radius: 8px;
+      padding: 15px 8px;
       text-align: center;
       transition: all 0.3s ease;
       cursor: pointer;
+      min-height: 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
     .month-box:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
     .month {
       font-weight: 600;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       color: #333;
-      font-size: 1.1rem;
+      font-size: 1rem;
     }
     .price {
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       font-weight: 700;
       color: #2c3e50;
     }
@@ -677,23 +736,31 @@
     .price-legend {
       display: flex;
       justify-content: center;
-      gap: 25px;
+      gap: 20px;
       flex-wrap: wrap;
-      margin-top: 25px;
-      padding-top: 20px;
+      margin-top: 20px;
+      padding-top: 15px;
       border-top: 1px solid #eee;
+    }
+    @media (max-width: 480px) {
+      .price-legend {
+        gap: 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-left: 10px;
+      }
     }
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 0.95rem;
+      gap: 8px;
+      font-size: 0.9rem;
       color: #555;
     }
     .legend-color {
-      width: 22px;
-      height: 22px;
-      border-radius: 5px;
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
     }
     .legend-color.low {
       background-color: #f0f9ff;
@@ -863,7 +930,7 @@
         height: 70px;
       }
       .price-modal-content {
-        max-width: 95%;
+        max-width: 90%;
       }
     }
     @media (max-width: 768px) {
@@ -895,13 +962,13 @@
         right: 5px;
       }
       .price-modal-header {
-        padding: 20px 20px 10px;
+        padding: 15px 15px 10px;
       }
       .price-modal-body {
-        padding: 15px 20px;
+        padding: 12px 15px;
       }
       .price-modal-footer {
-        padding: 15px 20px;
+        padding: 12px 15px;
       }
       
       /* Стили для мобильного lightbox */
@@ -955,11 +1022,6 @@
       .play-button::before {
         border-width: 10px 0 10px 16px;
       }
-      .price-legend {
-        gap: 15px;
-        flex-direction: column;
-        align-items: center;
-      }
     }
     
     /* Специальные медиа-запросы для ориентации */
@@ -974,6 +1036,16 @@
       .hero p {
         font-size: 1.1rem;
       }
+      .price-modal {
+        padding: 10px;
+      }
+      .price-modal-content {
+        max-width: 95%;
+      }
+      .price-modal-header h3 {
+        font-size: 1.4rem;
+        line-height: 1.2;
+      }
     }
     
     @media (orientation: landscape) and (max-height: 500px) {
@@ -987,6 +1059,12 @@
       }
       .hero p {
         font-size: 1.2rem;
+      }
+      .price-modal {
+        padding: 5px;
+      }
+      .price-modal-content {
+        max-height: 95vh;
       }
     }
     
@@ -1220,7 +1298,7 @@
         </div>
       </div>
       <div class="price-modal-footer">
-        <p><strong>Узнайте доступность конкретных дат.</strong> После отправки формы мы свяжемся с Вами в течение рабочего дня. В случае необходимости обсудить детали бронирования обращайтесь по телефону: +7(978)143-94-27 (также Telegram, WhatsApp)</p>
+        <p><strong>Узнайте доступность конкретных дат.</strong> После отправки формы мы свяжемся с Вами в течение рабочего дня. В случае необходимости обсудить детали бронирования обращайтесь по телефону: <span class="phone-highlight">+7(978)143-94-27</span> (также Telegram, Мессенджер Max)</p>
         <p>В зависимости от продолжительности Вашего отдыха могут быть оговорены индивидуальные скидки!</p>
         <p><em>С уважением,<br>апартаменты "Большая Терраса"</em></p>
       </div>
@@ -1506,6 +1584,16 @@
         
         // Также обновляем форму при resize
         refreshFormLayout();
+        
+        // Обновление заголовка в модальном окне цен для корректного отображения
+        const priceModalHeader = document.querySelector('.price-modal-header h3');
+        if (priceModalHeader && priceModalHeader.textContent.includes('Стоимость аренды')) {
+          // Принудительный рефлоу для корректного расчета размеров
+          priceModalHeader.style.display = 'inline-block';
+          setTimeout(() => {
+            priceModalHeader.style.display = '';
+          }, 10);
+        }
       }, 250);
     });
 
@@ -1659,6 +1747,8 @@
       const priceLink = document.getElementById('priceLink');
       const priceLinkFooter = document.getElementById('priceLinkFooter');
       const monthBoxes = document.querySelectorAll('.month-box');
+      const messageField = document.getElementById('message');
+      let lastSelectedMonth = '';
       
       // Открытие модального окна цен
       function openPriceModal() {
@@ -1672,8 +1762,8 @@
         document.body.style.overflow = '';
       }
       
-      // Открытие при загрузке страницы
-      setTimeout(openPriceModal, 1000);
+      // Убрано автоматическое открытие при загрузке
+      // setTimeout(openPriceModal, 1000); // УДАЛЕНО
       
       // Обработчики для открытия модального окна
       priceLink.addEventListener('click', function(e) {
@@ -1709,6 +1799,7 @@
       monthBoxes.forEach(function(monthBox) {
         monthBox.addEventListener('click', function() {
           const month = this.getAttribute('data-month');
+          lastSelectedMonth = month;
           closePriceModal();
           
           // Прокрутка к форме бронирования
@@ -1717,17 +1808,64 @@
             if (contactSection) {
               contactSection.scrollIntoView({ behavior: 'smooth' });
               
-              // Автоматическое заполнение месяца в поле сообщения (опционально)
-              const messageField = document.getElementById('message');
+              // Обновление текста в поле сообщения (замена, а не добавление)
               if (messageField) {
-                const currentMessage = messageField.value;
+                // Удаляем предыдущее упоминание месяца, если оно есть
+                const currentValue = messageField.value;
+                const monthRegex = /Интересует бронирование в [А-Яа-я]+\.?\s*/g;
+                const cleanedValue = currentValue.replace(monthRegex, '');
+                
+                // Добавляем новое упоминание месяца
                 const monthText = `Интересует бронирование в ${month}. `;
-                messageField.value = monthText + (currentMessage || '');
+                messageField.value = monthText + cleanedValue;
                 messageField.focus();
+                
+                // Прокручиваем к полю сообщения
+                setTimeout(() => {
+                  messageField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
               }
             }
           }, 300);
         });
+      });
+      
+      // Обработка изменения ориентации для корректного отображения таблицы
+      let lastOrientation = window.orientation || screen.orientation.angle;
+      window.addEventListener('orientationchange', function() {
+        setTimeout(function() {
+          const newOrientation = window.orientation || screen.orientation.angle;
+          
+          // Если ориентация изменилась
+          if (newOrientation !== lastOrientation) {
+            lastOrientation = newOrientation;
+            
+            // Принудительное обновление стилей модального окна
+            if (priceModal.classList.contains('open')) {
+              const priceModalContent = document.querySelector('.price-modal-content');
+              const headerTitle = document.querySelector('.price-modal-header h3');
+              
+              // Временное изменение display для принудительного рефлоу
+              if (priceModalContent && headerTitle) {
+                priceModalContent.style.display = 'none';
+                setTimeout(() => {
+                  priceModalContent.style.display = 'block';
+                  
+                  // Оптимизация заголовка для новой ориентации
+                  if (Math.abs(newOrientation) === 90 || Math.abs(newOrientation) === 270) {
+                    // Горизонтальная ориентация
+                    headerTitle.style.fontSize = '1.5rem';
+                    headerTitle.style.lineHeight = '1.3';
+                  } else {
+                    // Вертикальная ориентация
+                    headerTitle.style.fontSize = '1.6rem';
+                    headerTitle.style.lineHeight = '1.3';
+                  }
+                }, 50);
+              }
+            }
+          }
+        }, 300);
       });
       
       // Lightbox для галереи
