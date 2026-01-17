@@ -175,6 +175,7 @@
       overflow: hidden;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
       min-width: 0;
+      position: relative;
     }
     .about-image img {
       width: 100%;
@@ -183,6 +184,49 @@
       transition: transform 0.5s;
     }
     .about-image:hover img { transform: scale(1.05); }
+    
+    /* Контейнер для видео с кнопкой воспроизведения */
+    .video-preview-container {
+      position: relative;
+      width: 100%;
+      cursor: pointer;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .video-preview-container:hover img {
+      transform: scale(1.05);
+    }
+    .video-preview-container:hover .play-button {
+      background: rgba(0, 0, 0, 0.8);
+      transform: translate(-50%, -50%) scale(1.05);
+    }
+    .play-button {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80px;
+      height: 80px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 3px solid white;
+      border-radius: 50%;
+      padding: 0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .play-button::before {
+      content: '';
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 15px 0 15px 25px;
+      border-color: transparent transparent transparent white;
+      margin-left: 5px;
+    }
 
     /* Особенности */
     .features { background-color: #fff; }
@@ -407,6 +451,70 @@
       justify-content: center;
     }
 
+    /* Модальное окно для видео */
+    .video-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.9);
+      z-index: 3000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .video-modal.open {
+      display: flex;
+      opacity: 1;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    .video-modal-content {
+      position: relative;
+      width: 90%;
+      max-width: 800px;
+      margin: 0 auto;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .video-modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      background: rgba(0,0,0,0.5);
+      border: none;
+      z-index: 3001;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s;
+    }
+    .video-modal-close:hover {
+      background: rgba(0,0,0,0.8);
+    }
+    .video-modal-video {
+      width: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .video-modal-video video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
     /* Контакты */
     .contact-wrapper { 
       display: flex; 
@@ -557,6 +665,13 @@
         flex-direction: column;
         gap: 0;
       }
+      .play-button {
+        width: 70px;
+        height: 70px;
+      }
+      .video-modal-content {
+        width: 95%;
+      }
     }
     @media (max-width: 768px) {
       .nav-links { display: none; }
@@ -571,6 +686,13 @@
       .btn {
         padding: 12px 30px;
         font-size: 1rem;
+      }
+      .play-button {
+        width: 60px;
+        height: 60px;
+      }
+      .play-button::before {
+        border-width: 12px 0 12px 20px;
       }
       
       /* Стили для мобильного lightbox */
@@ -616,6 +738,13 @@
       }
       .contact-map {
         height: 300px;
+      }
+      .play-button {
+        width: 50px;
+        height: 50px;
+      }
+      .play-button::before {
+        border-width: 10px 0 10px 16px;
       }
     }
     
@@ -699,7 +828,11 @@
           Hабережная Адмирала Перелешина, 3. Мыс Хрустальный. Пребывание в апартаментах "Большая Терраса", - это Ваш идеальный побег на отдых! GGGGGetaway GrandTerraceApt!</p>
         </div>
         <div class="about-image">
-          <img src="images/living-room.png" alt="Интерьер апартаментов">
+          <!-- Контейнер для видео с кнопкой воспроизведения -->
+          <div class="video-preview-container" id="videoPreview">
+            <img src="images/living-room.png" alt="Интерьер апартаментов">
+            <button class="play-button" id="playButton" aria-label="Посмотреть видео"></button>
+          </div>
         </div>
       </div>
     </div>
@@ -796,6 +929,20 @@
     </div>
   </section>
 
+  <!-- Модальное окно для видео -->
+  <div class="video-modal" id="videoModal">
+    <div class="video-modal-content">
+      <button class="video-modal-close" id="videoModalClose">&times;</button>
+      <div class="video-modal-video">
+        <video controls id="apartmentVideo">
+          <!-- Укажите здесь правильную raw ссылку на видео на GitHub -->
+          <source src="https://raw.githubusercontent.com/ovintor/grand-terrace/main/living-room-video.mp4" type="video/mp4">
+          Ваш браузер не поддерживает видео. Скачайте <a href="https://raw.githubusercontent.com/ВАШ_ЛОГИН/ВАШ_РЕПОЗИТОРИЙ/main/living-room-video.mp4">его по ссылке</a>.
+        </video>
+      </div>
+    </div>
+  </div>
+
   <!-- Lightbox -->
   <div class="lightbox" id="lightbox">
     <button class="lightbox-close" id="lightboxClose">&times;</button>
@@ -847,16 +994,16 @@
                 <input type="date" id="checkout" class="form-control" required>
               </div>
             </div>
-         <div class="form-group">
-  <label for="guests">Количество гостей</label>
-  <select id="guests" class="form-control">
-    <option value="1">1 гость</option>
-    <option value="2" selected>2 гостя</option>
-    <option value="3">3 гостя</option>
-    <option value="4">4 гостя</option>
-  </select>
-  <small style="color: #666; font-size: 0.9rem; display: block; margin-top: 5px;">Максимальное количество гостей - 4 человека</small>
-</div>
+            <div class="form-group">
+              <label for="guests">Количество гостей</label>
+              <select id="guests" class="form-control">
+                <option value="1">1 гость</option>
+                <option value="2" selected>2 гостя</option>
+                <option value="3">3 гостя</option>
+                <option value="4">4 гостя</option>
+              </select>
+              <small style="color: #666; font-size: 0.9rem; display: block; margin-top: 5px;">Максимальное количество гостей - 4 человека</small>
+            </div>
             <div class="form-group">
               <label for="message">Сообщение</label>
               <textarea id="message" class="form-control" placeholder="Дополнительные пожелания или вопросы"></textarea>
@@ -1133,6 +1280,56 @@
       // Инициализация карты при загрузке страницы
       initMap();
       
+      // Элементы для управления видео
+      const videoPreview = document.getElementById('videoPreview');
+      const playButton = document.getElementById('playButton');
+      const videoModal = document.getElementById('videoModal');
+      const videoModalClose = document.getElementById('videoModalClose');
+      const apartmentVideo = document.getElementById('apartmentVideo');
+      
+      // Открытие модального окна с видео
+      function openVideoModal() {
+        videoModal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        
+        // Автоматически запускаем видео при открытии
+        setTimeout(() => {
+          apartmentVideo.play().catch(error => {
+            console.log('Автовоспроизведение не удалось:', error);
+          });
+        }, 300);
+      }
+      
+      // Закрытие модального окна с видео
+      function closeVideoModal() {
+        videoModal.classList.remove('open');
+        document.body.style.overflow = '';
+        apartmentVideo.pause();
+        apartmentVideo.currentTime = 0;
+      }
+      
+      // Обработчики событий для видео
+      videoPreview.addEventListener('click', openVideoModal);
+      playButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        openVideoModal();
+      });
+      
+      videoModalClose.addEventListener('click', closeVideoModal);
+      videoModal.addEventListener('click', function(e) {
+        if (e.target === videoModal) {
+          closeVideoModal();
+        }
+      });
+      
+      // Закрытие по клавише Escape
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && videoModal.classList.contains('open')) {
+          closeVideoModal();
+        }
+      });
+      
+      // Lightbox для галереи
       const lightbox = document.getElementById('lightbox');
       const lightboxSlides = document.getElementById('lightboxSlides');
       const lightboxClose = document.getElementById('lightboxClose');
@@ -1397,18 +1594,18 @@
           };
           
           // Валидация
-         // Валидация
-if (!formData.name || !formData.email || !formData.phone || !formData.checkin || !formData.checkout) {
-  showMessage('Пожалуйста, заполните все обязательные поля', 'error');
-  return;
-}
-
-// Валидация количества гостей (максимум 4)
-if (parseInt(formData.guests) > 4) {
-  showMessage('Максимальное количество гостей - 4 человека', 'error');
-  return;
-}
-// Блокируем кнопку отправки
+          if (!formData.name || !formData.email || !formData.phone || !formData.checkin || !formData.checkout) {
+            showMessage('Пожалуйста, заполните все обязательные поля', 'error');
+            return;
+          }
+          
+          // Валидация количества гостей (максимум 4)
+          if (parseInt(formData.guests) > 4) {
+            showMessage('Максимальное количество гостей - 4 человека', 'error');
+            return;
+          }
+          
+          // Блокируем кнопку отправки
           submitBtn.disabled = true;
           submitBtn.textContent = 'Отправка...';
           
@@ -1432,27 +1629,24 @@ if (parseInt(formData.guests) > 4) {
       
       // Функция отправки email через Formspree
       function sendEmail(formData) {
-        // Формируем тело письма
-        const subject = 'Новая заявка на бронирование';
-        
-       // Используем Formspree для отправки email
-fetch('https://formspree.io/f/mjgblolk', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    name: formData.name,
-    email: formData.email,
-    phone: formData.phone,
-    checkin: formData.checkin,
-    checkout: formData.checkout,
-    guests: formData.guests,
-    message: formData.message,
-    _subject: subject,
-    _replyto: formData.email
-  })
-})
+        // Используем Formspree для отправки email
+        fetch('https://formspree.io/f/mjgblolk', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            checkin: formData.checkin,
+            checkout: formData.checkout,
+            guests: formData.guests,
+            message: formData.message,
+            _subject: 'Новая заявка на бронирование',
+            _replyto: formData.email
+          })
+        })
         .then(response => {
           if (response.ok) {
             showMessage('Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.', 'success');
@@ -1474,7 +1668,4 @@ fetch('https://formspree.io/f/mjgblolk', {
     });
   </script>
 </body>
-
 </html>
-
-
