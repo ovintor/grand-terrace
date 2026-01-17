@@ -517,6 +517,197 @@
       background: #000;
     }
 
+    /* Модальное окно для календаря цен */
+    .price-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.85);
+      z-index: 4000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .price-modal.open {
+      display: flex;
+      opacity: 1;
+    }
+    .price-modal-content {
+      position: relative;
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+      animation: modalFadeIn 0.4s ease;
+      max-width: 900px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .price-modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      color: #333;
+      font-size: 1.8rem;
+      cursor: pointer;
+      background: rgba(255,255,255,0.9);
+      border: none;
+      z-index: 4001;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      font-weight: 300;
+    }
+    .price-modal-close:hover {
+      background: #ffffff;
+      transform: rotate(90deg);
+      color: #c19a6b;
+    }
+    .price-modal-header {
+      padding: 25px 30px 15px;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+    .price-modal-header h3 {
+      font-size: 1.8rem;
+      color: #2c3e50;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    .price-modal-body {
+      padding: 20px 30px;
+    }
+    .price-modal-footer {
+      padding: 20px 30px;
+      background: #f8f9fa;
+      border-top: 1px solid #eee;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #555;
+    }
+    .price-modal-footer p {
+      margin-bottom: 10px;
+    }
+    .price-modal-footer strong {
+      color: #2c3e50;
+    }
+
+    /* Календарь цен */
+    .price-calendar {
+      width: 100%;
+      font-family: Arial, sans-serif;
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+    @media (max-width: 768px) {
+      .calendar-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    @media (max-width: 480px) {
+      .calendar-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .month-box {
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 18px 10px;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .month-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+    .month {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+      font-size: 1.1rem;
+    }
+    .price {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+    .low-price {
+      background-color: #f0f9ff;
+      border-color: #b8e2f8;
+    }
+    .low-price:hover {
+      background-color: #e1f3ff;
+      border-color: #5cb8ff;
+    }
+    .medium-price {
+      background-color: #fff9e6;
+      border-color: #ffe08c;
+    }
+    .medium-price:hover {
+      background-color: #fff3cc;
+      border-color: #ffc107;
+    }
+    .high-price {
+      background-color: #ffebee;
+      border-color: #ff8a8a;
+    }
+    .high-price:hover {
+      background-color: #ffdbde;
+      border-color: #ff5252;
+    }
+    .price-legend {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      flex-wrap: wrap;
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.95rem;
+      color: #555;
+    }
+    .legend-color {
+      width: 22px;
+      height: 22px;
+      border-radius: 5px;
+    }
+    .legend-color.low {
+      background-color: #f0f9ff;
+      border: 2px solid #b8e2f8;
+    }
+    .legend-color.medium {
+      background-color: #fff9e6;
+      border: 2px solid #ffe08c;
+    }
+    .legend-color.high {
+      background-color: #ffebee;
+      border: 2px solid #ff8a8a;
+    }
+
     /* Контакты */
     .contact-wrapper { 
       display: flex; 
@@ -671,6 +862,9 @@
         width: 70px;
         height: 70px;
       }
+      .price-modal-content {
+        max-width: 95%;
+      }
     }
     @media (max-width: 768px) {
       .nav-links { display: none; }
@@ -699,6 +893,15 @@
         font-size: 1.5rem;
         top: 5px;
         right: 5px;
+      }
+      .price-modal-header {
+        padding: 20px 20px 10px;
+      }
+      .price-modal-body {
+        padding: 15px 20px;
+      }
+      .price-modal-footer {
+        padding: 15px 20px;
       }
       
       /* Стили для мобильного lightbox */
@@ -752,6 +955,11 @@
       .play-button::before {
         border-width: 10px 0 10px 16px;
       }
+      .price-legend {
+        gap: 15px;
+        flex-direction: column;
+        align-items: center;
+      }
     }
     
     /* Специальные медиа-запросы для ориентации */
@@ -801,6 +1009,7 @@
           <li><a href="#about">Об апартаментах</a></li>
           <li><a href="#features">Наши преимущества</a></li>
           <li><a href="#gallery">Галерея</a></li>
+          <li><a href="#" id="priceLink">Стоимость</a></li>
           <li><a href="#contact">Контакты</a></li>
         </ul>
       </nav>
@@ -935,6 +1144,89 @@
     </div>
   </section>
 
+  <!-- Модальное окно для календаря цен -->
+  <div class="price-modal" id="priceModal">
+    <div class="price-modal-content">
+      <button class="price-modal-close" id="priceModalClose">&times;</button>
+      <div class="price-modal-header">
+        <h3>Стоимость аренды посуточно в 2026 г.</h3>
+      </div>
+      <div class="price-modal-body">
+        <div class="price-calendar">
+          <div class="calendar-grid">
+            <div class="month-box low-price" data-month="Январь">
+              <div class="month">Январь</div>
+              <div class="price">11 000 ₽</div>
+            </div>
+            <div class="month-box low-price" data-month="Февраль">
+              <div class="month">Февраль</div>
+              <div class="price">11 000 ₽</div>
+            </div>
+            <div class="month-box low-price" data-month="Март">
+              <div class="month">Март</div>
+              <div class="price">11 000 ₽</div>
+            </div>
+            <div class="month-box medium-price" data-month="Апрель">
+              <div class="month">Апрель</div>
+              <div class="price">12 000 ₽</div>
+            </div>
+            <div class="month-box medium-price" data-month="Май">
+              <div class="month">Май</div>
+              <div class="price">12 000 ₽</div>
+            </div>
+            <div class="month-box high-price" data-month="Июнь">
+              <div class="month">Июнь</div>
+              <div class="price">13 000 ₽</div>
+            </div>
+            <div class="month-box high-price" data-month="Июль">
+              <div class="month">Июль</div>
+              <div class="price">13 000 ₽</div>
+            </div>
+            <div class="month-box high-price" data-month="Август">
+              <div class="month">Август</div>
+              <div class="price">13 000 ₽</div>
+            </div>
+            <div class="month-box medium-price" data-month="Сентябрь">
+              <div class="month">Сентябрь</div>
+              <div class="price">12 000 ₽</div>
+            </div>
+            <div class="month-box low-price" data-month="Октябрь">
+              <div class="month">Октябрь</div>
+              <div class="price">11 000 ₽</div>
+            </div>
+            <div class="month-box low-price" data-month="Ноябрь">
+              <div class="month">Ноябрь</div>
+              <div class="price">11 000 ₽</div>
+            </div>
+            <div class="month-box low-price" data-month="Декабрь">
+              <div class="month">Декабрь</div>
+              <div class="price">11 000 ₽</div>
+            </div>
+          </div>
+          <div class="price-legend">
+            <div class="legend-item">
+              <span class="legend-color low"></span>
+              <span>Низкий сезон</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color medium"></span>
+              <span>Средний сезон</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color high"></span>
+              <span>Высокий сезон</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="price-modal-footer">
+        <p><strong>Узнайте доступность конкретных дат.</strong> После отправки формы мы свяжемся с Вами в течение рабочего дня. В случае необходимости обсудить детали бронирования обращайтесь по телефону: +7(978)143-94-27 (также Telegram, WhatsApp)</p>
+        <p>В зависимости от продолжительности Вашего отдыха могут быть оговорены индивидуальные скидки!</p>
+        <p><em>С уважением,<br>апартаменты "Большая Терраса"</em></p>
+      </div>
+    </div>
+  </div>
+
   <!-- Модальное окно для видео -->
   <div class="video-modal" id="videoModal">
     <div class="video-modal-content" id="videoModalContent">
@@ -1058,6 +1350,7 @@
             <li><a href="#about">О нас</a></li>
             <li><a href="#features">Наши преимущества</a></li>
             <li><a href="#gallery">Галерея</a></li>
+            <li><a href="#" id="priceLinkFooter">Стоимость</a></li>
             <li><a href="#contact">Контакты</a></li>
           </ul>
         </div>
@@ -1360,14 +1653,81 @@
         }
       });
       
-      // Обработка изменения размера окна
-      window.addEventListener('resize', function() {
-        if (videoModal.classList.contains('open')) {
-          // Обновляем размеры модального окна при изменении размера окна
-          const imageSize = getImageSize();
-          videoModalContent.style.width = imageSize.width + 'px';
-          videoModalContent.style.height = imageSize.height + 'px';
+      // Управление модальным окном цен
+      const priceModal = document.getElementById('priceModal');
+      const priceModalClose = document.getElementById('priceModalClose');
+      const priceLink = document.getElementById('priceLink');
+      const priceLinkFooter = document.getElementById('priceLinkFooter');
+      const monthBoxes = document.querySelectorAll('.month-box');
+      
+      // Открытие модального окна цен
+      function openPriceModal() {
+        priceModal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+      
+      // Закрытие модального окна цен
+      function closePriceModal() {
+        priceModal.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+      
+      // Открытие при загрузке страницы
+      setTimeout(openPriceModal, 1000);
+      
+      // Обработчики для открытия модального окна
+      priceLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        openPriceModal();
+      });
+      
+      if (priceLinkFooter) {
+        priceLinkFooter.addEventListener('click', function(e) {
+          e.preventDefault();
+          openPriceModal();
+        });
+      }
+      
+      // Обработчик для закрытия модального окна
+      priceModalClose.addEventListener('click', closePriceModal);
+      
+      // Закрытие при клике вне окна
+      priceModal.addEventListener('click', function(e) {
+        if (e.target === priceModal) {
+          closePriceModal();
         }
+      });
+      
+      // Закрытие по клавише Escape
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && priceModal.classList.contains('open')) {
+          closePriceModal();
+        }
+      });
+      
+      // Обработчики для месяцев - переход к форме бронирования
+      monthBoxes.forEach(function(monthBox) {
+        monthBox.addEventListener('click', function() {
+          const month = this.getAttribute('data-month');
+          closePriceModal();
+          
+          // Прокрутка к форме бронирования
+          setTimeout(function() {
+            const contactSection = document.getElementById('contact');
+            if (contactSection) {
+              contactSection.scrollIntoView({ behavior: 'smooth' });
+              
+              // Автоматическое заполнение месяца в поле сообщения (опционально)
+              const messageField = document.getElementById('message');
+              if (messageField) {
+                const currentMessage = messageField.value;
+                const monthText = `Интересует бронирование в ${month}. `;
+                messageField.value = monthText + (currentMessage || '');
+                messageField.focus();
+              }
+            }
+          }, 300);
+        });
       });
       
       // Lightbox для галереи
