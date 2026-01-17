@@ -54,7 +54,7 @@
     }
     p { margin-bottom: 1.5rem; color: #555; }
 
-    /* Навигация */
+    /* Обновленная шапка с мобильным меню */
     header {
       background-color: #fff;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -68,17 +68,29 @@
       justify-content: space-between;
       align-items: center;
       padding: 20px 0;
+      position: relative;
     }
     .logo {
       font-size: 1.8rem;
       font-weight: 700;
       color: #2c3e50;
       text-decoration: none;
+      display: flex;
+      align-items: center;
     }
-    .logo span { color: #c19a6b; }
+    .logo span { 
+      color: #c19a6b;
+      font-weight: 600;
+    }
+    .logo-main {
+      color: #2c3e50;
+    }
+    
+    /* Десктопное меню */
     .nav-links {
       display: flex;
       list-style: none;
+      transition: all 0.3s ease;
     }
     .nav-links li { margin-left: 30px; }
     .nav-links a {
@@ -86,8 +98,152 @@
       color: #2c3e50;
       font-weight: 500;
       transition: color 0.3s;
+      padding: 5px 0;
+      position: relative;
     }
     .nav-links a:hover { color: #c19a6b; }
+    .nav-links a:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #c19a6b;
+      transition: width 0.3s ease;
+    }
+    .nav-links a:hover:after {
+      width: 100%;
+    }
+    
+    /* Кнопка бургер-меню */
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 30px;
+      height: 21px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      z-index: 1001;
+    }
+    .menu-toggle span {
+      width: 100%;
+      height: 3px;
+      background-color: #2c3e50;
+      border-radius: 3px;
+      transition: all 0.3s ease;
+    }
+    .menu-toggle.active span:nth-child(1) {
+      transform: translateY(9px) rotate(45deg);
+    }
+    .menu-toggle.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .menu-toggle.active span:nth-child(3) {
+      transform: translateY(-9px) rotate(-45deg);
+    }
+    
+    /* Мобильное меню */
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: flex;
+      }
+      
+      .nav-links {
+        position: fixed;
+        top: 80px;
+        left: 0;
+        width: 100%;
+        background: #fff;
+        flex-direction: column;
+        align-items: center;
+        padding: 30px 20px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        transform: translateY(-100%);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        z-index: 999;
+        max-height: calc(100vh - 80px);
+        overflow-y: auto;
+      }
+      
+      .nav-links.active {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      .nav-links li {
+        margin: 0;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      
+      .nav-links li:last-child {
+        margin-bottom: 0;
+      }
+      
+      .nav-links a {
+        display: block;
+        padding: 15px 20px;
+        font-size: 1.2rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+      
+      .nav-links a:hover {
+        background-color: #f8f9fa;
+        color: #c19a6b;
+        transform: translateX(5px);
+      }
+      
+      .nav-links a:after {
+        display: none;
+      }
+      
+      /* Анимация для пунктов меню */
+      .nav-links li {
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.3s ease;
+      }
+      
+      .nav-links.active li {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      
+      .nav-links.active li:nth-child(1) { transition-delay: 0.1s; }
+      .nav-links.active li:nth-child(2) { transition-delay: 0.15s; }
+      .nav-links.active li:nth-child(3) { transition-delay: 0.2s; }
+      .nav-links.active li:nth-child(4) { transition-delay: 0.25s; }
+      .nav-links.active li:nth-child(5) { transition-delay: 0.3s; }
+      .nav-links.active li:nth-child(6) { transition-delay: 0.35s; }
+      
+      /* Затемнение фона при открытом меню */
+      .menu-overlay {
+        position: fixed;
+        top: 80px;
+        left: 0;
+        width: 100%;
+        height: calc(100% - 80px);
+        background: rgba(0,0,0,0.5);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 998;
+      }
+      
+      .menu-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
 
     /* Обновленный Герой */
     .hero {
@@ -934,7 +1090,6 @@
       }
     }
     @media (max-width: 768px) {
-      .nav-links { display: none; }
       .hero h1 { font-size: 2.2rem; }
       .hero p { font-size: 1.1rem; }
       h1 { font-size: 2rem; }
@@ -1022,6 +1177,9 @@
       .play-button::before {
         border-width: 10px 0 10px 16px;
       }
+      .logo {
+        font-size: 1.5rem;
+      }
     }
     
     /* Специальные медиа-запросы для ориентации */
@@ -1081,8 +1239,13 @@
   <header>
     <div class="container">
       <nav>
-        <a href="#" class="logo"><span>GrandTerraceApt</span></a>
-        <ul class="nav-links">
+        <a href="#" class="logo">Апартаменты <span>"Большая Терраса"</span></a>
+        <button class="menu-toggle" id="menuToggle" aria-label="Открыть меню">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
           <li><a href="#">Главная</a></li>
           <li><a href="#about">Об апартаментах</a></li>
           <li><a href="#features">Наши преимущества</a></li>
@@ -1090,6 +1253,7 @@
           <li><a href="#" id="priceLink">Стоимость</a></li>
           <li><a href="#contact">Контакты</a></li>
         </ul>
+        <div class="menu-overlay" id="menuOverlay"></div>
       </nav>
     </div>
   </header>
@@ -1418,7 +1582,7 @@
     <div class="container">
       <div class="footer-content">
         <div class="footer-column">
-          <h3>GrandTerraceApt</h3>
+          <h3>Апартаменты "Большая Терраса"</h3>
           <p>Элитные апартаменты в центре Севастополя с видом на море.</p>
         </div>
         <div class="footer-column">
@@ -1442,7 +1606,7 @@
         </div>
       </div>
       <div class="copyright">
-        © 2025 GrandTerraceApt. Все права защищены.
+        © 2025 Апартаменты "Большая Терраса". Все права защищены.
       </div>
     </div>
   </footer>
@@ -1455,6 +1619,60 @@
     let myMap = null;
     let orientationChangeInProgress = false;
     let currentOrientation = window.orientation || window.screen.orientation.angle;
+
+    // Управление мобильным меню
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+    const menuOverlay = document.getElementById('menuOverlay');
+    
+    if (menuToggle && navLinks) {
+      // Открытие/закрытие меню
+      menuToggle.addEventListener('click', function() {
+        menuToggle.classList.toggle('active');
+        navLinks.classList.toggle('active');
+        menuOverlay.classList.toggle('active');
+        document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
+      });
+      
+      // Закрытие меню при клике на оверлей
+      menuOverlay.addEventListener('click', function() {
+        menuToggle.classList.remove('active');
+        navLinks.classList.remove('active');
+        menuOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+      
+      // Закрытие меню при клике на ссылку
+      const navItems = navLinks.querySelectorAll('a');
+      navItems.forEach(item => {
+        item.addEventListener('click', function() {
+          menuToggle.classList.remove('active');
+          navLinks.classList.remove('active');
+          menuOverlay.classList.remove('active');
+          document.body.style.overflow = '';
+        });
+      });
+      
+      // Закрытие меню при изменении размера окна на десктоп
+      window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+          menuToggle.classList.remove('active');
+          navLinks.classList.remove('active');
+          menuOverlay.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+      
+      // Закрытие меню по клавише Escape
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && navLinks.classList.contains('active')) {
+          menuToggle.classList.remove('active');
+          navLinks.classList.remove('active');
+          menuOverlay.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    }
 
     // Функция для полного уничтожения и пересоздания карты
     function recreateMap() {
@@ -1528,6 +1746,14 @@
       
       // Принудительно вызываем событие resize
       window.dispatchEvent(new Event('resize'));
+      
+      // Закрываем мобильное меню при смене ориентации
+      if (menuToggle && navLinks && navLinks.classList.contains('active')) {
+        menuToggle.classList.remove('active');
+        navLinks.classList.remove('active');
+        menuOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
       
       // Ждем завершения анимации поворота и обновления DOM
       setTimeout(() => {
