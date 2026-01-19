@@ -1294,7 +1294,7 @@
       display: block;
     }
 
-    /* Модальное окно успешного бронирования */
+    /* Модальное окно успешного бронирования - УЛУЧШЕННЫЙ ВАРИАНТ */
     .booking-success-modal {
       display: none;
       position: fixed;
@@ -1302,54 +1302,94 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0,0,0,0.7);
+      background-color: rgba(0, 0, 0, 0.85);
       z-index: 5000;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.4s ease;
       align-items: center;
       justify-content: center;
       padding: 20px;
+      backdrop-filter: blur(8px);
     }
     .booking-success-modal.open {
       display: flex;
       opacity: 1;
     }
     .booking-success-content {
-      background-color: #e8f5e9;
-      padding: 40px;
-      border-radius: 12px;
+      background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+      padding: 50px 40px;
+      border-radius: 16px;
       text-align: center;
-      max-width: 500px;
+      max-width: 520px;
       width: 100%;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      animation: successFadeIn 0.4s ease;
-      border: 2px solid #4CAF50;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+      animation: successModalAppear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 3px solid #4CAF50;
+      position: relative;
+      overflow: hidden;
     }
-    @keyframes successFadeIn {
-      from { opacity: 0; transform: translateY(-20px) scale(0.95); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+    .booking-success-content::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #4CAF50, #8BC34A, #4CAF50);
+    }
+    @keyframes successModalAppear {
+      0% { 
+        opacity: 0; 
+        transform: translateY(-30px) scale(0.9); 
+      }
+      100% { 
+        opacity: 1; 
+        transform: translateY(0) scale(1); 
+      }
+    }
+    .success-icon {
+      font-size: 4rem;
+      color: #4CAF50;
+      margin-bottom: 25px;
+      animation: iconPulse 1.5s infinite alternate;
+    }
+    @keyframes iconPulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.1); }
+    }
+    .booking-success-content h3 {
+      font-size: 1.8rem;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      font-weight: 700;
     }
     .booking-success-content p {
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       color: #2c3e50;
-      margin-bottom: 25px;
+      margin-bottom: 35px;
       line-height: 1.6;
+      padding: 0 10px;
     }
     .booking-success-content button {
       background-color: #4CAF50;
       color: white;
       border: none;
-      padding: 12px 30px;
-      border-radius: 6px;
+      padding: 15px 40px;
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 1rem;
-      font-weight: 500;
+      font-size: 1.1rem;
+      font-weight: 600;
       transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+      letter-spacing: 0.5px;
     }
     .booking-success-content button:hover {
       background-color: #45a049;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(76, 175, 80, 0.4);
+    }
+    .booking-success-content button:active {
+      transform: translateY(-1px);
     }
 
     /* Футер */
@@ -1499,11 +1539,17 @@
       
       /* Адаптивность для модального окна успеха */
       .booking-success-content {
-        padding: 25px;
+        padding: 35px 25px;
         margin: 10px;
+      }
+      .booking-success-content h3 {
+        font-size: 1.6rem;
       }
       .booking-success-content p {
         font-size: 1.1rem;
+      }
+      .success-icon {
+        font-size: 3.5rem;
       }
     }
     @media (max-width: 480px) {
@@ -1524,6 +1570,19 @@
       }
       .logo-mobile {
         font-size: 1.3rem;
+      }
+      .booking-success-content {
+        padding: 30px 20px;
+      }
+      .booking-success-content h3 {
+        font-size: 1.4rem;
+      }
+      .booking-success-content p {
+        font-size: 1rem;
+        padding: 0;
+      }
+      .success-icon {
+        font-size: 3rem;
       }
     }
     
@@ -1915,11 +1974,13 @@
     </div>
   </div>
 
-  <!-- Модальное окно успешного бронирования -->
+  <!-- УЛУЧШЕННОЕ Модальное окно успешного бронирования -->
   <div class="booking-success-modal" id="bookingSuccessModal">
     <div class="booking-success-content">
+      <div class="success-icon">✅</div>
+      <h3>Запрос успешно отправлен!</h3>
       <p>Благодарим Вас за бронирование. Мы свяжемся с Вами в течение 90 мин. C уважением, Большая Терраса</p>
-      <button id="successModalClose">OK</button>
+      <button id="successModalClose">Понятно</button>
     </div>
   </div>
 
@@ -2417,7 +2478,7 @@
           
           // Если есть данные формы, отправляем их
           if (bookingFormData) {
-            sendEmail(bookingFormData);
+            sendFormspreeEmail(bookingFormData);
           }
         });
       }
@@ -3050,17 +3111,21 @@
       }
       
       // Функция отправки email через Formspree
-      function sendEmail(formData) {
+      function sendFormspreeEmail(formData) {
         // Блокируем кнопку отправки
         const submitBtn = document.getElementById('submitBtn');
         submitBtn.disabled = true;
         submitBtn.textContent = 'Отправка...';
         
+        // Показываем сообщение о процессе отправки
+        showMessage('Отправка запроса на бронирование...', 'success');
+        
         // Используем Formspree для отправки email
         fetch('https://formspree.io/f/mjgblolk', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
           },
           body: JSON.stringify({
             name: formData.name,
@@ -3070,23 +3135,35 @@
             checkout: formData.checkout,
             guests: formData.guests,
             message: formData.message,
-            _subject: 'Новая заявка на бронирование',
-            _replyto: formData.email
+            _subject: 'Новая заявка на бронирование апартамента "Большая Терраса"',
+            _replyto: formData.email,
+            _format: 'plain'
           })
         })
         .then(response => {
           if (response.ok) {
+            // Скрываем предыдущее сообщение
+            formMessage.classList.remove('visible');
+            
             // Показываем модальное окно успеха
-            openSuccessModal();
+            setTimeout(() => {
+              openSuccessModal();
+            }, 300);
+            
             // Сбрасываем форму
             bookingForm.reset();
+            
+            // Обновляем минимальные даты
+            const today = new Date().toISOString().split('T')[0];
+            checkinInput.setAttribute('min', today);
+            checkoutInput.setAttribute('min', today);
           } else {
             throw new Error('Ошибка отправки формы');
           }
         })
         .catch(error => {
           console.error('Ошибка:', error);
-          showMessage('Произошла ошибка при отправке. Пожалуйста, попробуйте еще раз или свяжитесь с нами по телефону.', 'error');
+          showMessage('Произошла ошибка при отправке. Пожалуйста, попробуйте еще раз или свяжитесь с нами по телефону +7(978)143-94-27.', 'error');
         })
         .finally(() => {
           // Разблокируем кнопку отправки
