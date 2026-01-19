@@ -323,7 +323,6 @@
       .nav-links.active li:nth-child(5) { transition-delay: 0.3s; }
       .nav-links.active li:nth-child(6) { transition-delay: 0.35s; }
       .nav-links.active li:nth-child(7) { transition-delay: 0.4s; }
-      .nav-links.active li:nth-child(8) { transition-delay: 0.45s; }
       
       /* Затемнение фона при открытом меню */
       .menu-overlay {
@@ -1103,11 +1102,7 @@
       border-radius: 4px;
       font-size: 1rem;
     }
-    /* Уменьшение высоты textarea в три раза */
-    textarea.form-control { 
-      min-height: 50px; /* было 150px */
-      resize: vertical; 
-    }
+    textarea.form-control { min-height: 150px; resize: vertical; }
     .date-inputs {
       display: flex;
       gap: 15px;
@@ -1154,7 +1149,7 @@
       width: 100%;
       height: 100%;
       background-color: rgba(0,0,0,0.7);
-      z-index: 6000;
+      z-index: 5000;
       opacity: 0;
       transition: opacity 0.3s ease;
       align-items: center;
@@ -1201,143 +1196,6 @@
       background-color: #45a049;
       transform: translateY(-2px);
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-
-    /* Модальное окно правил проживания */
-    .rules-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(255, 255, 255, 0.95);
-      z-index: 5000;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      align-items: center;
-      justify-content: center;
-      padding: 15px;
-      backdrop-filter: blur(3px);
-    }
-    .rules-modal.open {
-      display: flex;
-      opacity: 1;
-    }
-    .rules-modal-content {
-      position: relative;
-      background: #ffffff;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-      animation: modalFadeIn 0.4s ease;
-      max-width: 850px;
-      width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      border: 1px solid #e0e0e0;
-    }
-    .rules-modal-close {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      color: #555;
-      font-size: 1.8rem;
-      cursor: pointer;
-      background: rgba(255,255,255,0.95);
-      border: 1px solid #e0e0e0;
-      z-index: 5001;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s;
-      font-weight: 300;
-    }
-    .rules-modal-close:hover {
-      background: #ffffff;
-      transform: rotate(90deg);
-      color: #c19a6b;
-      border-color: #c19a6b;
-    }
-    .rules-modal-header {
-      padding: 20px 25px 15px;
-      text-align: center;
-      border-bottom: 1px solid #eee;
-    }
-    .rules-modal-header h3 {
-      font-size: 1.6rem;
-      color: #2c3e50;
-      margin-bottom: 8px;
-      font-weight: 600;
-      line-height: 1.3;
-    }
-    .rules-modal-body {
-      padding: 18px 25px;
-      font-size: 0.95rem;
-      line-height: 1.6;
-      color: #555;
-    }
-    .rules-modal-body ul {
-      list-style-type: none;
-      padding-left: 0;
-    }
-    .rules-modal-body li {
-      margin-bottom: 10px;
-      padding-left: 25px;
-      position: relative;
-    }
-    .rules-modal-body li:before {
-      content: "•";
-      color: #c19a6b;
-      font-size: 1.2rem;
-      position: absolute;
-      left: 5px;
-      top: -1px;
-    }
-    .rules-modal-footer {
-      padding: 18px 25px;
-      background: #f8f9fa;
-      border-top: 1px solid #eee;
-    }
-    .rules-checkbox {
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .rules-checkbox input {
-      margin-right: 10px;
-      width: 18px;
-      height: 18px;
-    }
-    .rules-checkbox label {
-      font-size: 0.95rem;
-      color: #2c3e50;
-    }
-    .rules-submit-btn {
-      background-color: #c19a6b;
-      color: white;
-      border: none;
-      padding: 12px 30px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 1rem;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      width: 100%;
-    }
-    .rules-submit-btn:hover {
-      background-color: #b08c5f;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    .rules-submit-btn:disabled {
-      background-color: #cccccc;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
     }
 
     /* Футер */
@@ -1405,7 +1263,7 @@
         width: 70px;
         height: 70px;
       }
-      .price-modal-content, .rules-modal-content {
+      .price-modal-content {
         max-width: 90%;
       }
     }
@@ -1436,13 +1294,13 @@
         top: 5px;
         right: 5px;
       }
-      .price-modal-header, .rules-modal-header {
+      .price-modal-header {
         padding: 15px 15px 10px;
       }
-      .price-modal-body, .rules-modal-body {
+      .price-modal-body {
         padding: 12px 15px;
       }
-      .price-modal-footer, .rules-modal-footer {
+      .price-modal-footer {
         padding: 12px 15px;
       }
       
@@ -1481,7 +1339,7 @@
         font-size: 1rem;
       }
       
-      /* Адаптивность для модальных окон */
+      /* Адаптивность для модального окна успеха */
       .booking-success-content {
         padding: 25px;
         margin: 10px;
@@ -1523,13 +1381,13 @@
       .hero p {
         font-size: 1.1rem;
       }
-      .price-modal, .rules-modal {
+      .price-modal {
         padding: 10px;
       }
-      .price-modal-content, .rules-modal-content {
+      .price-modal-content {
         max-width: 95%;
       }
-      .price-modal-header h3, .rules-modal-header h3 {
+      .price-modal-header h3 {
         font-size: 1.4rem;
         line-height: 1.2;
       }
@@ -1547,10 +1405,10 @@
       .hero p {
         font-size: 1.2rem;
       }
-      .price-modal, .rules-modal {
+      .price-modal {
         padding: 5px;
       }
-      .price-modal-content, .rules-modal-content {
+      .price-modal-content {
         max-height: 95vh;
       }
     }
@@ -1560,33 +1418,6 @@
       .hero {
         height: -webkit-fill-available;
       }
-    }
-
-    /* Стили для выравнивания заголовков в секции контактов */
-    .contact-section-headers {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      margin-bottom: 30px;
-      flex-wrap: wrap;
-    }
-    .contact-form h2, .contact-info h2 {
-      flex: 1;
-      text-align: center;
-      margin-bottom: 0;
-    }
-    @media (max-width: 768px) {
-      .contact-section-headers {
-        flex-direction: column;
-        gap: 30px;
-      }
-    }
-
-    /* Стиль для якоря с отступом */
-    .scroll-anchor {
-      scroll-margin-top: 120px;
-      display: block;
     }
   </style>
 </head>
@@ -1618,8 +1449,7 @@
           <li><a href="#features">Наши преимущества</a></li>
           <li><a href="#gallery">Галерея</a></li>
           <li><a href="#" id="priceLink">Стоимость</a></li>
-          <li><a href="#" id="rulesLink">Правила проживания</a></li>
-          <li><a href="#submitBtn" class="book-now">Забронировать</a></li>
+          <li><a href="#booking-form" class="book-now">Забронировать</a></li>
           <li><a href="#contact-info">Контакты</a></li>
         </ul>
         <div class="menu-overlay" id="menuOverlay"></div>
@@ -1633,7 +1463,7 @@
       <div class="hero-content">
         <h1>Апартамент в самом центре Севастополя</h1>
         <p>Апартамент "Большая Терраса" в центре города с панорамным видом на Севастопольскую бухту</p>
-        <a href="#submitBtn" class="btn">Забронировать</a>
+        <a href="#booking-form" class="btn">Забронировать</a>
       </div>
     </div>
   </section>
@@ -1843,38 +1673,6 @@
     </div>
   </div>
 
-  <!-- Модальное окно правил проживания -->
-  <div class="rules-modal" id="rulesModal">
-    <div class="rules-modal-content">
-      <button class="rules-modal-close" id="rulesModalClose">&times;</button>
-      <div class="rules-modal-header">
-        <h3>Правила проживания</h3>
-      </div>
-      <div class="rules-modal-body">
-        <p><strong>✅ Правила проживания в апартаменте "Большая Терраса":</strong></p>
-        <ul>
-          <li>Заезд: 14:00 | Выезд: 11:00</li>
-          <li>Гости: до 4 человек (будем рады Вам с детьми).</li>
-          <li>Животные: Нельзя | Вечеринки: Не разрешены</li>
-          <li>Курить разрешается исключительно на террасе (чувствительная противопожарная система внутри помещения)</li>
-          <li>Финансовое обеспечение бронирования - 20% от стоимости проживания в день бронирования</li>
-          <li>В случае не заселения обеспечительный взнос не возвращается.</li>
-          <li>Залог: 10 000 ₽ при заселении</li>
-          <li>Минимальный срок: От 2 суток.</li>
-          <li>Помесячная аренда не предусмотрена.</li>
-        </ul>
-        <p>-------------------------------------</p>
-        <ul>
-          <li>При заселении подписывается договор.</li>
-          <li>Предоставляется чек об оплате.</li>
-        </ul>
-      </div>
-      <div class="rules-modal-footer" id="rulesModalFooter">
-        <!-- Содержимое будет добавлено динамически -->
-      </div>
-    </div>
-  </div>
-
   <!-- Модальное окно для видео -->
   <div class="video-modal" id="videoModal">
     <div class="video-modal-content" id="videoModalContent">
@@ -1918,13 +1716,10 @@
   <!-- Контакты -->
   <section id="contact" class="contact">
     <div class="container">
-      <div class="contact-section-headers">
-        <h2>Форма бронирования</h2>
-        <h2>Контакты</h2>
-      </div>
       <div class="contact-wrapper">
         <!-- Раздел Форма бронирования -->
-        <div class="contact-form">
+        <div class="contact-form" id="booking-form">
+          <h2>Форма бронирования</h2>
           <div id="formMessage" class="form-message"></div>
           <form id="bookingForm">
             <div class="form-group">
@@ -1964,13 +1759,14 @@
               <label for="message">Сообщение</label>
               <textarea id="message" class="form-control" placeholder="Дополнительные пожелания или вопросы"></textarea>
             </div>
-            <a class="scroll-anchor" id="submitBtn"></a>
-            <button type="submit" class="btn" id="submitButton">Отправить запрос</button>
+            <button type="submit" class="btn" id="submitBtn">Отправить запрос</button>
           </form>
         </div>
         
         <!-- Раздел Контакты -->
         <div class="contact-info" id="contact-info">
+          <h2>Контакты</h2>
+          <h3>Свяжитесь с нами</h3>
           <div class="info-item">
             <div class="info-icon">📍</div>
             <div>Севастополь, набережная Адмирала Перелешина, 3</div>
@@ -2012,8 +1808,7 @@
             <li><a href="#features">Наши преимущества</a></li>
             <li><a href="#gallery">Галерея</a></li>
             <li><a href="#" id="priceLinkFooter">Стоимость</a></li>
-            <li><a href="#" id="rulesLinkFooter">Правила проживания</a></li>
-            <li><a href="#submitBtn" class="book-now-footer">Забронировать</a></li>
+            <li><a href="#booking-form" class="book-now-footer">Забронировать</a></li>
             <li><a href="#contact-info">Контакты</a></li>
           </ul>
         </div>
@@ -2469,11 +2264,11 @@
           // Получаем даты для выбранного месяца
           const monthDates = getMonthDates(month);
           
-          // Прокрутка к кнопке "Отправить запрос"
+          // Прокрутка к форме бронирования
           setTimeout(function() {
-            const submitBtn = document.getElementById('submitBtn');
-            if (submitBtn) {
-              submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const bookingFormSection = document.getElementById('booking-form');
+            if (bookingFormSection) {
+              bookingFormSection.scrollIntoView({ behavior: 'smooth' });
               
               // Устанавливаем даты в форме бронирования
               if (monthDates.first && monthDates.last) {
@@ -2786,110 +2581,14 @@
         }
       }
 
-      // Обработка формы бронирования и модальных окон
+      // Обработка формы бронирования и модального окна успеха
       const bookingForm = document.getElementById('bookingForm');
       const bookingSuccessModal = document.getElementById('bookingSuccessModal');
       const successModalClose = document.getElementById('successModalClose');
       const formMessage = document.getElementById('formMessage');
-      const submitButton = document.getElementById('submitButton');
+      const submitBtn = document.getElementById('submitBtn');
       const checkinInput = document.getElementById('checkin');
       const checkoutInput = document.getElementById('checkout');
-      
-      // Управление модальным окном правил проживания
-      const rulesModal = document.getElementById('rulesModal');
-      const rulesModalClose = document.getElementById('rulesModalClose');
-      const rulesLink = document.getElementById('rulesLink');
-      const rulesLinkFooter = document.getElementById('rulesLinkFooter');
-      const rulesModalFooter = document.getElementById('rulesModalFooter');
-      
-      // Переменная для отслеживания контекста открытия модального окна правил
-      let isRulesModalFromForm = false;
-      
-      // Функция открытия модального окна правил
-      function openRulesModal(fromForm = false) {
-        isRulesModalFromForm = fromForm;
-        
-        // Очищаем футер модального окна
-        rulesModalFooter.innerHTML = '';
-        
-        if (fromForm) {
-          // Для открытия из формы: добавляем чекбокс и кнопку отправки
-          const checkboxHtml = `
-            <div class="rules-checkbox">
-              <input type="checkbox" id="agreeRules">
-              <label for="agreeRules">Я согласен с условиями бронирования и проживания</label>
-            </div>
-            <button class="rules-submit-btn" id="rulesSubmitBtn" disabled>Отправить</button>
-          `;
-          rulesModalFooter.innerHTML = checkboxHtml;
-          
-          // Настраиваем обработчики
-          setTimeout(() => {
-            const agreeCheckbox = document.getElementById('agreeRules');
-            const rulesSubmitBtn = document.getElementById('rulesSubmitBtn');
-            
-            if (agreeCheckbox && rulesSubmitBtn) {
-              agreeCheckbox.addEventListener('change', function() {
-                rulesSubmitBtn.disabled = !this.checked;
-              });
-              
-              rulesSubmitBtn.addEventListener('click', function() {
-                if (agreeCheckbox.checked) {
-                  // Закрываем модальное окно правил
-                  closeRulesModal();
-                  // Отправляем форму
-                  submitBookingForm();
-                }
-              });
-            }
-          }, 100);
-        } else {
-          // Для открытия из меню: добавляем только кнопку закрытия
-          const closeBtn = document.createElement('button');
-          closeBtn.className = 'rules-submit-btn';
-          closeBtn.textContent = 'Закрыть';
-          closeBtn.addEventListener('click', closeRulesModal);
-          rulesModalFooter.appendChild(closeBtn);
-        }
-        
-        rulesModal.classList.add('open');
-        document.body.style.overflow = 'hidden';
-      }
-      
-      // Функция закрытия модального окна правил
-      function closeRulesModal() {
-        rulesModal.classList.remove('open');
-        document.body.style.overflow = '';
-        isRulesModalFromForm = false;
-      }
-      
-      // Обработчики для модального окна правил
-      rulesModalClose.addEventListener('click', closeRulesModal);
-      rulesModal.addEventListener('click', function(e) {
-        if (e.target === rulesModal) {
-          closeRulesModal();
-        }
-      });
-      
-      // Обработчики для открытия модального окна правил из меню
-      rulesLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        openRulesModal(false);
-      });
-      
-      if (rulesLinkFooter) {
-        rulesLinkFooter.addEventListener('click', function(e) {
-          e.preventDefault();
-          openRulesModal(false);
-        });
-      }
-      
-      // Закрытие по клавише Escape
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && rulesModal.classList.contains('open')) {
-          closeRulesModal();
-        }
-      });
       
       // Управление модальным окном успешного бронирования
       function openSuccessModal() {
@@ -2958,8 +2657,16 @@
           }
         });
         
-        // Функция для отправки формы после подтверждения правил
-        function submitBookingForm() {
+        // Отправка формы
+        bookingForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          // Проверка минимального срока проживания
+          if (!validateStayDuration()) {
+            showMessage('Минимальный срок заселения - двое суток. Пожалуйста, выберите более длительный период проживания.', 'error');
+            return;
+          }
+          
           // Получаем данные формы
           const formData = {
             name: document.getElementById('name').value,
@@ -2984,25 +2691,11 @@
           }
           
           // Блокируем кнопку отправки
-          submitButton.disabled = true;
-          submitButton.textContent = 'Отправка...';
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Отправка...';
           
           // Отправляем данные
           sendEmail(formData);
-        }
-        
-        // Отправка формы
-        bookingForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          
-          // Проверка минимального срока проживания
-          if (!validateStayDuration()) {
-            showMessage('Минимальный срок заселения - двое суток. Пожалуйста, выберите более длительный период проживания.', 'error');
-            return;
-          }
-          
-          // Вместо отправки формы открываем модальное окно с правилами
-          openRulesModal(true);
         });
       }
       
@@ -3055,8 +2748,8 @@
         })
         .finally(() => {
           // Разблокируем кнопку отправки
-          submitButton.disabled = false;
-          submitButton.textContent = 'Отправить запрос';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Отправить запрос';
         });
       }
     });
