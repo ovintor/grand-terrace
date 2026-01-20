@@ -495,32 +495,6 @@
       margin-left: 5px;
     }
 
-    /* Правила проживания (бывшие Особенности) */
-    .rules { background-color: #fff; }
-    .rules-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 30px;
-      width: 100%;
-    }
-    .rule-item {
-      text-align: center;
-      padding: 30px;
-      border-radius: 8px;
-      transition: transform 0.3s, box-shadow 0.3s;
-      background-color: #f8f9fa;
-      border: 1px solid #eee;
-    }
-    .rule-item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    }
-    .rule-icon {
-      font-size: 2.5rem;
-      color: #c19a6b;
-      margin-bottom: 20px;
-    }
-
     /* Обновленная Галерея с 12 изображениями */
     .gallery-grid {
       display: grid;
@@ -564,6 +538,40 @@
     .gallery-item:hover .gallery-caption {
       transform: translateY(0);
       opacity: 1;
+    }
+
+    /* Правила проживания (после Галереи) */
+    .rules { background-color: #fff; }
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      width: 100%;
+    }
+    .rule-item {
+      text-align: center;
+      padding: 30px;
+      border-radius: 8px;
+      transition: transform 0.3s, box-shadow 0.3s;
+      background-color: #f8f9fa;
+      border: 1px solid #eee;
+    }
+    .rule-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .rule-icon {
+      font-size: 2.5rem;
+      color: #c19a6b;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 60px;
+    }
+    .rule-icon i {
+      font-style: normal;
+      font-size: 2.5rem;
     }
 
     /* Lightbox стили */
@@ -1674,7 +1682,7 @@
     </div>
   </section>
 
-  <!-- Галерея с 12 изображениями -->
+  <!-- Галерея с 12 изображениями (перемещена перед Правилами) -->
   <section id="gallery">
     <div class="container">
       <div class="section-title">
@@ -1734,7 +1742,7 @@
     </div>
   </section>
 
-  <!-- Правила проживания (бывшие Особенности) -->
+  <!-- Правила проживания (после Галереи) -->
   <section id="rules" class="rules">
     <div class="container">
       <div class="section-title">
@@ -1742,22 +1750,30 @@
       </div>
       <div class="rules-grid">
         <div class="rule-item">
-          <div class="rule-icon">🕒</div>
+          <div class="rule-icon">
+            <i>🕒</i>
+          </div>
           <h3>Заезд и выезд</h3>
           <p>Заезд: 14:00 | Выезд: 11:00</p>
         </div>
         <div class="rule-item">
-          <div class="rule-icon">👨‍👩‍👧‍👦</div>
+          <div class="rule-icon">
+            <i>👨‍👩‍👧‍👦</i>
+          </div>
           <h3>Количество гостей</h3>
           <p>До 4 человек (дети приветствуются)</p>
         </div>
         <div class="rule-item">
-          <div class="rule-icon">🚭</div>
+          <div class="rule-icon">
+            <i>🚭</i>
+          </div>
           <h3>Ограничения</h3>
           <p>Животные: нельзя | Вечеринки: не разрешены</p>
         </div>
         <div class="rule-item">
-          <div class="rule-icon">₽</div>
+          <div class="rule-icon">
+            <i>₽</i>
+          </div>
           <h3>Финансовые условия</h3>
           <p>Бронирование 20% | Залог: 10 000 ₽</p>
         </div>
@@ -2061,9 +2077,13 @@
   <script src="https://api-maps.yandex.ru/2.1/?apikey=ВАШ_API_КЛЮЧ&lang=ru_RU" type="text/javascript"></script>
   
   <script>
-    // Глобальная переменная для управления картой
+    // Глобальные переменные для управления картой
     let myMap = null;
-    let resizeTimer;
+    let orientationChangeInProgress = false;
+    let currentOrientation = window.orientation || window.screen.orientation.angle;
+    
+    // Переменные для хранения данных формы перед отправкой
+    let pendingFormData = null;
 
     // Управление мобильным меню
     const menuToggle = document.getElementById('menuToggle');
@@ -2119,71 +2139,223 @@
       });
     }
 
-    // Функция для обновления размера карты
-    function updateMapSize() {
-      if (myMap) {
-        try {
-          myMap.container.fitToViewport();
-        } catch (error) {
-          console.error('Ошибка при обновлении размера карты:', error);
-        }
+    // Функция для полного уничтожения и пересоздания карты
+    function recreateMap() {
+      if (!myMap) return;
+      
+      try {
+        // Сохраняем текущее состояние карты
+        const center = myMap.getCenter();
+        const zoom = myMap.getZoom();
+        
+        // Уничтожаем старую карту
+        myMap.destroy();
+        myMap = null;
+        
+        // Очищаем контейнер карты
+        const mapContainer = document.getElementById('map');
+        mapContainer.innerHTML = '';
+        
+        // Даем время на уничтожение
+        setTimeout(() => {
+          initMap(center, zoom);
+        }, 300);
+      } catch (error) {
+        console.error('Ошибка при пересоздании карты:', error);
+        // Если произошла ошибка, пытаемся инициализировать заново
+        setTimeout(initMap, 500);
       }
     }
 
-    // Debounce функция для обработки resize
-    function debounce(func, wait) {
-      return function() {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(func, wait);
-      };
+    // Функция для принудительного обновления формы
+    function refreshFormLayout() {
+      const form = document.getElementById('bookingForm');
+      if (!form) return;
+      
+      // Принудительно вызываем перерисовку формы
+      form.style.display = 'none';
+      // Принудительный reflow
+      void form.offsetHeight;
+      form.style.display = 'block';
+      
+      // Обновляем все поля формы
+      const inputs = form.querySelectorAll('input, textarea, select');
+      inputs.forEach(input => {
+        input.style.width = '99%';
+        setTimeout(() => {
+          input.style.width = '100%';
+        }, 10);
+      });
     }
 
-    // Обработчик изменения размера окна с debouncing
-    window.addEventListener('resize', debounce(function() {
-      updateMapSize();
+    // Функция для обновления размера карты
+    function updateMapSize() {
+      if (!myMap) return;
       
-      // Закрытие мобильного меню при ресайзе
+      try {
+        myMap.container.fitToViewport();
+      } catch (error) {
+        console.error('Ошибка при обновлении карты:', error);
+      }
+    }
+
+    // Функция для обработки изменения ориентации
+    function handleOrientationChange() {
+      if (orientationChangeInProgress) return;
+      
+      orientationChangeInProgress = true;
+      const newOrientation = window.orientation || window.screen.orientation.angle;
+      
+      // Если ориентация не изменилась, выходим
+      if (newOrientation === currentOrientation) {
+        orientationChangeInProgress = false;
+        return;
+      }
+      
+      currentOrientation = newOrientation;
+      
+      // Сбрасываем viewport
+      const viewport = document.querySelector('meta[name="viewport"]');
+      if (viewport) {
+        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+      }
+      
+      // Принудительно вызываем событие resize
+      window.dispatchEvent(new Event('resize'));
+      
+      // Закрываем мобильное меню при смене ориентации
       if (menuToggle && navLinks && navLinks.classList.contains('active')) {
         menuToggle.classList.remove('active');
         navLinks.classList.remove('active');
-        if (menuOverlay) menuOverlay.classList.remove('active');
+        menuOverlay.classList.remove('active');
         document.body.style.overflow = '';
       }
-    }, 250));
+      
+      // Ждем завершения анимации поворота и обновления DOM
+      setTimeout(() => {
+        // Обновляем форму
+        refreshFormLayout();
+        
+        if (myMap) {
+          // Сначала пробуем стандартные методы
+          try {
+            myMap.container.fitToViewport();
+          } catch (e) {
+            console.log('Standard resize failed, will recreate map');
+          }
+          
+          // Даем дополнительное время и пробуем еще раз
+          setTimeout(() => {
+            if (myMap) {
+              try {
+                myMap.container.fitToViewport();
+                
+                // Если через 800 мс карта все еще не в порядке - пересоздаем
+                setTimeout(() => {
+                  if (myMap && orientationChangeInProgress) {
+                    recreateMap();
+                  }
+                }, 800);
+              } catch (e) {
+                recreateMap();
+              }
+            }
+          }, 400);
+        }
+        
+        orientationChangeInProgress = false;
+      }, 500);
+    }
 
-    // Инициализация карты
-    function initMap() {
+    // Обработчик изменения ориентации
+    window.addEventListener('orientationchange', function() {
+      setTimeout(handleOrientationChange, 100);
+    });
+
+    // Обработчик изменения размера окна с улучшенной логикой
+    window.addEventListener('resize', function() {
+      clearTimeout(window.resizeTimer);
+      window.resizeTimer = setTimeout(function() {
+        if (myMap && !orientationChangeInProgress) {
+          try {
+            myMap.container.fitToViewport();
+          } catch (error) {
+            console.error('Ошибка при resize карты:', error);
+          }
+        }
+        
+        // Также обновляем форму при resize
+        refreshFormLayout();
+        
+        // Обновление заголовка в модальном окне цен для корректного отображения
+        const priceModalHeader = document.querySelector('.price-modal-header h3');
+        if (priceModalHeader && priceModalHeader.textContent.includes('Стоимость аренды')) {
+          // Принудительный рефлоу для корректного расчета размеров
+          priceModalHeader.style.display = 'inline-block';
+          setTimeout(() => {
+            priceModalHeader.style.display = '';
+          }, 10);
+        }
+      }, 250);
+    });
+
+    // Функция инициализации карты с возможностью указания центра и зума
+    function initMap(center = null, zoom = null) {
+      // Проверяем, загрузился ли API Яндекс.Карт
       if (typeof ymaps === 'undefined') {
         console.error('Yandex Maps API не загрузился');
         document.getElementById('map').innerHTML = '<div class="map-placeholder">Карта временно недоступна</div>';
         return;
       }
       
+      // Если карта уже существует, выходим
+      if (myMap) return;
+      
       ymaps.ready(function() {
+        // Координаты апартамента
         const apartmentCoords = [44.616622961342124, 33.517859032692016];
         
         try {
+          // Создание карты
           myMap = new ymaps.Map('map', {
-            center: apartmentCoords,
-            zoom: 16,
+            center: center || apartmentCoords,
+            zoom: zoom || 16,
             controls: ['zoomControl', 'fullscreenControl']
           });
           
+          // Создание метки
           const myPlacemark = new ymaps.Placemark(apartmentCoords, {
             hintContent: 'Апартамент "Большая Терраса"',
             balloonContent: 'Апартамент "Большая Терраса"<br>набережная Адмирала Перелешина, 3<br>Севастополь'
           }, {
+            // Используем стандартную метку
             preset: 'islands#redIcon'
           });
           
+          // Добавление метки на карту
           myMap.geoObjects.add(myPlacemark);
+          
+          // Открываем балун при загрузке
           myPlacemark.balloon.open();
           
-          // Отключаем скролл зум на мобильных
+          // Адаптация карты для мобильных устройств
           myMap.behaviors.disable('scrollZoom');
           
-          // Первоначальная адаптация размера
-          setTimeout(updateMapSize, 100);
+          // Обработчик изменения размера карты
+          setTimeout(function() {
+            if (myMap) {
+              myMap.container.fitToViewport();
+            }
+          }, 200);
+          
+          // Дополнительные попытки обновления размера
+          setTimeout(() => {
+            if (myMap) myMap.container.fitToViewport();
+          }, 600);
+          
+          setTimeout(() => {
+            if (myMap) myMap.container.fitToViewport();
+          }, 1200);
           
         } catch (error) {
           console.error('Ошибка при создании карты:', error);
@@ -2217,16 +2389,22 @@
       
       // Открытие модального окна с видео
       function openVideoModal() {
+        // Получаем размеры изображения
         const imageSize = getImageSize();
+        
+        // Устанавливаем размеры модального окна равными размерам изображения
         videoModalContent.style.width = imageSize.width + 'px';
         videoModalContent.style.height = imageSize.height + 'px';
         
+        // Открываем модальное окно
         videoModal.classList.add('open');
         document.body.style.overflow = 'hidden';
         
+        // Автоматически запускаем видео при открытии
         setTimeout(() => {
           apartmentVideo.play().catch(error => {
             console.log('Автовоспроизведение не удалось:', error);
+            // В случае ошибки автовоспроизведения показываем сообщение
             apartmentVideo.controls = true;
           });
         }, 300);
@@ -2238,6 +2416,8 @@
         document.body.style.overflow = '';
         apartmentVideo.pause();
         apartmentVideo.currentTime = 0;
+        
+        // Сбрасываем размеры модального окна
         videoModalContent.style.width = '';
         videoModalContent.style.height = '';
       }
@@ -2256,6 +2436,7 @@
         }
       });
       
+      // Закрытие по клавише Escape
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && videoModal.classList.contains('open')) {
           closeVideoModal();
@@ -2340,23 +2521,28 @@
           lastSelectedMonth = month;
           closePriceModal();
           
+          // Получаем даты для выбранного месяца
           const monthDates = getMonthDates(month);
           
+          // Прокрутка к форме бронирования
           setTimeout(function() {
             const bookingFormSection = document.getElementById('booking-form');
             if (bookingFormSection) {
               bookingFormSection.scrollIntoView({ behavior: 'smooth' });
               
+              // Устанавливаем даты в форме бронирования
               if (monthDates.first && monthDates.last) {
                 const checkinInput = document.getElementById('checkin');
                 const checkoutInput = document.getElementById('checkout');
                 
                 checkinInput.value = monthDates.first;
                 
+                // Устанавливаем минимальную дату для выезда (не менее чем через 2 дня после заезда)
                 const checkinDate = new Date(monthDates.first);
                 const minCheckoutDate = new Date(checkinDate);
                 minCheckoutDate.setDate(minCheckoutDate.getDate() + 2);
                 
+                // Если последний день месяца меньше минимальной даты, используем минимальную дату
                 const lastDay = new Date(monthDates.last);
                 if (lastDay < minCheckoutDate) {
                   checkoutInput.value = minCheckoutDate.toISOString().split('T')[0];
@@ -2364,18 +2550,23 @@
                   checkoutInput.value = monthDates.last;
                 }
                 
+                // Устанавливаем минимальное значение для выезда
                 checkoutInput.min = minCheckoutDate.toISOString().split('T')[0];
               }
               
+              // Обновление текста в поле сообщения (замена, а не добавление)
               if (messageField) {
+                // Удаляем предыдущее упоминание месяца, если оно есть
                 const currentValue = messageField.value;
                 const monthRegex = /Интересует бронирование в [А-Яа-я]+\.?\s*/g;
                 const cleanedValue = currentValue.replace(monthRegex, '');
                 
+                // Добавляем новое упоминание месяца
                 const monthText = `Интересует бронирование в ${month}. `;
                 messageField.value = monthText + cleanedValue;
                 messageField.focus();
                 
+                // Прокручиваем к полю сообщения
                 setTimeout(() => {
                   messageField.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }, 100);
@@ -2514,6 +2705,7 @@
         const activeImage = document.querySelector('.lightbox-slide.active img');
         if (activeImage) {
           currentScale *= factor;
+          // Ограничиваем масштаб
           currentScale = Math.max(0.5, Math.min(currentScale, 5));
           activeImage.style.transform = `scale(${currentScale}) translate(${currentTranslate.x}px, ${currentTranslate.y}px)`;
         }
@@ -2544,6 +2736,7 @@
           startX = e.touches[0].clientX;
           isDragging = true;
         } else if (e.touches.length === 2) {
+          // Масштабирование двумя пальцами
           e.preventDefault();
           initialTouchesDistance = Math.hypot(
             e.touches[0].clientX - e.touches[1].clientX,
@@ -2557,10 +2750,12 @@
         if (e.touches.length === 1 && isDragging) {
           currentX = e.touches[0].clientX;
           
+          // Предотвращаем скролл страницы при горизонтальном свайпе
           if (Math.abs(currentX - startX) > 10) {
             e.preventDefault();
           }
         } else if (e.touches.length === 2) {
+          // Масштабирование двумя пальцами
           e.preventDefault();
           const currentDistance = Math.hypot(
             e.touches[0].clientX - e.touches[1].clientX,
@@ -2573,6 +2768,7 @@
             
             if (activeImage) {
               currentScale *= zoomFactor;
+              // Ограничиваем масштаб
               currentScale = Math.max(0.5, Math.min(currentScale, 5));
               activeImage.style.transform = `scale(${currentScale}) translate(${currentTranslate.x}px, ${currentTranslate.y}px)`;
               
@@ -2589,10 +2785,13 @@
           if (e.changedTouches.length === 1) {
             const diffX = currentX - startX;
             
-            if (Math.abs(diffX) > 50) {
+            // Определяем направление свайпа
+            if (Math.abs(diffX) > 50) { // Минимальная дистанция для свайпа
               if (diffX > 0) {
+                // Свайп вправо - предыдущее изображение
                 showSlide(currentImageIndex - 1);
               } else {
+                // Свайп влево - следующее изображение
                 showSlide(currentImageIndex + 1);
               }
             }
@@ -2616,28 +2815,34 @@
       
       // Открытие модального окна правил в режиме просмотра (из меню или кнопки)
       function openRulesModalView() {
+        // Скрываем чекбокс и кнопку отправки
         rulesCheckboxContainer.style.display = 'none';
         rulesSubmitBtn.style.display = 'none';
         rulesCloseBtn.style.display = 'block';
         rulesCloseBtn.textContent = 'Закрыть';
         
+        // Сбрасываем состояние чекбокса
         rulesAgreement.checked = false;
         rulesError.classList.remove('visible');
         
+        // Открываем модальное окно
         rulesModal.classList.add('open');
         document.body.style.overflow = 'hidden';
       }
       
       // Открытие модального окна правил в режиме подтверждения (из формы бронирования)
       function openRulesModalConfirm() {
+        // Показываем чекбокс и кнопку отправки
         rulesCheckboxContainer.style.display = 'block';
         rulesSubmitBtn.style.display = 'block';
         rulesCloseBtn.style.display = 'block';
         rulesCloseBtn.textContent = 'Отмена';
         
+        // Сбрасываем состояние чекбокса
         rulesAgreement.checked = false;
         rulesError.classList.remove('visible');
         
+        // Открываем модальное окно
         rulesModal.classList.add('open');
         document.body.style.overflow = 'hidden';
       }
@@ -2688,8 +2893,11 @@
         }
         
         rulesError.classList.remove('visible');
+        
+        // Закрываем модальное окно правил
         closeRulesModal();
         
+        // Отправляем форму
         if (pendingFormData) {
           sendEmail(pendingFormData);
         }
@@ -2753,6 +2961,7 @@
           
           checkoutInput.setAttribute('min', minCheckout.toISOString().split('T')[0]);
           
+          // Если дата выезда раньше минимальной даты, устанавливаем минимальную дату
           if (checkoutInput.value < minCheckout.toISOString().split('T')[0]) {
             checkoutInput.value = minCheckout.toISOString().split('T')[0];
           }
@@ -2774,11 +2983,13 @@
         bookingForm.addEventListener('submit', function(e) {
           e.preventDefault();
           
+          // Проверка минимального срока проживания
           if (!validateStayDuration()) {
             showMessage('Минимальный срок заселения - двое суток. Пожалуйста, выберите более длительный период проживания.', 'error');
             return;
           }
           
+          // Получаем данные формы
           pendingFormData = {
             name: document.getElementById('name').value,
             email: document.getElementById('email').value,
@@ -2789,19 +3000,23 @@
             message: document.getElementById('message').value
           };
           
+          // Валидация
           if (!pendingFormData.name || !pendingFormData.email || !pendingFormData.phone || !pendingFormData.checkin || !pendingFormData.checkout) {
             showMessage('Пожалуйста, заполните все обязательные поля', 'error');
             return;
           }
           
+          // Валидация количества гостей (максимум 4)
           if (parseInt(pendingFormData.guests) > 4) {
             showMessage('Максимальное количество гостей - 4 человека', 'error');
             return;
           }
           
+          // Блокируем кнопку отправки
           submitBtn.disabled = true;
           submitBtn.textContent = 'Отправка...';
           
+          // Открываем модальное окно правил в режиме подтверждения
           openRulesModalConfirm();
         });
       }
@@ -2812,6 +3027,7 @@
           formMessage.textContent = text;
           formMessage.className = `form-message ${type} visible`;
           
+          // Автоматическое скрытие через 5 секунд
           setTimeout(() => {
             formMessage.classList.remove('visible');
           }, 5000);
@@ -2820,6 +3036,7 @@
       
       // Функция отправки email через Formspree
       function sendEmail(formData) {
+        // Используем Formspree для отправки email
         fetch('https://formspree.io/f/mjgblolk', {
           method: 'POST',
           headers: {
@@ -2839,8 +3056,11 @@
         })
         .then(response => {
           if (response.ok) {
+            // Показываем модальное окно успеха
             openSuccessModal();
+            // Сбрасываем форму
             bookingForm.reset();
+            // Сбрасываем pendingFormData
             pendingFormData = null;
           } else {
             throw new Error('Ошибка отправки формы');
@@ -2851,6 +3071,7 @@
           showMessage('Произошла ошибка при отправке. Пожалуйста, попробуйте еще раз или свяжитесь с нами по телефону: +7 (978) 143-94-27', 'error');
         })
         .finally(() => {
+          // Разблокируем кнопку отправки
           submitBtn.disabled = false;
           submitBtn.textContent = 'Отправить запрос';
         });
