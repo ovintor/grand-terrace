@@ -495,32 +495,6 @@
       margin-left: 5px;
     }
 
-    /* Правила проживания (бывшие Особенности) */
-    .rules { background-color: #fff; }
-    .rules-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 30px;
-      width: 100%;
-    }
-    .rule-item {
-      text-align: center;
-      padding: 30px;
-      border-radius: 8px;
-      transition: transform 0.3s, box-shadow 0.3s;
-      background-color: #f8f9fa;
-      border: 1px solid #eee;
-    }
-    .rule-item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    }
-    .rule-icon {
-      font-size: 2.5rem;
-      color: #c19a6b;
-      margin-bottom: 20px;
-    }
-
     /* Обновленная Галерея с 12 изображениями */
     .gallery-grid {
       display: grid;
@@ -564,6 +538,40 @@
     .gallery-item:hover .gallery-caption {
       transform: translateY(0);
       opacity: 1;
+    }
+
+    /* Правила проживания (после Галереи) */
+    .rules { background-color: #fff; }
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      width: 100%;
+    }
+    .rule-item {
+      text-align: center;
+      padding: 30px;
+      border-radius: 8px;
+      transition: transform 0.3s, box-shadow 0.3s;
+      background-color: #f8f9fa;
+      border: 1px solid #eee;
+    }
+    .rule-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .rule-icon {
+      font-size: 2.5rem;
+      color: #c19a6b;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 60px;
+    }
+    .rule-icon i {
+      font-style: normal;
+      font-size: 2.5rem;
     }
 
     /* Lightbox стили */
@@ -1626,8 +1634,8 @@
         <ul class="nav-links" id="navLinks">
           <li><a href="#">Главная</a></li>
           <li><a href="#about">Об апартаменте</a></li>
-          <li><a href="#rules">Правила проживания</a></li>
           <li><a href="#gallery">Галерея</a></li>
+          <li><a href="#rules">Правила проживания</a></li>
           <li><a href="#" id="priceLink">Стоимость</a></li>
           <li><a href="#booking-form" class="book-now">Забронировать</a></li>
           <li><a href="#contact-info">Контакты</a></li>
@@ -1674,41 +1682,7 @@
     </div>
   </section>
 
-  <!-- Правила проживания (бывшие Особенности) -->
-  <section id="rules" class="rules">
-    <div class="container">
-      <div class="section-title">
-        <h2>Правила проживания</h2>
-      </div>
-      <div class="rules-grid">
-        <div class="rule-item">
-          <div class="rule-icon">🕒</div>
-          <h3>Заезд и выезд</h3>
-          <p>Заезд: 14:00 | Выезд: 11:00</p>
-        </div>
-        <div class="rule-item">
-          <div class="rule-icon">👥</div>
-          <h3>Количество гостей</h3>
-          <p>До 4 человек (дети приветствуются)</p>
-        </div>
-        <div class="rule-item">
-          <div class="rule-icon">🚭</div>
-          <h3>Ограничения</h3>
-          <p>Животные: нельзя | Вечеринки: не разрешены</p>
-        </div>
-        <div class="rule-item">
-          <div class="rule-icon">💵</div>
-          <h3>Финансовые условия</h3>
-          <p>Бронирование 20% | Залог: 10 000 ₽</p>
-        </div>
-      </div>
-      <div style="text-align: center; margin-top: 30px;">
-        <button class="btn" id="viewRulesBtn">Посмотреть все правила</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Галерея с 12 изображениями -->
+  <!-- Галерея с 12 изображениями (перемещена перед Правилами) -->
   <section id="gallery">
     <div class="container">
       <div class="section-title">
@@ -1764,6 +1738,48 @@
           <img src="images/gallery12.jpg" alt="Большая терраса">
           <div class="gallery-caption">Ночной вид на освещенную Севастопольскую бухту</div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Правила проживания (после Галереи) -->
+  <section id="rules" class="rules">
+    <div class="container">
+      <div class="section-title">
+        <h2>Правила проживания</h2>
+      </div>
+      <div class="rules-grid">
+        <div class="rule-item">
+          <div class="rule-icon">
+            <i>🕒</i>
+          </div>
+          <h3>Заезд и выезд</h3>
+          <p>Заезд: 14:00 | Выезд: 11:00</p>
+        </div>
+        <div class="rule-item">
+          <div class="rule-icon">
+            <i>👥</i>
+          </div>
+          <h3>Количество гостей</h3>
+          <p>До 4 человек (дети приветствуются)</p>
+        </div>
+        <div class="rule-item">
+          <div class="rule-icon">
+            <i>🚭</i>
+          </div>
+          <h3>Ограничения</h3>
+          <p>Животные: нельзя | Вечеринки: не разрешены</p>
+        </div>
+        <div class="rule-item">
+          <div class="rule-icon">
+            <i>₽</i>
+          </div>
+          <h3>Финансовые условия</h3>
+          <p>Бронирование 20% | Залог: 10 000 ₽</p>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 30px;">
+        <button class="btn" id="viewRulesBtn">Посмотреть все правила</button>
       </div>
     </div>
   </section>
@@ -2035,8 +2051,8 @@
           <ul class="footer-links">
             <li><a href="#">Главная</a></li>
             <li><a href="#about">О апартаменте</a></li>
-            <li><a href="#rules">Правила проживания</a></li>
             <li><a href="#gallery">Галерея</a></li>
+            <li><a href="#rules">Правила проживания</a></li>
             <li><a href="#" id="priceLinkFooter">Стоимость</a></li>
             <li><a href="#booking-form" class="book-now-footer">Забронировать</a></li>
             <li><a href="#contact-info">Контакты</a></li>
@@ -2063,8 +2079,7 @@
   <script>
     // Глобальные переменные для управления картой
     let myMap = null;
-    let orientationChangeInProgress = false;
-    let currentOrientation = window.orientation || window.screen.orientation.angle;
+    let mapResizeTimeout = null;
     
     // Переменные для хранения данных формы перед отправкой
     let pendingFormData = null;
@@ -2123,166 +2138,26 @@
       });
     }
 
-    // Функция для полного уничтожения и пересоздания карты
-    function recreateMap() {
+    // Упрощенная функция для обновления карты при изменении размера
+    function updateMapSize() {
       if (!myMap) return;
       
       try {
-        // Сохраняем текущее состояние карты
-        const center = myMap.getCenter();
-        const zoom = myMap.getZoom();
-        
-        // Уничтожаем старую карту
-        myMap.destroy();
-        myMap = null;
-        
-        // Очищаем контейнер карты
-        const mapContainer = document.getElementById('map');
-        mapContainer.innerHTML = '';
-        
-        // Даем время на уничтожение
-        setTimeout(() => {
-          initMap(center, zoom);
-        }, 300);
+        // Простое обновление размера карты
+        myMap.container.fitToViewport();
       } catch (error) {
-        console.error('Ошибка при пересоздании карты:', error);
-        // Если произошла ошибка, пытаемся инициализировать заново
-        setTimeout(initMap, 500);
+        console.error('Ошибка при обновлении карты:', error);
       }
     }
 
-    // Функция для принудительного обновления формы
-    function refreshFormLayout() {
-      const form = document.getElementById('bookingForm');
-      if (!form) return;
-      
-      // Принудительно вызываем перерисовку формы
-      form.style.display = 'none';
-      // Принудительный reflow
-      void form.offsetHeight;
-      form.style.display = 'block';
-      
-      // Обновляем все поля формы
-      const inputs = form.querySelectorAll('input, textarea, select');
-      inputs.forEach(input => {
-        input.style.width = '99%';
-        setTimeout(() => {
-          input.style.width = '100%';
-        }, 10);
-      });
-    }
-
-    // Функция для обработки изменения ориентации
-    function handleOrientationChange() {
-      if (orientationChangeInProgress) return;
-      
-      orientationChangeInProgress = true;
-      const newOrientation = window.orientation || window.screen.orientation.angle;
-      
-      // Если ориентация не изменилась, выходим
-      if (newOrientation === currentOrientation) {
-        orientationChangeInProgress = false;
-        return;
-      }
-      
-      currentOrientation = newOrientation;
-      
-      // Сбрасываем viewport
-      const viewport = document.querySelector('meta[name="viewport"]');
-      if (viewport) {
-        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
-      }
-      
-      // Принудительно вызываем событие resize
-      window.dispatchEvent(new Event('resize'));
-      
-      // Закрываем мобильное меню при смене ориентации
-      if (menuToggle && navLinks && navLinks.classList.contains('active')) {
-        menuToggle.classList.remove('active');
-        navLinks.classList.remove('active');
-        menuOverlay.classList.remove('active');
-        document.body.style.overflow = '';
-      }
-      
-      // Ждем завершения анимации поворота и обновления DOM
-      setTimeout(() => {
-        // Обновляем форму
-        refreshFormLayout();
-        
-        if (myMap) {
-          // Сначала пробуем стандартные методы
-          try {
-            myMap.container.fitToViewport();
-          } catch (e) {
-            console.log('Standard resize failed, will recreate map');
-          }
-          
-          // Даем дополнительное время и пробуем еще раз
-          setTimeout(() => {
-            if (myMap) {
-              try {
-                myMap.container.fitToViewport();
-                
-                // Если через 800 мс карта все еще не в порядке - пересоздаем
-                setTimeout(() => {
-                  if (myMap && orientationChangeInProgress) {
-                    recreateMap();
-                  }
-                }, 800);
-              } catch (e) {
-                recreateMap();
-              }
-            }
-          }, 400);
-        }
-        
-        orientationChangeInProgress = false;
-      }, 500);
-    }
-
-    // Обработчик изменения ориентации
-    window.addEventListener('orientationchange', function() {
-      setTimeout(handleOrientationChange, 100);
-    });
-
-    // Обработчик изменения размера окна с улучшенной логикой
-    window.addEventListener('resize', function() {
-      clearTimeout(window.resizeTimer);
-      window.resizeTimer = setTimeout(function() {
-        if (myMap && !orientationChangeInProgress) {
-          try {
-            myMap.container.fitToViewport();
-          } catch (error) {
-            console.error('Ошибка при resize карты:', error);
-          }
-        }
-        
-        // Также обновляем форму при resize
-        refreshFormLayout();
-        
-        // Обновление заголовка в модальном окне цен для корректного отображения
-        const priceModalHeader = document.querySelector('.price-modal-header h3');
-        if (priceModalHeader && priceModalHeader.textContent.includes('Стоимость аренды')) {
-          // Принудительный рефлоу для корректного расчета размеров
-          priceModalHeader.style.display = 'inline-block';
-          setTimeout(() => {
-            priceModalHeader.style.display = '';
-          }, 10);
-        }
-      }, 250);
-    });
-
-    // Функция инициализации карты с возможностью указания центра и зума
-    function initMap(center = null, zoom = null) {
+    // Функция инициализации карты
+    function initMap() {
       // Проверяем, загрузился ли API Яндекс.Карт
       if (typeof ymaps === 'undefined') {
         console.error('Yandex Maps API не загрузился');
         document.getElementById('map').innerHTML = '<div class="map-placeholder">Карта временно недоступна</div>';
         return;
       }
-      
-      // Если карта уже существует, выходим
-      if (myMap) return;
       
       ymaps.ready(function() {
         // Координаты апартамента
@@ -2291,8 +2166,8 @@
         try {
           // Создание карты
           myMap = new ymaps.Map('map', {
-            center: center || apartmentCoords,
-            zoom: zoom || 16,
+            center: apartmentCoords,
+            zoom: 16,
             controls: ['zoomControl', 'fullscreenControl']
           });
           
@@ -2311,24 +2186,17 @@
           // Открываем балун при загрузке
           myPlacemark.balloon.open();
           
-          // Адаптация карты для мобильных устройств
-          myMap.behaviors.disable('scrollZoom');
+          // Отключаем скролл зум для мобильных
+          if ('ontouchstart' in window) {
+            myMap.behaviors.disable('scrollZoom');
+          }
           
-          // Обработчик изменения размера карты
+          // Настраиваем адаптацию карты
           setTimeout(function() {
             if (myMap) {
               myMap.container.fitToViewport();
             }
-          }, 200);
-          
-          // Дополнительные попытки обновления размера
-          setTimeout(() => {
-            if (myMap) myMap.container.fitToViewport();
-          }, 600);
-          
-          setTimeout(() => {
-            if (myMap) myMap.container.fitToViewport();
-          }, 1200);
+          }, 100);
           
         } catch (error) {
           console.error('Ошибка при создании карты:', error);
@@ -2336,6 +2204,22 @@
         }
       });
     }
+
+    // Обработчик изменения размера окна с дебаунсингом
+    window.addEventListener('resize', function() {
+      clearTimeout(mapResizeTimeout);
+      mapResizeTimeout = setTimeout(function() {
+        updateMapSize();
+      }, 250);
+    });
+
+    // Обработчик изменения ориентации
+    window.addEventListener('orientationchange', function() {
+      // Даем время на завершение анимации поворота
+      setTimeout(function() {
+        updateMapSize();
+      }, 500);
+    });
 
     // Lightbox и остальной код JavaScript
     document.addEventListener('DOMContentLoaded', function() {
@@ -2547,44 +2431,6 @@
             }
           }, 300);
         });
-      });
-      
-      // Обработка изменения ориентации для корректного отображения таблицы
-      let lastOrientation = window.orientation || screen.orientation.angle;
-      window.addEventListener('orientationchange', function() {
-        setTimeout(function() {
-          const newOrientation = window.orientation || screen.orientation.angle;
-          
-          // Если ориентация изменилась
-          if (newOrientation !== lastOrientation) {
-            lastOrientation = newOrientation;
-            
-            // Принудительное обновление стилей модального окна
-            if (priceModal.classList.contains('open')) {
-              const priceModalContent = document.querySelector('.price-modal-content');
-              const headerTitle = document.querySelector('.price-modal-header h3');
-              
-              // Временное изменение display для принудительного рефлоу
-              if (priceModalContent && headerTitle) {
-                priceModalContent.style.display = 'none';
-                setTimeout(() => {
-                  priceModalContent.style.display = 'block';
-                  
-                  // Оптимизация заголовка для новой ориентации
-                  if (Math.abs(newOrientation) === 90 || Math.abs(newOrientation) === 270) {
-                    // Горизонтальная ориентация
-                    headerTitle.style.fontSize = '1.5rem';
-                    headerTitle.style.lineHeight = '1.3';
-                  } else {
-                    // Вертикальная ориентация
-                    headerTitle.style.fontSize = '1.6rem';
-                    headerTitle.style.lineHeight = '1.3';
-                  }
-                }, 50);
-              }
-            }
-          }
-        }, 300);
       });
       
       // Lightbox для галереи
