@@ -2560,11 +2560,11 @@
               if (messageField) {
                 // Удаляем предыдущее упоминание месяца, если оно есть
                 const currentValue = messageField.value;
-                const monthRegex = /Интересует бронирование в [А-Яа-я]+\.?\s*/g;
+                const monthRegex = /Интересует бронирование  [А-Яа-я]+\.?\s*/g;
                 const cleanedValue = currentValue.replace(monthRegex, '');
                 
                 // Добавляем новое упоминание месяца
-                const monthText = `Интересует бронирование в ${month}. `;
+                const monthText = `Интересует бронирование  ${month}. `;
                 messageField.value = monthText + cleanedValue;
                 messageField.focus();
                 
@@ -3082,5 +3082,6 @@
   </script>
 </body>
 </html>
+
 
 
