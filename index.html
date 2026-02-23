@@ -1653,7 +1653,7 @@
           <ul class="footer-links">
             <li><a href="#">Главная</a></li><li><a href="#about">О апартаменте</a></li><li><a href="#gallery">Галерея</a></li>
             <li><a href="#rules">Правила проживания</a></li><li><a href="#" id="priceLinkFooter">Стоимость</a></li>
-            <li><a href="#calculator" class="book-now-footer">Рассчитать стоимость</a></li><li><a href="#contact-info">Контакты</a></li>
+            <li><a href="#calculator" class="book-now-footer">За скидкой!</a></li><li><a href="#contact-info">Контакты</a></li>
           </ul>
         </div>
         <div class="footer-column">
@@ -1673,7 +1673,7 @@
   <script src="https://api-maps.yandex.ru/2.1/?apikey=ВАШ_API_КЛЮЧ&lang=ru_RU" type="text/javascript"></script>
 
   <script>
-    // Глобальные переменные
+    // Глобальные переменные для управления картой
     let myMap = null;
     let orientationChangeInProgress = false;
     let currentOrientation = window.orientation || window.screen.orientation.angle;
@@ -1722,15 +1722,13 @@
       });
     }
 
-    // Функция для принудительного обновления формы калькулятора
+    // Функция для принудительного обновления калькулятора (аналог refreshFormLayout)
     function refreshCalculatorLayout() {
       const calculator = document.getElementById('calculator');
       if (!calculator) return;
       calculator.style.display = 'none';
       void calculator.offsetHeight; // принудительный reflow
       calculator.style.display = 'block';
-      
-      // Обновляем все поля ввода для перерисовки
       const inputs = calculator.querySelectorAll('input, select, button');
       inputs.forEach(input => {
         input.style.width = '99%';
@@ -1769,7 +1767,7 @@
       }
     }
 
-    // Обработчик изменения ориентации (из первого варианта)
+    // Обработчик изменения ориентации (полностью из первого варианта)
     function handleOrientationChange() {
       if (orientationChangeInProgress) return;
       orientationChangeInProgress = true;
@@ -1780,7 +1778,6 @@
       }
       currentOrientation = newOrientation;
       
-      // Сбрасываем viewport (на всякий случай)
       const viewport = document.querySelector('meta[name="viewport"]');
       if (viewport) {
         viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
@@ -1880,425 +1877,434 @@
       });
     }
 
-    // Запуск инициализации карты при загрузке
-    document.addEventListener('DOMContentLoaded', () => initMap());
+    // Запуск инициализации карты при загрузке DOM
+    document.addEventListener('DOMContentLoaded', function() {
+      initMap();
 
-    // Видео
-    const videoPreview = document.getElementById('videoPreview');
-    const playButton = document.getElementById('playButton');
-    const videoModal = document.getElementById('videoModal');
-    const videoModalContent = document.getElementById('videoModalContent');
-    const videoModalClose = document.getElementById('videoModalClose');
-    const apartmentVideo = document.getElementById('apartmentVideo');
-    function getImageSize() {
-      const rect = videoPreview.querySelector('img').getBoundingClientRect();
-      return { width: rect.width, height: rect.height };
-    }
-    function openVideoModal() {
-      const size = getImageSize();
-      videoModalContent.style.width = size.width + 'px';
-      videoModalContent.style.height = size.height + 'px';
-      videoModal.classList.add('open');
-      document.body.style.overflow = 'hidden';
-      setTimeout(() => apartmentVideo.play().catch(() => apartmentVideo.controls = true), 300);
-    }
-    function closeVideoModal() {
-      videoModal.classList.remove('open');
-      document.body.style.overflow = '';
-      apartmentVideo.pause();
-      apartmentVideo.currentTime = 0;
-      videoModalContent.style.width = '';
-      videoModalContent.style.height = '';
-    }
-    videoPreview.addEventListener('click', openVideoModal);
-    playButton.addEventListener('click', (e) => { e.stopPropagation(); openVideoModal(); });
-    videoModalClose.addEventListener('click', closeVideoModal);
-    videoModal.addEventListener('click', (e) => { if (e.target === videoModal) closeVideoModal(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && videoModal.classList.contains('open')) closeVideoModal(); });
-
-    // Модальное окно цен
-    const priceModal = document.getElementById('priceModal');
-    const priceModalClose = document.getElementById('priceModalClose');
-    const priceLink = document.getElementById('priceLink');
-    const priceLinkFooter = document.getElementById('priceLinkFooter');
-    function openPriceModal() { priceModal.classList.add('open'); document.body.style.overflow = 'hidden'; }
-    function closePriceModal() { priceModal.classList.remove('open'); document.body.style.overflow = ''; }
-    priceLink.addEventListener('click', (e) => { e.preventDefault(); openPriceModal(); });
-    if (priceLinkFooter) priceLinkFooter.addEventListener('click', (e) => { e.preventDefault(); openPriceModal(); });
-    priceModalClose.addEventListener('click', closePriceModal);
-    priceModal.addEventListener('click', (e) => { if (e.target === priceModal) closePriceModal(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && priceModal.classList.contains('open')) closePriceModal(); });
-
-    // Функция получения цены по дате
-    function getPriceForDate(date) {
-      const month = date.getMonth(); // 0-11
-      if (month >= 0 && month <= 2) return 11000; // Янв-Март
-      if (month === 3 || month === 4) return 12000; // Апр-Май
-      if (month >= 5 && month <= 7) return 13000; // Июн-Авг
-      if (month === 8) return 12000; // Сен
-      return 11000; // Окт-Дек
-    }
-
-    // Калькулятор
-    const checkinInput = document.getElementById('calc_checkin');
-    const checkoutInput = document.getElementById('calc_checkout');
-    const guestsSelect = document.getElementById('calc_guests');
-    const calculateBtn = document.getElementById('calculateBtn');
-    const calcResult = document.getElementById('calcResult');
-    const rulesModal = document.getElementById('rulesModal');
-    const rulesCheckboxContainer = document.getElementById('rulesCheckboxContainer');
-    const rulesAgreement = document.getElementById('rulesAgreement');
-    const rulesError = document.getElementById('rulesError');
-    const rulesSubmitBtn = document.getElementById('rulesSubmitBtn');
-    const rulesCloseBtn = document.getElementById('rulesCloseBtn');
-    const viewRulesBtn = document.getElementById('viewRulesBtn');
-
-    // Установка минимальных дат
-    const today = new Date().toISOString().split('T')[0];
-    checkinInput.setAttribute('min', today);
-    checkoutInput.setAttribute('min', today);
-
-    // Валидация минимального срока
-    function validateDates() {
-      if (!checkinInput.value || !checkoutInput.value) return false;
-      const checkin = new Date(checkinInput.value);
-      const checkout = new Date(checkoutInput.value);
-      const diffDays = (checkout - checkin) / (1000 * 60 * 60 * 24);
-      return diffDays >= 2;
-    }
-
-    checkinInput.addEventListener('change', function() {
-      if (this.value) {
-        const checkin = new Date(this.value);
-        const minCheckout = new Date(checkin);
-        minCheckout.setDate(minCheckout.getDate() + 2);
-        checkoutInput.setAttribute('min', minCheckout.toISOString().split('T')[0]);
-        if (checkoutInput.value && new Date(checkoutInput.value) < minCheckout) {
-          checkoutInput.value = minCheckout.toISOString().split('T')[0];
-        }
-      }
-    });
-
-    // Функция открытия модального окна правил в режиме подтверждения
-    function openRulesModalConfirm() {
-      rulesCheckboxContainer.style.display = 'block';
-      rulesSubmitBtn.style.display = 'block';
-      rulesCloseBtn.style.display = 'block';
-      rulesCloseBtn.textContent = 'Отмена';
-      rulesAgreement.checked = false;
-      rulesError.classList.remove('visible');
-      rulesModal.classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeRulesModal() {
-      rulesModal.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    // Обработчик кнопки "Рассчитать"
-    calculateBtn.addEventListener('click', function() {
-      if (!validateDates()) {
-        alert('Пожалуйста, выберите корректные даты. Минимальный срок — двое суток.');
-        return;
-      }
-      openRulesModalConfirm();
-    });
-
-    // Обработчик подтверждения правил
-    rulesSubmitBtn.addEventListener('click', function() {
-      if (!rulesAgreement.checked) {
-        rulesError.classList.add('visible');
-        return;
-      }
-      rulesError.classList.remove('visible');
-      closeRulesModal();
-
-      const checkin = new Date(checkinInput.value);
-      const checkout = new Date(checkoutInput.value);
-      const days = Math.ceil((checkout - checkin) / (1000 * 60 * 60 * 24));
+      // ====== Видео (как в первом варианте) ======
+      const videoPreview = document.getElementById('videoPreview');
+      const playButton = document.getElementById('playButton');
+      const videoModal = document.getElementById('videoModal');
+      const videoModalContent = document.getElementById('videoModalContent');
+      const videoModalClose = document.getElementById('videoModalClose');
+      const apartmentVideo = document.getElementById('apartmentVideo');
       
-      let total = 0;
-      let currentDate = new Date(checkin);
-      while (currentDate < checkout) {
-        total += getPriceForDate(currentDate);
-        currentDate.setDate(currentDate.getDate() + 1);
+      function getImageSize() {
+        const rect = videoPreview.querySelector('img').getBoundingClientRect();
+        return { width: rect.width, height: rect.height };
       }
+      
+      function openVideoModal() {
+        const size = getImageSize();
+        videoModalContent.style.width = size.width + 'px';
+        videoModalContent.style.height = size.height + 'px';
+        videoModal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => apartmentVideo.play().catch(() => apartmentVideo.controls = true), 300);
+      }
+      
+      function closeVideoModal() {
+        videoModal.classList.remove('open');
+        document.body.style.overflow = '';
+        apartmentVideo.pause();
+        apartmentVideo.currentTime = 0;
+        videoModalContent.style.width = '';
+        videoModalContent.style.height = '';
+      }
+      
+      videoPreview.addEventListener('click', openVideoModal);
+      playButton.addEventListener('click', (e) => { e.stopPropagation(); openVideoModal(); });
+      videoModalClose.addEventListener('click', closeVideoModal);
+      videoModal.addEventListener('click', (e) => { if (e.target === videoModal) closeVideoModal(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && videoModal.classList.contains('open')) closeVideoModal(); });
 
-      const phoneLink = '<a href="tel:+79781439427" style="font-weight:700;">+7 (978) 143-94-27</a>';
-      calcResult.innerHTML = `
-        <p><strong>Предварительная стоимость:</strong> ${total.toLocaleString()} руб. (${days} суток).</p>
-        <p>Для бронирования и уточнения наличия позвоните нам по телефону ${phoneLink}.</p>
-        <p>При звонке уточните, что вы с сайта, и мы рассмотрим для вас <strong>индивидуальную скидку</strong>!</p>
-      `;
-      calcResult.classList.remove('hidden');
-    });
+      // ====== Модальное окно цен ======
+      const priceModal = document.getElementById('priceModal');
+      const priceModalClose = document.getElementById('priceModalClose');
+      const priceLink = document.getElementById('priceLink');
+      const priceLinkFooter = document.getElementById('priceLinkFooter');
+      
+      function openPriceModal() { priceModal.classList.add('open'); document.body.style.overflow = 'hidden'; }
+      function closePriceModal() { priceModal.classList.remove('open'); document.body.style.overflow = ''; }
+      
+      priceLink.addEventListener('click', (e) => { e.preventDefault(); openPriceModal(); });
+      if (priceLinkFooter) priceLinkFooter.addEventListener('click', (e) => { e.preventDefault(); openPriceModal(); });
+      priceModalClose.addEventListener('click', closePriceModal);
+      priceModal.addEventListener('click', (e) => { if (e.target === priceModal) closePriceModal(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && priceModal.classList.contains('open')) closePriceModal(); });
 
-    // Закрытие модального окна правил
-    rulesModalClose.addEventListener('click', closeRulesModal);
-    rulesCloseBtn.addEventListener('click', closeRulesModal);
-    rulesModal.addEventListener('click', (e) => { if (e.target === rulesModal) closeRulesModal(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && rulesModal.classList.contains('open')) closeRulesModal(); });
-
-    // Открытие правил из кнопки "Посмотреть все правила"
-    if (viewRulesBtn) {
-      viewRulesBtn.addEventListener('click', function(e) {
-        e.preventDefault();
+      // ====== Модальное окно правил проживания ======
+      const rulesModal = document.getElementById('rulesModal');
+      const rulesModalClose = document.getElementById('rulesModalClose');
+      const rulesCloseBtn = document.getElementById('rulesCloseBtn');
+      const rulesCheckboxContainer = document.getElementById('rulesCheckboxContainer');
+      const rulesAgreement = document.getElementById('rulesAgreement');
+      const rulesError = document.getElementById('rulesError');
+      const viewRulesBtn = document.getElementById('viewRulesBtn');
+      
+      function openRulesModalView() {
         rulesCheckboxContainer.style.display = 'none';
-        rulesSubmitBtn.style.display = 'none';
         rulesCloseBtn.style.display = 'block';
         rulesCloseBtn.textContent = 'Закрыть';
+        rulesAgreement.checked = false;
+        rulesError.classList.remove('visible');
         rulesModal.classList.add('open');
         document.body.style.overflow = 'hidden';
-      });
-    }
-
-    // Клик по месяцам в календаре цен — исправлено для корректных дат
-    const monthBoxes = document.querySelectorAll('.month-box');
-    monthBoxes.forEach(box => {
-      box.addEventListener('click', function() {
-        const month = this.getAttribute('data-month');
-        closePriceModal();
-
-        const year = 2026;
-        const monthMap = {
-          'Январь':0, 'Февраль':1, 'Март':2, 'Апрель':3, 'Май':4, 'Июнь':5,
-          'Июль':6, 'Август':7, 'Сентябрь':8, 'Октябрь':9, 'Ноябрь':10, 'Декабрь':11
-        };
-        const monthIndex = monthMap[month];
-        if (monthIndex === undefined) return;
-
-        const firstDay = new Date(year, monthIndex, 1);
-        const lastDay = new Date(year, monthIndex + 1, 0);
-
-        const formatDate = (date) => {
-          const y = date.getFullYear();
-          const m = String(date.getMonth() + 1).padStart(2, '0');
-          const d = String(date.getDate()).padStart(2, '0');
-          return `${y}-${m}-${d}`;
-        };
-
-        const firstStr = formatDate(firstDay);
-        const lastStr = formatDate(lastDay);
-
-        setTimeout(() => {
-          document.getElementById('calculator').scrollIntoView({ behavior: 'smooth' });
-          checkinInput.value = firstStr;
-          checkoutInput.value = lastStr;
-          const minCheckout = new Date(firstDay);
-          minCheckout.setDate(minCheckout.getDate() + 2);
-          checkoutInput.setAttribute('min', formatDate(minCheckout));
-        }, 300);
-      });
-    });
-
-    // ========== Lightbox с поддержкой свайпа и зума ==========
-    const lightbox = document.getElementById('lightbox');
-    const lightboxSlides = document.getElementById('lightboxSlides');
-    const lightboxClose = document.getElementById('lightboxClose');
-    const prevButton = document.getElementById('prevButton');
-    const nextButton = document.getElementById('nextButton');
-    const lightboxCounter = document.getElementById('lightboxCounter');
-    const zoomInButton = document.getElementById('zoomIn');
-    const zoomOutButton = document.getElementById('zoomOut');
-    const resetZoomButton = document.getElementById('resetZoom');
-    const galleryItems = document.querySelectorAll('.gallery-item');
-
-    let currentImageIndex = 0;
-    let startX = 0;
-    let currentX = 0;
-    let isDragging = false;
-    let currentScale = 1;
-    let currentTranslate = { x: 0, y: 0 };
-    let initialTouchesDistance = 0;
-
-    function createSlides() {
-      lightboxSlides.innerHTML = '';
-      galleryItems.forEach((item, idx) => {
-        const slide = document.createElement('div');
-        slide.className = 'lightbox-slide';
-        if (idx === currentImageIndex) slide.classList.add('active');
-
-        const imageContainer = document.createElement('div');
-        imageContainer.className = 'lightbox-image-container';
-
-        const img = document.createElement('img');
-        img.src = item.querySelector('img').src;
-        img.alt = item.querySelector('img').alt;
-        img.dataset.initialTransform = 'scale(1) translate(0, 0)';
-
-        const caption = document.createElement('div');
-        caption.className = 'lightbox-caption';
-        caption.textContent = item.querySelector('.gallery-caption').textContent;
-
-        imageContainer.appendChild(img);
-        slide.appendChild(imageContainer);
-        slide.appendChild(caption);
-        lightboxSlides.appendChild(slide);
-      });
-
-      updateCounter();
-      resetImageTransform();
-    }
-
-    function updateCounter() {
-      lightboxCounter.textContent = `${currentImageIndex + 1} / ${galleryItems.length}`;
-    }
-
-    function resetImageTransform() {
-      currentScale = 1;
-      currentTranslate = { x: 0, y: 0 };
-      const activeImage = document.querySelector('.lightbox-slide.active img');
-      if (activeImage) {
-        activeImage.style.transform = `scale(1) translate(0, 0)`;
       }
-    }
+      
+      function closeRulesModal() {
+        rulesModal.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+      
+      const rulesMenuLinks = document.querySelectorAll('a[href="#rules"]');
+      rulesMenuLinks.forEach(link => {
+        link.addEventListener('click', (e) => { e.preventDefault(); openRulesModalView(); });
+      });
+      
+      if (viewRulesBtn) {
+        viewRulesBtn.addEventListener('click', (e) => { e.preventDefault(); openRulesModalView(); });
+      }
+      
+      rulesModalClose.addEventListener('click', closeRulesModal);
+      rulesCloseBtn.addEventListener('click', closeRulesModal);
+      rulesModal.addEventListener('click', (e) => { if (e.target === rulesModal) closeRulesModal(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && rulesModal.classList.contains('open')) closeRulesModal(); });
 
-    function showSlide(index) {
-      const slides = document.querySelectorAll('.lightbox-slide');
-      slides.forEach(slide => slide.classList.remove('active'));
+      // ====== Lightbox с поддержкой свайпа и зума ======
+      const lightbox = document.getElementById('lightbox');
+      const lightboxSlides = document.getElementById('lightboxSlides');
+      const lightboxClose = document.getElementById('lightboxClose');
+      const prevButton = document.getElementById('prevButton');
+      const nextButton = document.getElementById('nextButton');
+      const lightboxCounter = document.getElementById('lightboxCounter');
+      const zoomInButton = document.getElementById('zoomIn');
+      const zoomOutButton = document.getElementById('zoomOut');
+      const resetZoomButton = document.getElementById('resetZoom');
+      const galleryItems = document.querySelectorAll('.gallery-item');
 
-      currentImageIndex = index;
-      if (currentImageIndex < 0) {
-        currentImageIndex = galleryItems.length - 1;
-      } else if (currentImageIndex >= galleryItems.length) {
-        currentImageIndex = 0;
+      let currentImageIndex = 0;
+      let startX = 0;
+      let currentX = 0;
+      let isDragging = false;
+      let currentScale = 1;
+      let currentTranslate = { x: 0, y: 0 };
+      let initialTouchesDistance = 0;
+
+      function createSlides() {
+        lightboxSlides.innerHTML = '';
+        galleryItems.forEach((item, idx) => {
+          const slide = document.createElement('div');
+          slide.className = 'lightbox-slide';
+          if (idx === currentImageIndex) slide.classList.add('active');
+
+          const imageContainer = document.createElement('div');
+          imageContainer.className = 'lightbox-image-container';
+
+          const img = document.createElement('img');
+          img.src = item.querySelector('img').src;
+          img.alt = item.querySelector('img').alt;
+          img.dataset.initialTransform = 'scale(1) translate(0, 0)';
+
+          const caption = document.createElement('div');
+          caption.className = 'lightbox-caption';
+          caption.textContent = item.querySelector('.gallery-caption').textContent;
+
+          imageContainer.appendChild(img);
+          slide.appendChild(imageContainer);
+          slide.appendChild(caption);
+          lightboxSlides.appendChild(slide);
+        });
+
+        updateCounter();
+        resetImageTransform();
       }
 
-      slides[currentImageIndex].classList.add('active');
-      resetImageTransform();
-      updateCounter();
-    }
+      function updateCounter() {
+        lightboxCounter.textContent = `${currentImageIndex + 1} / ${galleryItems.length}`;
+      }
 
-    galleryItems.forEach((item, index) => {
-      item.addEventListener('click', () => {
+      function resetImageTransform() {
+        currentScale = 1;
+        currentTranslate = { x: 0, y: 0 };
+        const activeImage = document.querySelector('.lightbox-slide.active img');
+        if (activeImage) {
+          activeImage.style.transform = `scale(1) translate(0, 0)`;
+        }
+      }
+
+      function showSlide(index) {
+        const slides = document.querySelectorAll('.lightbox-slide');
+        slides.forEach(slide => slide.classList.remove('active'));
+
         currentImageIndex = index;
-        createSlides();
-        lightbox.classList.add('open');
-        document.body.style.overflow = 'hidden';
+        if (currentImageIndex < 0) {
+          currentImageIndex = galleryItems.length - 1;
+        } else if (currentImageIndex >= galleryItems.length) {
+          currentImageIndex = 0;
+        }
+
+        slides[currentImageIndex].classList.add('active');
+        resetImageTransform();
+        updateCounter();
+      }
+
+      galleryItems.forEach((item, index) => {
+        item.addEventListener('click', () => {
+          currentImageIndex = index;
+          createSlides();
+          lightbox.classList.add('open');
+          document.body.style.overflow = 'hidden';
+        });
       });
-    });
 
-    lightboxClose.addEventListener('click', closeLightbox);
-    lightbox.addEventListener('click', (e) => {
-      if (e.target === lightbox) closeLightbox();
-    });
+      lightboxClose.addEventListener('click', closeLightbox);
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) closeLightbox();
+      });
 
-    prevButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      showSlide(currentImageIndex - 1);
-    });
+      prevButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showSlide(currentImageIndex - 1);
+      });
 
-    nextButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      showSlide(currentImageIndex + 1);
-    });
+      nextButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showSlide(currentImageIndex + 1);
+      });
 
-    function closeLightbox() {
-      lightbox.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    // Zoom functions
-    function zoomImage(factor) {
-      const activeImage = document.querySelector('.lightbox-slide.active img');
-      if (activeImage) {
-        currentScale *= factor;
-        currentScale = Math.max(0.5, Math.min(currentScale, 5));
-        activeImage.style.transform = `scale(${currentScale}) translate(${currentTranslate.x}px, ${currentTranslate.y}px)`;
+      function closeLightbox() {
+        lightbox.classList.remove('open');
+        document.body.style.overflow = '';
       }
-    }
 
-    zoomInButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      zoomImage(1.2);
-    });
-
-    zoomOutButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      zoomImage(0.8);
-    });
-
-    resetZoomButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      resetImageTransform();
-    });
-
-    // Touch events for swipe and pinch
-    lightbox.addEventListener('touchstart', handleTouchStart, false);
-    lightbox.addEventListener('touchmove', handleTouchMove, false);
-    lightbox.addEventListener('touchend', handleTouchEnd, false);
-
-    function handleTouchStart(e) {
-      if (e.touches.length === 1) {
-        startX = e.touches[0].clientX;
-        isDragging = true;
-      } else if (e.touches.length === 2) {
-        e.preventDefault();
-        initialTouchesDistance = Math.hypot(
-          e.touches[0].clientX - e.touches[1].clientX,
-          e.touches[0].clientY - e.touches[1].clientY
-        );
-        isDragging = false;
+      function zoomImage(factor) {
+        const activeImage = document.querySelector('.lightbox-slide.active img');
+        if (activeImage) {
+          currentScale *= factor;
+          currentScale = Math.max(0.5, Math.min(currentScale, 5));
+          activeImage.style.transform = `scale(${currentScale}) translate(${currentTranslate.x}px, ${currentTranslate.y}px)`;
+        }
       }
-    }
 
-    function handleTouchMove(e) {
-      if (e.touches.length === 1 && isDragging) {
-        currentX = e.touches[0].clientX;
-        if (Math.abs(currentX - startX) > 10) {
+      zoomInButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        zoomImage(1.2);
+      });
+
+      zoomOutButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        zoomImage(0.8);
+      });
+
+      resetZoomButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        resetImageTransform();
+      });
+
+      lightbox.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          startX = e.touches[0].clientX;
+          isDragging = true;
+        } else if (e.touches.length === 2) {
           e.preventDefault();
+          initialTouchesDistance = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          isDragging = false;
         }
-      } else if (e.touches.length === 2) {
-        e.preventDefault();
-        const currentDistance = Math.hypot(
-          e.touches[0].clientX - e.touches[1].clientX,
-          e.touches[0].clientY - e.touches[1].clientY
-        );
+      }, false);
 
-        if (initialTouchesDistance > 0) {
-          const zoomFactor = currentDistance / initialTouchesDistance;
-          const activeImage = document.querySelector('.lightbox-slide.active img');
-
-          if (activeImage) {
-            currentScale *= zoomFactor;
-            currentScale = Math.max(0.5, Math.min(currentScale, 5));
-            activeImage.style.transform = `scale(${currentScale}) translate(${currentTranslate.x}px, ${currentTranslate.y}px)`;
-            initialTouchesDistance = currentDistance;
+      lightbox.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 1 && isDragging) {
+          currentX = e.touches[0].clientX;
+          if (Math.abs(currentX - startX) > 10) {
+            e.preventDefault();
           }
-        }
-      }
-    }
+        } else if (e.touches.length === 2) {
+          e.preventDefault();
+          const currentDistance = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
 
-    function handleTouchEnd(e) {
-      if (e.touches.length < 1) {
-        isDragging = false;
+          if (initialTouchesDistance > 0) {
+            const zoomFactor = currentDistance / initialTouchesDistance;
+            const activeImage = document.querySelector('.lightbox-slide.active img');
 
-        if (e.changedTouches.length === 1) {
-          const diffX = currentX - startX;
-
-          if (Math.abs(diffX) > 50) {
-            if (diffX > 0) {
-              showSlide(currentImageIndex - 1);
-            } else {
-              showSlide(currentImageIndex + 1);
+            if (activeImage) {
+              currentScale *= zoomFactor;
+              currentScale = Math.max(0.5, Math.min(currentScale, 5));
+              activeImage.style.transform = `scale(${currentScale}) translate(${currentTranslate.x}px, ${currentTranslate.y}px)`;
+              initialTouchesDistance = currentDistance;
             }
           }
         }
+      }, false);
+
+      lightbox.addEventListener('touchend', (e) => {
+        if (e.touches.length < 1) {
+          isDragging = false;
+
+          if (e.changedTouches.length === 1) {
+            const diffX = currentX - startX;
+
+            if (Math.abs(diffX) > 50) {
+              if (diffX > 0) {
+                showSlide(currentImageIndex - 1);
+              } else {
+                showSlide(currentImageIndex + 1);
+              }
+            }
+          }
+        }
+
+        if (e.touches.length < 2) {
+          initialTouchesDistance = 0;
+        }
+      }, false);
+
+      document.addEventListener('keydown', (e) => {
+        if (!lightbox.classList.contains('open')) return;
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') showSlide(currentImageIndex - 1);
+        if (e.key === 'ArrowRight') showSlide(currentImageIndex + 1);
+      });
+
+      // ====== Калькулятор стоимости ======
+      const checkinInput = document.getElementById('calc_checkin');
+      const checkoutInput = document.getElementById('calc_checkout');
+      const guestsSelect = document.getElementById('calc_guests');
+      const calculateBtn = document.getElementById('calculateBtn');
+      const calcResult = document.getElementById('calcResult');
+      const rulesSubmitBtn = document.getElementById('rulesSubmitBtn');
+
+      // Установка минимальных дат
+      const today = new Date().toISOString().split('T')[0];
+      checkinInput.setAttribute('min', today);
+      checkoutInput.setAttribute('min', today);
+
+      // Функция получения цены по дате
+      function getPriceForDate(date) {
+        const month = date.getMonth(); // 0-11
+        if (month >= 0 && month <= 2) return 11000; // Янв-Март
+        if (month === 3 || month === 4) return 12000; // Апр-Май
+        if (month >= 5 && month <= 7) return 13000; // Июн-Авг
+        if (month === 8) return 12000; // Сен
+        return 11000; // Окт-Дек
       }
 
-      if (e.touches.length < 2) {
-        initialTouchesDistance = 0;
+      // Валидация минимального срока
+      function validateDates() {
+        if (!checkinInput.value || !checkoutInput.value) return false;
+        const checkin = new Date(checkinInput.value);
+        const checkout = new Date(checkoutInput.value);
+        const diffDays = (checkout - checkin) / (1000 * 60 * 60 * 24);
+        return diffDays >= 2;
       }
-    }
 
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-      if (!lightbox.classList.contains('open')) return;
-      if (e.key === 'Escape') closeLightbox();
-      if (e.key === 'ArrowLeft') showSlide(currentImageIndex - 1);
-      if (e.key === 'ArrowRight') showSlide(currentImageIndex + 1);
-    });
+      checkinInput.addEventListener('change', function() {
+        if (this.value) {
+          const checkin = new Date(this.value);
+          const minCheckout = new Date(checkin);
+          minCheckout.setDate(minCheckout.getDate() + 2);
+          checkoutInput.setAttribute('min', minCheckout.toISOString().split('T')[0]);
+          if (checkoutInput.value && new Date(checkoutInput.value) < minCheckout) {
+            checkoutInput.value = minCheckout.toISOString().split('T')[0];
+          }
+        }
+      });
+
+      // Функция открытия модального окна правил в режиме подтверждения
+      function openRulesModalConfirm() {
+        rulesCheckboxContainer.style.display = 'block';
+        rulesSubmitBtn.style.display = 'block';
+        rulesCloseBtn.style.display = 'block';
+        rulesCloseBtn.textContent = 'Отмена';
+        rulesAgreement.checked = false;
+        rulesError.classList.remove('visible');
+        rulesModal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      // Обработчик кнопки "Рассчитать"
+      calculateBtn.addEventListener('click', function() {
+        if (!validateDates()) {
+          alert('Пожалуйста, выберите корректные даты. Минимальный срок — двое суток.');
+          return;
+        }
+        openRulesModalConfirm();
+      });
+
+      // Обработчик подтверждения правил
+      rulesSubmitBtn.addEventListener('click', function() {
+        if (!rulesAgreement.checked) {
+          rulesError.classList.add('visible');
+          return;
+        }
+        rulesError.classList.remove('visible');
+        closeRulesModal();
+
+        const checkin = new Date(checkinInput.value);
+        const checkout = new Date(checkoutInput.value);
+        const days = Math.ceil((checkout - checkin) / (1000 * 60 * 60 * 24));
+        
+        let total = 0;
+        let currentDate = new Date(checkin);
+        while (currentDate < checkout) {
+          total += getPriceForDate(currentDate);
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        const phoneLink = '<a href="tel:+79781439427" style="font-weight:700;">+7 (978) 143-94-27</a>';
+        calcResult.innerHTML = `
+          <p><strong>Предварительная стоимость:</strong> ${total.toLocaleString()} руб. (${days} суток).</p>
+          <p>Для бронирования и уточнения наличия позвоните нам по телефону ${phoneLink}.</p>
+          <p>При звонке уточните, что вы с сайта, и мы рассмотрим для вас <strong>индивидуальную скидку</strong>!</p>
+        `;
+        calcResult.classList.remove('hidden');
+      });
+
+      // Клик по месяцам в календаре цен
+      const monthBoxes = document.querySelectorAll('.month-box');
+      monthBoxes.forEach(box => {
+        box.addEventListener('click', function() {
+          const month = this.getAttribute('data-month');
+          closePriceModal();
+
+          const year = 2026;
+          const monthMap = {
+            'Январь':0, 'Февраль':1, 'Март':2, 'Апрель':3, 'Май':4, 'Июнь':5,
+            'Июль':6, 'Август':7, 'Сентябрь':8, 'Октябрь':9, 'Ноябрь':10, 'Декабрь':11
+          };
+          const monthIndex = monthMap[month];
+          if (monthIndex === undefined) return;
+
+          const firstDay = new Date(year, monthIndex, 1);
+          const lastDay = new Date(year, monthIndex + 1, 0);
+
+          const formatDate = (date) => {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+          };
+
+          const firstStr = formatDate(firstDay);
+          const lastStr = formatDate(lastDay);
+
+          setTimeout(() => {
+            document.getElementById('calculator').scrollIntoView({ behavior: 'smooth' });
+            checkinInput.value = firstStr;
+            checkoutInput.value = lastStr;
+            const minCheckout = new Date(firstDay);
+            minCheckout.setDate(minCheckout.getDate() + 2);
+            checkoutInput.setAttribute('min', formatDate(minCheckout));
+          }, 300);
+        });
+      });
+    }); // конец DOMContentLoaded
   </script>
 </body>
 </html>
