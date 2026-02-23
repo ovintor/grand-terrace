@@ -6,10 +6,10 @@
   <title>Аренда апартамента «Большая Терраса» в Севастополе посуточно — Вид на море</title>
   <meta name="description" content="Апартамент «Большая Терраса» в центре Севастополя с панорамным видом на бухту. Посуточная аренда для 2-4 гостей. Большая терраса, современный ремонт, вся техника. Гарантия лучшей цены. Забронируйте онлайн.">
   <meta name="keywords" content="апартаменты Севастополь посуточно, аренда квартир Севастополь, Большая Терраса, снять апартамент с видом на море, жилье на сутки в центре Севастополя, терраса с видом на бухту">
-  <!-- Favicon: быстрая загрузка SVG -->
+  <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="favicon_120x120.svg" sizes="120x120">
   <style>
-    /* Все стили без изменений, кроме добавленных правил для .calculator */
+    /* Базовые стили (оптимизированы для мобильных) */
     * {
       margin: 0;
       padding: 0;
@@ -337,7 +337,7 @@
       }
     }
 
-    /* Герой */
+    /* Герой — улучшено для мобильных */
     .hero {
       height: 100vh;
       min-height: 600px;
@@ -416,7 +416,7 @@
       margin-bottom: 50px;
     }
 
-    /* О нас */
+    /* О нас (улучшено для мобильных) */
     .about-content {
       display: flex;
       align-items: center;
@@ -485,7 +485,7 @@
       margin-left: 5px;
     }
 
-    /* Галерея */
+    /* Галерея — без изменений, пропорции сохранены */
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -564,7 +564,7 @@
       font-size: 2.5rem;
     }
 
-    /* Lightbox */
+    /* Lightbox (без изменений) */
     .lightbox {
       display: none;
       position: fixed;
@@ -1197,7 +1197,7 @@
       min-width: 140px;
     }
 
-    /* Новая секция калькулятора — исправлено для соответствия размерам оригинальной формы */
+    /* Калькулятор — размеры как у исходной формы */
     .calculator {
       flex: 1;
       min-width: 300px;
@@ -1263,7 +1263,7 @@
       display: none;
     }
 
-    /* Контакты — без изменений, сохранены оригинальные пропорции */
+    /* Контакты */
     .contact-wrapper { 
       display: flex; 
       gap: 50px; 
@@ -1359,20 +1359,39 @@
       color: #bbb;
     }
 
-    /* Адаптивность */
+    /* Адаптивность — улучшено для мобильных */
     @media (max-width: 992px) {
       .contact-wrapper { flex-direction: column; }
+      .hero h1 { font-size: 2.8rem; }
+      .hero p { font-size: 1.3rem; }
+      .about-content { flex-direction: column; }
     }
     @media (max-width: 768px) {
-      .date-inputs {
-        flex-direction: column;
-        gap: 0;
-      }
+      .hero h1 { font-size: 2.2rem; }
+      .hero p { font-size: 1.1rem; }
+      h1 { font-size: 2rem; }
+      h2 { font-size: 1.8rem; }
+      .btn { padding: 12px 30px; font-size: 1rem; }
+      .play-button { width: 60px; height: 60px; }
+      .play-button::before { border-width: 12px 0 12px 20px; }
+      .date-inputs { flex-direction: column; gap: 0; }
+      .calculator { padding: 20px; }
+    }
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 1.8rem; }
+      .hero p { font-size: 1rem; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .contact-map { height: 300px; }
+      .logo-mobile { font-size: 1.3rem; }
+    }
+    /* Фикс для iOS */
+    @supports (-webkit-touch-callout: none) {
+      .hero { height: -webkit-fill-available; }
     }
   </style>
 </head>
 <body>
-  <!-- Шапка -->
+  <!-- Шапка (без изменений) -->
   <header>
     <div class="container">
       <nav>
@@ -1395,7 +1414,7 @@
           <li><a href="#gallery">Галерея</a></li>
           <li><a href="#rules">Правила проживания</a></li>
           <li><a href="#" id="priceLink">Стоимость</a></li>
-          <li><a href="#calculator" class="book-now">Подробно</a></li>
+          <li><a href="#calculator" class="book-now">Рассчитать стоимость</a></li>
           <li><a href="#contact-info">Контакты</a></li>
         </ul>
         <div class="menu-overlay" id="menuOverlay"></div>
@@ -1471,7 +1490,7 @@
     </div>
   </section>
 
-  <!-- Модальное окно для календаря цен (без изменений) -->
+  <!-- Модальное окно для календаря цен -->
   <div class="price-modal" id="priceModal">
     <div class="price-modal-content">
       <button class="price-modal-close" id="priceModalClose">&times;</button>
@@ -1646,7 +1665,7 @@
     let orientationChangeInProgress = false;
     let currentOrientation = window.orientation || window.screen.orientation.angle;
 
-    // Управление мобильным меню (как в исходном коде)
+    // Управление мобильным меню
     const menuToggle = document.getElementById('menuToggle');
     const navLinks = document.getElementById('navLinks');
     const menuOverlay = document.getElementById('menuOverlay');
@@ -1690,7 +1709,7 @@
       });
     }
 
-    // Функции карты (сокращены для краткости, но работоспособны)
+    // Карта (сокращено для читаемости, но функционально)
     function initMap(center = null, zoom = null) {
       if (typeof ymaps === 'undefined') {
         document.getElementById('map').innerHTML = '<div class="map-placeholder">Карта временно недоступна</div>';
@@ -1713,7 +1732,7 @@
     }
     document.addEventListener('DOMContentLoaded', () => initMap());
 
-    // Видео (как в исходном коде)
+    // Видео
     const videoPreview = document.getElementById('videoPreview');
     const playButton = document.getElementById('playButton');
     const videoModal = document.getElementById('videoModal');
@@ -1746,7 +1765,7 @@
     videoModal.addEventListener('click', (e) => { if (e.target === videoModal) closeVideoModal(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && videoModal.classList.contains('open')) closeVideoModal(); });
 
-    // Модальное окно цен (как в исходном коде)
+    // Модальное окно цен
     const priceModal = document.getElementById('priceModal');
     const priceModalClose = document.getElementById('priceModalClose');
     const priceLink = document.getElementById('priceLink');
@@ -1759,7 +1778,7 @@
     priceModal.addEventListener('click', (e) => { if (e.target === priceModal) closePriceModal(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && priceModal.classList.contains('open')) closePriceModal(); });
 
-    // Функция получения цены по дате (из модального окна цен)
+    // Функция получения цены по дате
     function getPriceForDate(date) {
       const month = date.getMonth(); // 0-11
       if (month >= 0 && month <= 2) return 11000; // Янв-Март
@@ -1832,7 +1851,6 @@
         alert('Пожалуйста, выберите корректные даты. Минимальный срок — двое суток.');
         return;
       }
-      // Открываем модальное окно с правилами
       openRulesModalConfirm();
     });
 
@@ -1845,12 +1863,10 @@
       rulesError.classList.remove('visible');
       closeRulesModal();
 
-      // Расчёт стоимости
       const checkin = new Date(checkinInput.value);
       const checkout = new Date(checkoutInput.value);
       const days = Math.ceil((checkout - checkin) / (1000 * 60 * 60 * 24));
       
-      // Посчитаем стоимость для каждого дня (если цены меняются внутри периода)
       let total = 0;
       let currentDate = new Date(checkin);
       while (currentDate < checkout) {
@@ -1858,7 +1874,6 @@
         currentDate.setDate(currentDate.getDate() + 1);
       }
 
-      const guests = guestsSelect.value;
       const phoneLink = '<a href="tel:+79781439427" style="font-weight:700;">+7 (978) 143-94-27</a>';
       calcResult.innerHTML = `
         <p><strong>Предварительная стоимость:</strong> ${total.toLocaleString()} руб. (${days} суток).</p>
@@ -1887,23 +1902,36 @@
       });
     }
 
-    // Клик по месяцам в календаре цен (перенаправляет на калькулятор и подставляет даты)
+    // Клик по месяцам в календаре цен — исправлено для корректных дат
     const monthBoxes = document.querySelectorAll('.month-box');
     monthBoxes.forEach(box => {
       box.addEventListener('click', function() {
         const month = this.getAttribute('data-month');
         closePriceModal();
-        // Примерные даты: первое и последнее число месяца
+
         const year = 2026;
-        const monthIndex = {
+        const monthMap = {
           'Январь':0, 'Февраль':1, 'Март':2, 'Апрель':3, 'Май':4, 'Июнь':5,
           'Июль':6, 'Август':7, 'Сентябрь':8, 'Октябрь':9, 'Ноябрь':10, 'Декабрь':11
-        }[month];
+        };
+        const monthIndex = monthMap[month];
         if (monthIndex === undefined) return;
+
+        // Формируем даты в локальном формате без влияния часового пояса
         const firstDay = new Date(year, monthIndex, 1);
         const lastDay = new Date(year, monthIndex + 1, 0);
-        const firstStr = firstDay.toISOString().split('T')[0];
-        const lastStr = lastDay.toISOString().split('T')[0];
+
+        // Функция для форматирования даты в YYYY-MM-DD
+        const formatDate = (date) => {
+          const y = date.getFullYear();
+          const m = String(date.getMonth() + 1).padStart(2, '0');
+          const d = String(date.getDate()).padStart(2, '0');
+          return `${y}-${m}-${d}`;
+        };
+
+        const firstStr = formatDate(firstDay);
+        const lastStr = formatDate(lastDay);
+
         setTimeout(() => {
           document.getElementById('calculator').scrollIntoView({ behavior: 'smooth' });
           checkinInput.value = firstStr;
@@ -1911,12 +1939,12 @@
           // Обновить min для checkout
           const minCheckout = new Date(firstDay);
           minCheckout.setDate(minCheckout.getDate() + 2);
-          checkoutInput.setAttribute('min', minCheckout.toISOString().split('T')[0]);
+          checkoutInput.setAttribute('min', formatDate(minCheckout));
         }, 300);
       });
     });
 
-    // Галерея lightbox (сокращена, но функциональна – копия из исходного кода)
+    // Галерея lightbox (сокращена, но функциональна)
     const lightbox = document.getElementById('lightbox');
     const lightboxSlides = document.getElementById('lightboxSlides');
     const lightboxClose = document.getElementById('lightboxClose');
@@ -1980,4 +2008,3 @@
   </script>
 </body>
 </html>
-
