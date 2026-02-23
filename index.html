@@ -1418,7 +1418,7 @@
           <li><a href="#gallery">Галерея</a></li>
           <li><a href="#rules">Правила проживания</a></li>
           <li><a href="#" id="priceLink">Стоимость</a></li>
-          <li><a href="#calculator" class="book-now">За скидкой</a></li>
+          <li><a href="#calculator" class="book-now">Рассчитать стоимость</a></li>
           <li><a href="#contact-info">Контакты</a></li>
         </ul>
         <div class="menu-overlay" id="menuOverlay"></div>
@@ -1722,7 +1722,97 @@
       });
     }
 
-    // Карта
+    // Функции для работы с картой (восстановлены из предыдущих версий)
+    function recreateMap() {
+      if (!myMap) return;
+      try {
+        const center = myMap.getCenter();
+        const zoom = myMap.getZoom();
+        myMap.destroy();
+        myMap = null;
+        document.getElementById('map').innerHTML = '';
+        setTimeout(() => {
+          initMap(center, zoom);
+        }, 300);
+      } catch (error) {
+        console.error('Ошибка при пересоздании карты:', error);
+        setTimeout(initMap, 500);
+      }
+    }
+
+    function handleOrientationChange() {
+      if (orientationChangeInProgress) return;
+      orientationChangeInProgress = true;
+      const newOrientation = window.orientation || window.screen.orientation.angle;
+      if (newOrientation === currentOrientation) {
+        orientationChangeInProgress = false;
+        return;
+      }
+      currentOrientation = newOrientation;
+      const viewport = document.querySelector('meta[name="viewport"]');
+      if (viewport) {
+        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+      }
+      window.dispatchEvent(new Event('resize'));
+      // Закрываем меню, если открыто
+      if (menuToggle && navLinks && navLinks.classList.contains('active')) {
+        menuToggle.classList.remove('active');
+        navLinks.classList.remove('active');
+        menuOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+      setTimeout(() => {
+        if (myMap) {
+          try {
+            myMap.container.fitToViewport();
+          } catch (e) {
+            console.log('fitToViewport failed, will recreate map');
+          }
+          setTimeout(() => {
+            if (myMap) {
+              try {
+                myMap.container.fitToViewport();
+                setTimeout(() => {
+                  if (myMap && orientationChangeInProgress) {
+                    recreateMap();
+                  }
+                }, 800);
+              } catch (e) {
+                recreateMap();
+              }
+            }
+          }, 400);
+        }
+        orientationChangeInProgress = false;
+      }, 500);
+    }
+
+    // Обработчики событий ориентации и изменения размера
+    window.addEventListener('orientationchange', function() {
+      setTimeout(handleOrientationChange, 100);
+    });
+
+    window.addEventListener('resize', function() {
+      clearTimeout(window.resizeTimer);
+      window.resizeTimer = setTimeout(function() {
+        if (myMap && !orientationChangeInProgress) {
+          try {
+            myMap.container.fitToViewport();
+          } catch (error) {
+            console.error('Ошибка при resize карты:', error);
+          }
+        }
+        // Обновление формы, если нужно
+        const form = document.getElementById('bookingForm');
+        if (form) {
+          form.style.display = 'none';
+          void form.offsetHeight;
+          form.style.display = 'block';
+        }
+      }, 250);
+    });
+
+    // Инициализация карты
     function initMap(center = null, zoom = null) {
       if (typeof ymaps === 'undefined') {
         document.getElementById('map').innerHTML = '<div class="map-placeholder">Карта временно недоступна</div>';
@@ -1732,18 +1822,27 @@
       ymaps.ready(function() {
         const coords = [44.616622961342124, 33.517859032692016];
         try {
-          myMap = new ymaps.Map('map', { center: center || coords, zoom: zoom || 16, controls: ['zoomControl', 'fullscreenControl'] });
-          const placemark = new ymaps.Placemark(coords, { hintContent: 'Апартамент "Большая Терраса"' }, { preset: 'islands#redIcon' });
+          myMap = new ymaps.Map('map', {
+            center: center || coords,
+            zoom: zoom || 16,
+            controls: ['zoomControl', 'fullscreenControl']
+          });
+          const placemark = new ymaps.Placemark(coords, {
+            hintContent: 'Апартамент "Большая Терраса"',
+            balloonContent: 'Апартамент "Большая Терраса"<br>набережная Адмирала Перелешина, 3<br>Севастополь'
+          }, { preset: 'islands#redIcon' });
           myMap.geoObjects.add(placemark);
           placemark.balloon.open();
           myMap.behaviors.disable('scrollZoom');
-          setTimeout(() => myMap && myMap.container.fitToViewport(), 200);
-        } catch (e) {
+          setTimeout(function() { if (myMap) myMap.container.fitToViewport(); }, 200);
+          setTimeout(() => { if (myMap) myMap.container.fitToViewport(); }, 600);
+          setTimeout(() => { if (myMap) myMap.container.fitToViewport(); }, 1200);
+        } catch (error) {
+          console.error('Ошибка при создании карты:', error);
           document.getElementById('map').innerHTML = '<div class="map-placeholder">Ошибка загрузки карты</div>';
         }
       });
     }
-    document.addEventListener('DOMContentLoaded', () => initMap());
 
     // Видео
     const videoPreview = document.getElementById('videoPreview');
@@ -2161,7 +2260,9 @@
       if (e.key === 'ArrowLeft') showSlide(currentImageIndex - 1);
       if (e.key === 'ArrowRight') showSlide(currentImageIndex + 1);
     });
+
+    // Запуск инициализации карты после загрузки DOM
+    document.addEventListener('DOMContentLoaded', () => initMap());
   </script>
 </body>
 </html>
-
