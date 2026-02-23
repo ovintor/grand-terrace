@@ -9,7 +9,7 @@
   <!-- Favicon: быстрая загрузка SVG -->
   <link rel="icon" type="image/svg+xml" href="favicon_120x120.svg" sizes="120x120">
   <style>
-    /* Все стили без изменений (кроме удаления ненужных классов формы, но они остаются для совместимости) */
+    /* Все стили без изменений, кроме добавленных правил для .calculator */
     * {
       margin: 0;
       padding: 0;
@@ -1197,13 +1197,14 @@
       min-width: 140px;
     }
 
-    /* Новая секция калькулятора */
+    /* Новая секция калькулятора — исправлено для соответствия размерам оригинальной формы */
     .calculator {
+      flex: 1;
+      min-width: 300px;
       background-color: #fff;
       border-radius: 12px;
       padding: 30px;
       box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-      margin-top: 20px;
     }
     .calculator h2 {
       margin-top: 0;
@@ -1262,7 +1263,7 @@
       display: none;
     }
 
-    /* Контакты */
+    /* Контакты — без изменений, сохранены оригинальные пропорции */
     .contact-wrapper { 
       display: flex; 
       gap: 50px; 
@@ -1861,8 +1862,8 @@
       const phoneLink = '<a href="tel:+79781439427" style="font-weight:700;">+7 (978) 143-94-27</a>';
       calcResult.innerHTML = `
         <p><strong>Предварительная стоимость:</strong> ${total.toLocaleString()} руб. (${days} суток).</p>
-        <p>Для бронирования и уточнения свободных дат позвоните нам по телефону ${phoneLink}.</p>
-        <p>При звонке уточните, что вы с сайта большаятерраса.рф, и мы рассмотрим для вас <strong>индивидуальную скидку</strong>!</p>
+        <p>Для бронирования и уточнения наличия позвоните нам по телефону ${phoneLink}.</p>
+        <p>При звонке уточните, что вы с сайта, и мы рассмотрим для вас <strong>индивидуальную скидку</strong>!</p>
       `;
       calcResult.classList.remove('hidden');
     });
