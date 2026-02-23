@@ -1653,7 +1653,7 @@
           <ul class="footer-links">
             <li><a href="#">Главная</a></li><li><a href="#about">О апартаменте</a></li><li><a href="#gallery">Галерея</a></li>
             <li><a href="#rules">Правила проживания</a></li><li><a href="#" id="priceLinkFooter">Стоимость</a></li>
-            <li><a href="#calculator" class="book-now-footer">За скидкой!</a></li><li><a href="#contact-info">Контакты</a></li>
+            <li><a href="#calculator" class="book-now-footer">Рассчитать стоимость</a></li><li><a href="#contact-info">Контакты</a></li>
           </ul>
         </div>
         <div class="footer-column">
@@ -1722,7 +1722,35 @@
       });
     }
 
-    // Функции для работы с картой (восстановлены из предыдущих версий)
+    // Функция для принудительного обновления формы калькулятора
+    function refreshCalculatorLayout() {
+      const calculator = document.getElementById('calculator');
+      if (!calculator) return;
+      calculator.style.display = 'none';
+      void calculator.offsetHeight; // принудительный reflow
+      calculator.style.display = 'block';
+      
+      // Обновляем все поля ввода для перерисовки
+      const inputs = calculator.querySelectorAll('input, select, button');
+      inputs.forEach(input => {
+        input.style.width = '99%';
+        setTimeout(() => {
+          input.style.width = '100%';
+        }, 10);
+      });
+    }
+
+    // Функция для обновления размера карты
+    function updateMapSize() {
+      if (!myMap) return;
+      try {
+        myMap.container.fitToViewport();
+      } catch (error) {
+        console.error('Ошибка при обновлении карты:', error);
+      }
+    }
+
+    // Функция для полного уничтожения и пересоздания карты
     function recreateMap() {
       if (!myMap) return;
       try {
@@ -1730,7 +1758,8 @@
         const zoom = myMap.getZoom();
         myMap.destroy();
         myMap = null;
-        document.getElementById('map').innerHTML = '';
+        const mapContainer = document.getElementById('map');
+        mapContainer.innerHTML = '';
         setTimeout(() => {
           initMap(center, zoom);
         }, 300);
@@ -1740,6 +1769,7 @@
       }
     }
 
+    // Обработчик изменения ориентации (из первого варианта)
     function handleOrientationChange() {
       if (orientationChangeInProgress) return;
       orientationChangeInProgress = true;
@@ -1749,25 +1779,35 @@
         return;
       }
       currentOrientation = newOrientation;
+      
+      // Сбрасываем viewport (на всякий случай)
       const viewport = document.querySelector('meta[name="viewport"]');
       if (viewport) {
         viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
       }
+      
       window.dispatchEvent(new Event('resize'));
-      // Закрываем меню, если открыто
+      
+      // Закрываем мобильное меню при смене ориентации
       if (menuToggle && navLinks && navLinks.classList.contains('active')) {
         menuToggle.classList.remove('active');
         navLinks.classList.remove('active');
         menuOverlay.classList.remove('active');
         document.body.style.overflow = '';
       }
+      
+      // Ждем завершения анимации поворота
       setTimeout(() => {
+        // Обновляем калькулятор
+        refreshCalculatorLayout();
+        
         if (myMap) {
           try {
             myMap.container.fitToViewport();
           } catch (e) {
             console.log('fitToViewport failed, will recreate map');
           }
+          
           setTimeout(() => {
             if (myMap) {
               try {
@@ -1787,11 +1827,7 @@
       }, 500);
     }
 
-    // Обработчики событий ориентации и изменения размера
-    window.addEventListener('orientationchange', function() {
-      setTimeout(handleOrientationChange, 100);
-    });
-
+    // Обработчик изменения размера окна (с debounce)
     window.addEventListener('resize', function() {
       clearTimeout(window.resizeTimer);
       window.resizeTimer = setTimeout(function() {
@@ -1802,14 +1838,13 @@
             console.error('Ошибка при resize карты:', error);
           }
         }
-        // Обновление формы, если нужно
-        const form = document.getElementById('bookingForm');
-        if (form) {
-          form.style.display = 'none';
-          void form.offsetHeight;
-          form.style.display = 'block';
-        }
+        refreshCalculatorLayout();
       }, 250);
+    });
+
+    // Обработчик изменения ориентации
+    window.addEventListener('orientationchange', function() {
+      setTimeout(handleOrientationChange, 100);
     });
 
     // Инициализация карты
@@ -1834,6 +1869,7 @@
           myMap.geoObjects.add(placemark);
           placemark.balloon.open();
           myMap.behaviors.disable('scrollZoom');
+          
           setTimeout(function() { if (myMap) myMap.container.fitToViewport(); }, 200);
           setTimeout(() => { if (myMap) myMap.container.fitToViewport(); }, 600);
           setTimeout(() => { if (myMap) myMap.container.fitToViewport(); }, 1200);
@@ -1843,6 +1879,9 @@
         }
       });
     }
+
+    // Запуск инициализации карты при загрузке
+    document.addEventListener('DOMContentLoaded', () => initMap());
 
     // Видео
     const videoPreview = document.getElementById('videoPreview');
@@ -2260,10 +2299,6 @@
       if (e.key === 'ArrowLeft') showSlide(currentImageIndex - 1);
       if (e.key === 'ArrowRight') showSlide(currentImageIndex + 1);
     });
-
-    // Запуск инициализации карты после загрузки DOM
-    document.addEventListener('DOMContentLoaded', () => initMap());
   </script>
 </body>
 </html>
-
