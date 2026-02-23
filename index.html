@@ -9,7 +9,7 @@
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="favicon_120x120.svg" sizes="120x120">
   <style>
-    /* Базовые стили (оптимизированы для мобильных) */
+    /* Все стили без изменений (оптимизированы для мобильных) */
     * {
       margin: 0;
       padding: 0;
@@ -337,7 +337,7 @@
       }
     }
 
-    /* Герой — улучшено для мобильных */
+    /* Герой */
     .hero {
       height: 100vh;
       min-height: 600px;
@@ -416,7 +416,7 @@
       margin-bottom: 50px;
     }
 
-    /* О нас (улучшено для мобильных) */
+    /* О нас */
     .about-content {
       display: flex;
       align-items: center;
@@ -485,7 +485,7 @@
       margin-left: 5px;
     }
 
-    /* Галерея — без изменений, пропорции сохранены */
+    /* Галерея */
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -564,7 +564,7 @@
       font-size: 2.5rem;
     }
 
-    /* Lightbox (без изменений) */
+    /* Lightbox — полная версия с поддержкой жестов */
     .lightbox {
       display: none;
       position: fixed;
@@ -629,6 +629,10 @@
       object-fit: contain;
       border-radius: 8px;
       transition: transform 0.3s ease;
+      cursor: grab;
+    }
+    .lightbox-slide img:active {
+      cursor: grabbing;
     }
     .lightbox-caption {
       color: #fff;
@@ -1197,7 +1201,7 @@
       min-width: 140px;
     }
 
-    /* Калькулятор — размеры как у исходной формы */
+    /* Калькулятор */
     .calculator {
       flex: 1;
       min-width: 300px;
@@ -1359,7 +1363,7 @@
       color: #bbb;
     }
 
-    /* Адаптивность — улучшено для мобильных */
+    /* Адаптивность */
     @media (max-width: 992px) {
       .contact-wrapper { flex-direction: column; }
       .hero h1 { font-size: 2.8rem; }
@@ -1391,7 +1395,7 @@
   </style>
 </head>
 <body>
-  <!-- Шапка (без изменений) -->
+  <!-- Шапка -->
   <header>
     <div class="container">
       <nav>
@@ -1414,7 +1418,7 @@
           <li><a href="#gallery">Галерея</a></li>
           <li><a href="#rules">Правила проживания</a></li>
           <li><a href="#" id="priceLink">Стоимость</a></li>
-          <li><a href="#calculator" class="book-now">За скидкой!</a></li>
+          <li><a href="#calculator" class="book-now">Рассчитать стоимость</a></li>
           <li><a href="#contact-info">Контакты</a></li>
         </ul>
         <div class="menu-overlay" id="menuOverlay"></div>
@@ -1428,7 +1432,7 @@
       <div class="hero-content">
         <h1>Апартамент в самом центре Севастополя</h1>
         <p>Апартамент "Большая Терраса" в центре города с панорамным видом на Севастопольскую бухту</p>
-        <a href="#calculator" class="btn">Рассчитать стоимость и получить скидку</a>
+        <a href="#calculator" class="btn">Рассчитать стоимость</a>
       </div>
     </div>
   </section>
@@ -1572,13 +1576,22 @@
     </div>
   </div>
 
-  <!-- Lightbox -->
+  <!-- Lightbox (полная версия) -->
   <div class="lightbox" id="lightbox">
     <button class="lightbox-close" id="lightboxClose">&times;</button>
-    <div class="lightbox-nav"><button class="lightbox-button" id="prevButton">&#10094;</button><button class="lightbox-button" id="nextButton">&#10095;</button></div>
-    <div class="lightbox-content"><div class="lightbox-slides" id="lightboxSlides"></div></div>
+    <div class="lightbox-nav">
+      <button class="lightbox-button" id="prevButton">&#10094;</button>
+      <button class="lightbox-button" id="nextButton">&#10095;</button>
+    </div>
+    <div class="lightbox-content">
+      <div class="lightbox-slides" id="lightboxSlides"></div>
+    </div>
     <div class="lightbox-counter" id="lightboxCounter"></div>
-    <div class="lightbox-zoom-controls"><button class="lightbox-zoom-button" id="zoomIn">+</button><button class="lightbox-zoom-button" id="zoomOut">-</button><button class="lightbox-zoom-button" id="resetZoom">↺</button></div>
+    <div class="lightbox-zoom-controls">
+      <button class="lightbox-zoom-button" id="zoomIn">+</button>
+      <button class="lightbox-zoom-button" id="zoomOut">-</button>
+      <button class="lightbox-zoom-button" id="resetZoom">↺</button>
+    </div>
   </div>
 
   <!-- Калькулятор стоимости и контакты -->
@@ -1640,7 +1653,7 @@
           <ul class="footer-links">
             <li><a href="#">Главная</a></li><li><a href="#about">О апартаменте</a></li><li><a href="#gallery">Галерея</a></li>
             <li><a href="#rules">Правила проживания</a></li><li><a href="#" id="priceLinkFooter">Стоимость</a></li>
-            <li><a href="#calculator" class="book-now-footer">За скидкой!</a></li><li><a href="#contact-info">Контакты</a></li>
+            <li><a href="#calculator" class="book-now-footer">Рассчитать стоимость</a></li><li><a href="#contact-info">Контакты</a></li>
           </ul>
         </div>
         <div class="footer-column">
@@ -1709,7 +1722,7 @@
       });
     }
 
-    // Карта (сокращено для читаемости, но функционально)
+    // Карта
     function initMap(center = null, zoom = null) {
       if (typeof ymaps === 'undefined') {
         document.getElementById('map').innerHTML = '<div class="map-placeholder">Карта временно недоступна</div>';
@@ -1917,11 +1930,9 @@
         const monthIndex = monthMap[month];
         if (monthIndex === undefined) return;
 
-        // Формируем даты в локальном формате без влияния часового пояса
         const firstDay = new Date(year, monthIndex, 1);
         const lastDay = new Date(year, monthIndex + 1, 0);
 
-        // Функция для форматирования даты в YYYY-MM-DD
         const formatDate = (date) => {
           const y = date.getFullYear();
           const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -1936,7 +1947,6 @@
           document.getElementById('calculator').scrollIntoView({ behavior: 'smooth' });
           checkinInput.value = firstStr;
           checkoutInput.value = lastStr;
-          // Обновить min для checkout
           const minCheckout = new Date(firstDay);
           minCheckout.setDate(minCheckout.getDate() + 2);
           checkoutInput.setAttribute('min', formatDate(minCheckout));
@@ -1944,15 +1954,25 @@
       });
     });
 
-    // Галерея lightbox (сокращена, но функциональна)
+    // ========== Lightbox с поддержкой свайпа и зума ==========
     const lightbox = document.getElementById('lightbox');
     const lightboxSlides = document.getElementById('lightboxSlides');
     const lightboxClose = document.getElementById('lightboxClose');
     const prevButton = document.getElementById('prevButton');
     const nextButton = document.getElementById('nextButton');
     const lightboxCounter = document.getElementById('lightboxCounter');
+    const zoomInButton = document.getElementById('zoomIn');
+    const zoomOutButton = document.getElementById('zoomOut');
+    const resetZoomButton = document.getElementById('resetZoom');
     const galleryItems = document.querySelectorAll('.gallery-item');
+
     let currentImageIndex = 0;
+    let startX = 0;
+    let currentX = 0;
+    let isDragging = false;
+    let currentScale = 1;
+    let currentTranslate = { x: 0, y: 0 };
+    let initialTouchesDistance = 0;
 
     function createSlides() {
       lightboxSlides.innerHTML = '';
@@ -1960,52 +1980,187 @@
         const slide = document.createElement('div');
         slide.className = 'lightbox-slide';
         if (idx === currentImageIndex) slide.classList.add('active');
+
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'lightbox-image-container';
+
         const img = document.createElement('img');
         img.src = item.querySelector('img').src;
         img.alt = item.querySelector('img').alt;
+        img.dataset.initialTransform = 'scale(1) translate(0, 0)';
+
         const caption = document.createElement('div');
         caption.className = 'lightbox-caption';
         caption.textContent = item.querySelector('.gallery-caption').textContent;
-        slide.appendChild(img);
+
+        imageContainer.appendChild(img);
+        slide.appendChild(imageContainer);
         slide.appendChild(caption);
         lightboxSlides.appendChild(slide);
       });
-      lightboxCounter.textContent = `${currentImageIndex+1} / ${galleryItems.length}`;
+
+      updateCounter();
+      resetImageTransform();
+    }
+
+    function updateCounter() {
+      lightboxCounter.textContent = `${currentImageIndex + 1} / ${galleryItems.length}`;
+    }
+
+    function resetImageTransform() {
+      currentScale = 1;
+      currentTranslate = { x: 0, y: 0 };
+      const activeImage = document.querySelector('.lightbox-slide.active img');
+      if (activeImage) {
+        activeImage.style.transform = `scale(1) translate(0, 0)`;
+      }
     }
 
     function showSlide(index) {
       const slides = document.querySelectorAll('.lightbox-slide');
-      slides.forEach(s => s.classList.remove('active'));
+      slides.forEach(slide => slide.classList.remove('active'));
+
       currentImageIndex = index;
-      if (currentImageIndex < 0) currentImageIndex = galleryItems.length-1;
-      if (currentImageIndex >= galleryItems.length) currentImageIndex = 0;
+      if (currentImageIndex < 0) {
+        currentImageIndex = galleryItems.length - 1;
+      } else if (currentImageIndex >= galleryItems.length) {
+        currentImageIndex = 0;
+      }
+
       slides[currentImageIndex].classList.add('active');
-      lightboxCounter.textContent = `${currentImageIndex+1} / ${galleryItems.length}`;
+      resetImageTransform();
+      updateCounter();
     }
 
-    galleryItems.forEach((item, idx) => {
+    galleryItems.forEach((item, index) => {
       item.addEventListener('click', () => {
-        currentImageIndex = idx;
+        currentImageIndex = index;
         createSlides();
         lightbox.classList.add('open');
         document.body.style.overflow = 'hidden';
       });
     });
 
-    lightboxClose.addEventListener('click', () => {
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    prevButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showSlide(currentImageIndex - 1);
+    });
+
+    nextButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showSlide(currentImageIndex + 1);
+    });
+
+    function closeLightbox() {
       lightbox.classList.remove('open');
       document.body.style.overflow = '';
+    }
+
+    // Zoom functions
+    function zoomImage(factor) {
+      const activeImage = document.querySelector('.lightbox-slide.active img');
+      if (activeImage) {
+        currentScale *= factor;
+        currentScale = Math.max(0.5, Math.min(currentScale, 5));
+        activeImage.style.transform = `scale(${currentScale}) translate(${currentTranslate.x}px, ${currentTranslate.y}px)`;
+      }
+    }
+
+    zoomInButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      zoomImage(1.2);
     });
-    prevButton.addEventListener('click', (e) => { e.stopPropagation(); showSlide(currentImageIndex-1); });
-    nextButton.addEventListener('click', (e) => { e.stopPropagation(); showSlide(currentImageIndex+1); });
-    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) lightbox.classList.remove('open'); document.body.style.overflow = ''; });
+
+    zoomOutButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      zoomImage(0.8);
+    });
+
+    resetZoomButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      resetImageTransform();
+    });
+
+    // Touch events for swipe and pinch
+    lightbox.addEventListener('touchstart', handleTouchStart, false);
+    lightbox.addEventListener('touchmove', handleTouchMove, false);
+    lightbox.addEventListener('touchend', handleTouchEnd, false);
+
+    function handleTouchStart(e) {
+      if (e.touches.length === 1) {
+        startX = e.touches[0].clientX;
+        isDragging = true;
+      } else if (e.touches.length === 2) {
+        e.preventDefault();
+        initialTouchesDistance = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        isDragging = false;
+      }
+    }
+
+    function handleTouchMove(e) {
+      if (e.touches.length === 1 && isDragging) {
+        currentX = e.touches[0].clientX;
+        if (Math.abs(currentX - startX) > 10) {
+          e.preventDefault();
+        }
+      } else if (e.touches.length === 2) {
+        e.preventDefault();
+        const currentDistance = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+
+        if (initialTouchesDistance > 0) {
+          const zoomFactor = currentDistance / initialTouchesDistance;
+          const activeImage = document.querySelector('.lightbox-slide.active img');
+
+          if (activeImage) {
+            currentScale *= zoomFactor;
+            currentScale = Math.max(0.5, Math.min(currentScale, 5));
+            activeImage.style.transform = `scale(${currentScale}) translate(${currentTranslate.x}px, ${currentTranslate.y}px)`;
+            initialTouchesDistance = currentDistance;
+          }
+        }
+      }
+    }
+
+    function handleTouchEnd(e) {
+      if (e.touches.length < 1) {
+        isDragging = false;
+
+        if (e.changedTouches.length === 1) {
+          const diffX = currentX - startX;
+
+          if (Math.abs(diffX) > 50) {
+            if (diffX > 0) {
+              showSlide(currentImageIndex - 1);
+            } else {
+              showSlide(currentImageIndex + 1);
+            }
+          }
+        }
+      }
+
+      if (e.touches.length < 2) {
+        initialTouchesDistance = 0;
+      }
+    }
+
+    // Keyboard navigation
     document.addEventListener('keydown', (e) => {
       if (!lightbox.classList.contains('open')) return;
-      if (e.key === 'Escape') { lightbox.classList.remove('open'); document.body.style.overflow = ''; }
-      if (e.key === 'ArrowLeft') showSlide(currentImageIndex-1);
-      if (e.key === 'ArrowRight') showSlide(currentImageIndex+1);
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') showSlide(currentImageIndex - 1);
+      if (e.key === 'ArrowRight') showSlide(currentImageIndex + 1);
     });
   </script>
 </body>
 </html>
-
