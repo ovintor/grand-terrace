@@ -9,7 +9,7 @@
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="favicon_120x120.svg" sizes="120x120">
   <style>
-    /* Все стили без изменений (как в предыдущих версиях) */
+    /* Все стили без изменений (оптимизированы для мобильных) */
     * {
       margin: 0;
       padding: 0;
@@ -1395,7 +1395,7 @@
   </style>
 </head>
 <body>
-  <!-- Шапка (без изменений) -->
+  <!-- Шапка -->
   <header>
     <div class="container">
       <nav>
@@ -1665,10 +1665,7 @@
           </ul>
         </div>
       </div>
-      <div class="copyright">
-        © 2025 Апартамент "Большая Терраса". Все права защищены.
-        <br><span style="font-size: 0.8rem; opacity: 0.7;">Сайт не собирает и не обрабатывает персональные данные посетителей</span>
-      </div>
+      <div class="copyright">© 2025 Апартамент "Большая Терраса". Все права защищены.</div>
     </div>
   </footer>
 
@@ -1681,7 +1678,6 @@
     let orientationChangeInProgress = false;
     let currentOrientation = window.orientation || window.screen.orientation.angle;
     let mapRestoreTimeout = null;
-    let lastAspectRatio = window.innerWidth / window.innerHeight; // для отслеживания изменения соотношения сторон
 
     // Управление мобильным меню (без изменений)
     const menuToggle = document.getElementById('menuToggle');
@@ -1745,11 +1741,13 @@
 
     // Функция для полного уничтожения и пересоздания карты
     function recreateMap(center = null, zoom = null) {
+      // Если карта не существует, просто инициализируем
       if (!myMap) {
         initMap(center, zoom);
         return;
       }
 
+      // Сохраняем текущие параметры, если не переданы
       let targetCenter = center;
       let targetZoom = zoom;
       if (!targetCenter && myMap) {
@@ -1762,6 +1760,7 @@
         }
       }
 
+      // Уничтожаем старую карту
       try {
         myMap.destroy();
       } catch (e) {
@@ -1769,69 +1768,44 @@
       }
       myMap = null;
 
+      // Очищаем контейнер
       const mapContainer = document.getElementById('map');
       mapContainer.innerHTML = '';
 
+      // Даем время браузеру обновить размеры контейнера
       setTimeout(() => {
         initMap(targetCenter, targetZoom);
       }, 150);
     }
 
     // Функция для многократных попыток fitToViewport
-    function tryFitToViewport(attempts = [0, 150, 300, 600, 1000, 1500]) {
+    function tryFitToViewport(attempts = [0, 150, 300, 600, 1000]) {
       attempts.forEach(delay => {
         setTimeout(() => {
           if (myMap && !orientationChangeInProgress) {
             try {
               myMap.container.fitToViewport();
             } catch (e) {
-              // игнорируем
+              console.warn('fitToViewport error', e);
             }
           }
         }, delay);
       });
     }
 
-    // ========== УЛУЧШЕННЫЙ ОБРАБОТЧИК ИЗМЕНЕНИЯ РАЗМЕРА / ОРИЕНТАЦИИ ==========
-    function handleSizeOrOrientationChange() {
-      // Проверяем, изменилось ли соотношение сторон (т.е. реальная смена ориентации или существенное изменение размера)
-      const newAspect = window.innerWidth / window.innerHeight;
-      const aspectChanged = Math.abs(newAspect - lastAspectRatio) > 0.1; // порог 0.1 для исключения мелких изменений
-      lastAspectRatio = newAspect;
-
-      // Если не было события orientationchange, но изменилось соотношение, считаем это поворотом
-      if (aspectChanged && !orientationChangeInProgress) {
-        // Искусственно вызываем обработчик поворота
-        handleOrientationChange(true);
-      } else {
-        // Обычный resize, просто подгоняем карту
-        clearTimeout(window.resizeTimer);
-        window.resizeTimer = setTimeout(() => {
-          if (myMap && !orientationChangeInProgress) {
-            try {
-              myMap.container.fitToViewport();
-            } catch (error) {
-              console.error('Ошибка при resize карты:', error);
-            }
-          }
-          refreshCalculatorLayout();
-        }, 250);
-      }
-    }
-
-    // Основной обработчик смены ориентации
-    function handleOrientationChange(force = false) {
+    // ========== ОБРАБОТЧИК ОРИЕНТАЦИИ ==========
+    function handleOrientationChange() {
       if (orientationChangeInProgress) return;
       orientationChangeInProgress = true;
 
       const newOrientation = window.orientation || window.screen.orientation.angle;
-      if (!force && newOrientation === currentOrientation) {
+      if (newOrientation === currentOrientation) {
         orientationChangeInProgress = false;
         return;
       }
       currentOrientation = newOrientation;
 
-      // Закрываем мобильное меню
+      // Закрываем мобильное меню при смене ориентации
       if (menuToggle && navLinks && navLinks.classList.contains('active')) {
         menuToggle.classList.remove('active');
         navLinks.classList.remove('active');
@@ -1839,19 +1813,23 @@
         document.body.style.overflow = '';
       }
 
+      // Обновляем калькулятор
       refreshCalculatorLayout();
 
-      // Отменяем предыдущие таймеры
+      // Отменяем предыдущий таймер пересоздания
       if (mapRestoreTimeout) {
         clearTimeout(mapRestoreTimeout);
       }
 
-      // Сначала пытаемся просто подогнать несколько раз
-      tryFitToViewport([0, 150, 300, 600]);
+      // Пытаемся подогнать карту несколько раз с разными задержками
+      if (myMap) {
+        tryFitToViewport([0, 150, 300, 600]);
+      }
 
-      // Затем пересоздаём карту через 400 мс, чтобы дать время на изменение размеров контейнера
+      // Пересоздаём карту через 400 мс для гарантии (если подгонка не помогла)
       mapRestoreTimeout = setTimeout(() => {
         if (myMap) {
+          // Если карта существует, пересоздаём
           recreateMap();
         } else {
           initMap();
@@ -1859,27 +1837,30 @@
         mapRestoreTimeout = null;
       }, 400);
 
-      // Дополнительные попытки подгонки после пересоздания
-      setTimeout(() => {
-        if (myMap && !orientationChangeInProgress) {
-          tryFitToViewport([0, 150, 300]);
-        }
-      }, 800);
-
-      // Снимаем флаг через 2 секунды
+      // Снимаем флаг через 1.5 секунды
       setTimeout(() => {
         orientationChangeInProgress = false;
-      }, 2000);
+      }, 1500);
     }
 
-    // Слушаем orientationchange
+    // Обработчик изменения ориентации
     window.addEventListener('orientationchange', function() {
       setTimeout(handleOrientationChange, 50);
     });
 
-    // Слушаем resize для контроля изменения соотношения сторон
+    // Обработчик изменения размера окна (с debounce) - только fitToViewport, без пересоздания
     window.addEventListener('resize', function() {
-      handleSizeOrOrientationChange();
+      clearTimeout(window.resizeTimer);
+      window.resizeTimer = setTimeout(function() {
+        if (myMap && !orientationChangeInProgress) {
+          try {
+            myMap.container.fitToViewport();
+          } catch (error) {
+            console.error('Ошибка при resize карты:', error);
+          }
+        }
+        refreshCalculatorLayout();
+      }, 250);
     });
 
     // Инициализация карты
@@ -1906,7 +1887,7 @@
           placemark.balloon.open();
           myMap.behaviors.disable('scrollZoom');
 
-          // Подгоняем после загрузки несколько раз
+          // Подгоняем после загрузки
           setTimeout(() => { if (myMap) myMap.container.fitToViewport(); }, 200);
           setTimeout(() => { if (myMap) myMap.container.fitToViewport(); }, 600);
           setTimeout(() => { if (myMap) myMap.container.fitToViewport(); }, 1200);
@@ -2220,6 +2201,7 @@
       const calcResult = document.getElementById('calcResult');
       const rulesSubmitBtn = document.getElementById('rulesSubmitBtn');
 
+      // Установка минимальных дат
       const today = new Date().toISOString().split('T')[0];
       checkinInput.setAttribute('min', today);
       checkoutInput.setAttribute('min', today);
