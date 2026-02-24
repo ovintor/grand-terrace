@@ -1677,10 +1677,9 @@
     let myMap = null;
     let orientationChangeInProgress = false;
     let currentOrientation = window.orientation || window.screen.orientation.angle;
-    let mapRestoreTimeout = null; // для защиты от повторных пересозданий
-    let resizeObserver = null;
+    let mapRestoreTimeout = null;
 
-    // Управление мобильным меню
+    // Управление мобильным меню (без изменений)
     const menuToggle = document.getElementById('menuToggle');
     const navLinks = document.getElementById('navLinks');
     const menuOverlay = document.getElementById('menuOverlay');
@@ -1740,7 +1739,7 @@
       });
     }
 
-    // Функция для полного уничтожения и пересоздания карты (основной метод восстановления)
+    // Функция для полного уничтожения и пересоздания карты
     function recreateMap(center = null, zoom = null) {
       // Если карта не существует, просто инициализируем
       if (!myMap) {
@@ -1756,7 +1755,6 @@
           targetCenter = myMap.getCenter();
           targetZoom = myMap.getZoom();
         } catch (e) {
-          // если не получается, используем координаты по умолчанию
           targetCenter = [44.616622961342124, 33.517859032692016];
           targetZoom = 16;
         }
@@ -1780,7 +1778,22 @@
       }, 150);
     }
 
-    // ========== УЛУЧШЕННЫЙ ОБРАБОТЧИК ОРИЕНТАЦИИ ==========
+    // Функция для многократных попыток fitToViewport
+    function tryFitToViewport(attempts = [0, 150, 300, 600, 1000]) {
+      attempts.forEach(delay => {
+        setTimeout(() => {
+          if (myMap && !orientationChangeInProgress) {
+            try {
+              myMap.container.fitToViewport();
+            } catch (e) {
+              console.warn('fitToViewport error', e);
+            }
+          }
+        }, delay);
+      });
+    }
+
+    // ========== ОБРАБОТЧИК ОРИЕНТАЦИИ ==========
     function handleOrientationChange() {
       if (orientationChangeInProgress) return;
       orientationChangeInProgress = true;
@@ -1792,13 +1805,6 @@
       }
       currentOrientation = newOrientation;
 
-      const viewport = document.querySelector('meta[name="viewport"]');
-      if (viewport) {
-        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
-      }
-
-      window.dispatchEvent(new Event('resize'));
-
       // Закрываем мобильное меню при смене ориентации
       if (menuToggle && navLinks && navLinks.classList.contains('active')) {
         menuToggle.classList.remove('active');
@@ -1807,54 +1813,34 @@
         document.body.style.overflow = '';
       }
 
-      // Принудительно обновляем калькулятор
+      // Обновляем калькулятор
       refreshCalculatorLayout();
 
-      // Отменяем предыдущий запланированный перезапуск карты
+      // Отменяем предыдущий таймер пересоздания
       if (mapRestoreTimeout) {
         clearTimeout(mapRestoreTimeout);
       }
 
-      // Планируем пересоздание карты с задержкой, чтобы контейнер успел изменить размер
+      // Пытаемся подогнать карту несколько раз с разными задержками
+      if (myMap) {
+        tryFitToViewport([0, 150, 300, 600]);
+      }
+
+      // Пересоздаём карту через 400 мс для гарантии (если подгонка не помогла)
       mapRestoreTimeout = setTimeout(() => {
         if (myMap) {
-          // Пытаемся сначала просто подогнать, но часто это не помогает, поэтому пересоздаём
-          try {
-            myMap.container.fitToViewport();
-          } catch (e) {
-            // игнорируем
-          }
-          // Всё равно пересоздаём для гарантии
+          // Если карта существует, пересоздаём
           recreateMap();
         } else {
-          // Если карты нет, создаём
           initMap();
         }
         mapRestoreTimeout = null;
-      }, 300);
+      }, 400);
 
-      // Дополнительные попытки через 600, 1000 и 1500 мс
-      [600, 1000, 1500].forEach((delay) => {
-        setTimeout(() => {
-          if (!myMap) {
-            initMap();
-          } else {
-            try {
-              myMap.container.fitToViewport();
-            } catch (e) {
-              // если не получается, пересоздадим
-              if (!orientationChangeInProgress) {
-                recreateMap();
-              }
-            }
-          }
-        }, delay);
-      });
-
-      // Снимаем флаг через 2 секунды
+      // Снимаем флаг через 1.5 секунды
       setTimeout(() => {
         orientationChangeInProgress = false;
-      }, 2000);
+      }, 1500);
     }
 
     // Обработчик изменения ориентации
@@ -1862,7 +1848,7 @@
       setTimeout(handleOrientationChange, 50);
     });
 
-    // Обработчик изменения размера окна (с debounce) - только для мелких правок
+    // Обработчик изменения размера окна (с debounce) - только fitToViewport, без пересоздания
     window.addEventListener('resize', function() {
       clearTimeout(window.resizeTimer);
       window.resizeTimer = setTimeout(function() {
@@ -1877,31 +1863,13 @@
       }, 250);
     });
 
-    // Используем ResizeObserver для наблюдения за контейнером карты
-    function observeMapContainer() {
-      const mapContainer = document.getElementById('map');
-      if (!mapContainer) return;
-      if (resizeObserver) resizeObserver.disconnect();
-      resizeObserver = new ResizeObserver(entries => {
-        // При изменении размера контейнера пересоздаём карту, если она существует
-        if (myMap && !orientationChangeInProgress) {
-          // небольшая задержка, чтобы дать браузеру завершить перерисовку
-          clearTimeout(mapRestoreTimeout);
-          mapRestoreTimeout = setTimeout(() => {
-            recreateMap();
-          }, 200);
-        }
-      });
-      resizeObserver.observe(mapContainer);
-    }
-
     // Инициализация карты
     function initMap(center = null, zoom = null) {
       if (typeof ymaps === 'undefined') {
         document.getElementById('map').innerHTML = '<div class="map-placeholder">Карта временно недоступна</div>';
         return;
       }
-      if (myMap) return; // защита от повторной инициализации
+      if (myMap) return;
 
       ymaps.ready(function() {
         const coords = [44.616622961342124, 33.517859032692016];
@@ -1919,11 +1887,8 @@
           placemark.balloon.open();
           myMap.behaviors.disable('scrollZoom');
 
-          // Наблюдаем за контейнером после создания карты
-          observeMapContainer();
-
-          // Многократные попытки подогнать после загрузки
-          setTimeout(function() { if (myMap) myMap.container.fitToViewport(); }, 200);
+          // Подгоняем после загрузки
+          setTimeout(() => { if (myMap) myMap.container.fitToViewport(); }, 200);
           setTimeout(() => { if (myMap) myMap.container.fitToViewport(); }, 600);
           setTimeout(() => { if (myMap) myMap.container.fitToViewport(); }, 1200);
         } catch (error) {
@@ -2241,17 +2206,15 @@
       checkinInput.setAttribute('min', today);
       checkoutInput.setAttribute('min', today);
 
-      // Функция получения цены по дате
       function getPriceForDate(date) {
-        const month = date.getMonth(); // 0-11
-        if (month >= 0 && month <= 2) return 11000; // Янв-Март
-        if (month === 3 || month === 4) return 12000; // Апр-Май
-        if (month >= 5 && month <= 7) return 13000; // Июн-Авг
-        if (month === 8) return 12000; // Сен
-        return 11000; // Окт-Дек
+        const month = date.getMonth();
+        if (month >= 0 && month <= 2) return 11000;
+        if (month === 3 || month === 4) return 12000;
+        if (month >= 5 && month <= 7) return 13000;
+        if (month === 8) return 12000;
+        return 11000;
       }
 
-      // Валидация минимального срока
       function validateDates() {
         if (!checkinInput.value || !checkoutInput.value) return false;
         const checkin = new Date(checkinInput.value);
@@ -2272,7 +2235,6 @@
         }
       });
 
-      // Функция открытия модального окна правил в режиме подтверждения
       function openRulesModalConfirm() {
         rulesCheckboxContainer.style.display = 'block';
         rulesSubmitBtn.style.display = 'block';
@@ -2284,7 +2246,6 @@
         document.body.style.overflow = 'hidden';
       }
 
-      // Обработчик кнопки "Рассчитать"
       calculateBtn.addEventListener('click', function() {
         if (!validateDates()) {
           alert('Пожалуйста, выберите корректные даты. Минимальный срок — двое суток.');
@@ -2293,7 +2254,6 @@
         openRulesModalConfirm();
       });
 
-      // Обработчик подтверждения правил
       rulesSubmitBtn.addEventListener('click', function() {
         if (!rulesAgreement.checked) {
           rulesError.classList.add('visible');
@@ -2322,7 +2282,6 @@
         calcResult.classList.remove('hidden');
       });
 
-      // Клик по месяцам в календаре цен
       const monthBoxes = document.querySelectorAll('.month-box');
       monthBoxes.forEach(box => {
         box.addEventListener('click', function() {
