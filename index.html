@@ -1678,6 +1678,7 @@
     let orientationChangeInProgress = false;
     let currentOrientation = window.orientation || window.screen.orientation.angle;
     let mapRestoreTimeout = null; // для защиты от повторных пересозданий
+    let resizeObserver = null;
 
     // Управление мобильным меню
     const menuToggle = document.getElementById('menuToggle');
@@ -1723,7 +1724,7 @@
       });
     }
 
-    // Функция для принудительного обновления калькулятора (аналог refreshFormLayout)
+    // Функция для принудительного обновления калькулятора
     function refreshCalculatorLayout() {
       const calculator = document.getElementById('calculator');
       if (!calculator) return;
@@ -1779,7 +1780,7 @@
       }, 150);
     }
 
-    // ========== УЛУЧШЕННЫЙ ОБРАБОТЧИК ОРИЕНТАЦИИ С ПЕРЕСОЗДАНИЕМ КАРТЫ ==========
+    // ========== УЛУЧШЕННЫЙ ОБРАБОТЧИК ОРИЕНТАЦИИ ==========
     function handleOrientationChange() {
       if (orientationChangeInProgress) return;
       orientationChangeInProgress = true;
@@ -1832,19 +1833,23 @@
         mapRestoreTimeout = null;
       }, 300);
 
-      // Дополнительная подстраховка: ещё один перезапуск через секунду, если первый не сработал
-      setTimeout(() => {
-        if (!myMap) {
-          initMap();
-        } else {
-          // Проверим, адекватно ли отображается, если нет - пересоздадим
-          try {
-            myMap.container.fitToViewport();
-          } catch (e) {
-            recreateMap();
+      // Дополнительные попытки через 600, 1000 и 1500 мс
+      [600, 1000, 1500].forEach((delay) => {
+        setTimeout(() => {
+          if (!myMap) {
+            initMap();
+          } else {
+            try {
+              myMap.container.fitToViewport();
+            } catch (e) {
+              // если не получается, пересоздадим
+              if (!orientationChangeInProgress) {
+                recreateMap();
+              }
+            }
           }
-        }
-      }, 1000);
+        }, delay);
+      });
 
       // Снимаем флаг через 2 секунды
       setTimeout(() => {
@@ -1872,6 +1877,24 @@
       }, 250);
     });
 
+    // Используем ResizeObserver для наблюдения за контейнером карты
+    function observeMapContainer() {
+      const mapContainer = document.getElementById('map');
+      if (!mapContainer) return;
+      if (resizeObserver) resizeObserver.disconnect();
+      resizeObserver = new ResizeObserver(entries => {
+        // При изменении размера контейнера пересоздаём карту, если она существует
+        if (myMap && !orientationChangeInProgress) {
+          // небольшая задержка, чтобы дать браузеру завершить перерисовку
+          clearTimeout(mapRestoreTimeout);
+          mapRestoreTimeout = setTimeout(() => {
+            recreateMap();
+          }, 200);
+        }
+      });
+      resizeObserver.observe(mapContainer);
+    }
+
     // Инициализация карты
     function initMap(center = null, zoom = null) {
       if (typeof ymaps === 'undefined') {
@@ -1896,6 +1919,9 @@
           placemark.balloon.open();
           myMap.behaviors.disable('scrollZoom');
 
+          // Наблюдаем за контейнером после создания карты
+          observeMapContainer();
+
           // Многократные попытки подогнать после загрузки
           setTimeout(function() { if (myMap) myMap.container.fitToViewport(); }, 200);
           setTimeout(() => { if (myMap) myMap.container.fitToViewport(); }, 600);
@@ -1911,7 +1937,7 @@
     document.addEventListener('DOMContentLoaded', function() {
       initMap();
 
-      // ====== Видео (как в первом варианте) ======
+      // ====== Видео ======
       const videoPreview = document.getElementById('videoPreview');
       const playButton = document.getElementById('playButton');
       const videoModal = document.getElementById('videoModal');
