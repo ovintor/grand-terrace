@@ -1677,6 +1677,7 @@
     let myMap = null;
     let orientationChangeInProgress = false;
     let currentOrientation = window.orientation || window.screen.orientation.angle;
+    let mapRestoreTimeout = null; // для защиты от повторных пересозданий
 
     // Управление мобильным меню
     const menuToggle = document.getElementById('menuToggle');
@@ -1738,36 +1739,47 @@
       });
     }
 
-    // Функция для обновления размера карты
-    function updateMapSize() {
-      if (!myMap) return;
-      try {
-        myMap.container.fitToViewport();
-      } catch (error) {
-        console.error('Ошибка при обновлении карты:', error);
+    // Функция для полного уничтожения и пересоздания карты (основной метод восстановления)
+    function recreateMap(center = null, zoom = null) {
+      // Если карта не существует, просто инициализируем
+      if (!myMap) {
+        initMap(center, zoom);
+        return;
       }
-    }
 
-    // Функция для полного уничтожения и пересоздания карты
-    function recreateMap() {
-      if (!myMap) return;
+      // Сохраняем текущие параметры, если не переданы
+      let targetCenter = center;
+      let targetZoom = zoom;
+      if (!targetCenter && myMap) {
+        try {
+          targetCenter = myMap.getCenter();
+          targetZoom = myMap.getZoom();
+        } catch (e) {
+          // если не получается, используем координаты по умолчанию
+          targetCenter = [44.616622961342124, 33.517859032692016];
+          targetZoom = 16;
+        }
+      }
+
+      // Уничтожаем старую карту
       try {
-        const center = myMap.getCenter();
-        const zoom = myMap.getZoom();
         myMap.destroy();
-        myMap = null;
-        const mapContainer = document.getElementById('map');
-        mapContainer.innerHTML = '';
-        setTimeout(() => {
-          initMap(center, zoom);
-        }, 300);
-      } catch (error) {
-        console.error('Ошибка при пересоздании карты:', error);
-        setTimeout(initMap, 500);
+      } catch (e) {
+        console.warn('Ошибка при уничтожении карты', e);
       }
+      myMap = null;
+
+      // Очищаем контейнер
+      const mapContainer = document.getElementById('map');
+      mapContainer.innerHTML = '';
+
+      // Даем время браузеру обновить размеры контейнера
+      setTimeout(() => {
+        initMap(targetCenter, targetZoom);
+      }, 150);
     }
 
-    // ========== УЛУЧШЕННЫЙ ОБРАБОТЧИК ОРИЕНТАЦИИ ==========
+    // ========== УЛУЧШЕННЫЙ ОБРАБОТЧИК ОРИЕНТАЦИИ С ПЕРЕСОЗДАНИЕМ КАРТЫ ==========
     function handleOrientationChange() {
       if (orientationChangeInProgress) return;
       orientationChangeInProgress = true;
@@ -1794,48 +1806,58 @@
         document.body.style.overflow = '';
       }
 
-      // Массив задержек для многократных попыток обновления
-      const attempts = [100, 300, 600, 1000, 1500];
+      // Принудительно обновляем калькулятор
+      refreshCalculatorLayout();
 
-      attempts.forEach((delay, index) => {
-        setTimeout(() => {
-          // Принудительно перерисовываем калькулятор
-          refreshCalculatorLayout();
+      // Отменяем предыдущий запланированный перезапуск карты
+      if (mapRestoreTimeout) {
+        clearTimeout(mapRestoreTimeout);
+      }
 
-          // Пытаемся подогнать карту
-          if (myMap) {
-            try {
-              myMap.container.fitToViewport();
-            } catch (e) {
-              console.log(`fitToViewport attempt ${index + 1} failed`);
-            }
+      // Планируем пересоздание карты с задержкой, чтобы контейнер успел изменить размер
+      mapRestoreTimeout = setTimeout(() => {
+        if (myMap) {
+          // Пытаемся сначала просто подогнать, но часто это не помогает, поэтому пересоздаём
+          try {
+            myMap.container.fitToViewport();
+          } catch (e) {
+            // игнорируем
           }
+          // Всё равно пересоздаём для гарантии
+          recreateMap();
+        } else {
+          // Если карты нет, создаём
+          initMap();
+        }
+        mapRestoreTimeout = null;
+      }, 300);
 
-          // Если это последняя попытка и карта всё ещё не обновилась корректно — пересоздаём
-          if (index === attempts.length - 1 && myMap) {
-            setTimeout(() => {
-              try {
-                myMap.container.fitToViewport();
-              } catch (e) {
-                recreateMap();
-              }
-            }, 200);
+      // Дополнительная подстраховка: ещё один перезапуск через секунду, если первый не сработал
+      setTimeout(() => {
+        if (!myMap) {
+          initMap();
+        } else {
+          // Проверим, адекватно ли отображается, если нет - пересоздадим
+          try {
+            myMap.container.fitToViewport();
+          } catch (e) {
+            recreateMap();
           }
-        }, delay);
-      });
+        }
+      }, 1000);
 
-      // Дополнительный сброс флага через разумное время
+      // Снимаем флаг через 2 секунды
       setTimeout(() => {
         orientationChangeInProgress = false;
       }, 2000);
     }
 
-    // Обработчик изменения ориентации (запускаем с небольшой задержкой)
+    // Обработчик изменения ориентации
     window.addEventListener('orientationchange', function() {
       setTimeout(handleOrientationChange, 50);
     });
 
-    // Обработчик изменения размера окна (с debounce)
+    // Обработчик изменения размера окна (с debounce) - только для мелких правок
     window.addEventListener('resize', function() {
       clearTimeout(window.resizeTimer);
       window.resizeTimer = setTimeout(function() {
@@ -1856,7 +1878,8 @@
         document.getElementById('map').innerHTML = '<div class="map-placeholder">Карта временно недоступна</div>';
         return;
       }
-      if (myMap) return;
+      if (myMap) return; // защита от повторной инициализации
+
       ymaps.ready(function() {
         const coords = [44.616622961342124, 33.517859032692016];
         try {
@@ -1872,8 +1895,8 @@
           myMap.geoObjects.add(placemark);
           placemark.balloon.open();
           myMap.behaviors.disable('scrollZoom');
-          
-          // Несколько попыток подгонки после загрузки
+
+          // Многократные попытки подогнать после загрузки
           setTimeout(function() { if (myMap) myMap.container.fitToViewport(); }, 200);
           setTimeout(() => { if (myMap) myMap.container.fitToViewport(); }, 600);
           setTimeout(() => { if (myMap) myMap.container.fitToViewport(); }, 1200);
