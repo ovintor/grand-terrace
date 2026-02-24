@@ -1445,7 +1445,7 @@
         <div class="about-text">
           <p>Наш апартамент сочетает в себе современный дизайн, высокий комфорт и выгодное расположение в самом сердце города. Просторное помещение с панорамными окнами и большая терраса открывают удивительный вид на главную Севастопольскую бухту.</p>
           <p>Мы тщательно подошли к созданию атмосферы отдыха и уюта, уделили внимание каждой детали, чтобы обеспечить нашим гостям незабываемые впечатления от проживания.</p>
-          <p>Убeги от повceднеvноcти в aпapтaмeнт c cамой Большoй Teррaсой и видoм нa Ceвacтoпoльcкую буxту, cимвол гоpода Пaмятник зaтoпленным кopaблям! Добрo пожаловать в aпapтaмeнт "Большaя Tеpрaса" Hабережная Адмирала Перелешина, 3. Мыс Хрустальный. Пребывание в апартаменте "Большая Терраса", - это Ваш идеальный побег на отдых!</p>
+          <p>Убeги от повcеднеvноcти в aпapтaмeнт c cамой Большoй Teррaсой и видoм нa Ceвacтoпoльcкую буxту, cимвол гоpода Пaмятник зaтoпленным кopaблям! Добрo пожаловать в aпapтaмeнт "Большaя Tеpрaса" Hабережная Адмирала Перелешина, 3. Мыс Хрустальный. Пребывание в апартаменте "Большая Терраса", - это Ваш идеальный побег на отдых!</p>
         </div>
         <div class="about-image">
           <div class="video-preview-container" id="videoPreview">
@@ -1767,24 +1767,25 @@
       }
     }
 
-    // Обработчик изменения ориентации (полностью из первого варианта)
+    // ========== УЛУЧШЕННЫЙ ОБРАБОТЧИК ОРИЕНТАЦИИ ==========
     function handleOrientationChange() {
       if (orientationChangeInProgress) return;
       orientationChangeInProgress = true;
+
       const newOrientation = window.orientation || window.screen.orientation.angle;
       if (newOrientation === currentOrientation) {
         orientationChangeInProgress = false;
         return;
       }
       currentOrientation = newOrientation;
-      
+
       const viewport = document.querySelector('meta[name="viewport"]');
       if (viewport) {
         viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
       }
-      
+
       window.dispatchEvent(new Event('resize'));
-      
+
       // Закрываем мобильное меню при смене ориентации
       if (menuToggle && navLinks && navLinks.classList.contains('active')) {
         menuToggle.classList.remove('active');
@@ -1792,37 +1793,47 @@
         menuOverlay.classList.remove('active');
         document.body.style.overflow = '';
       }
-      
-      // Ждем завершения анимации поворота
-      setTimeout(() => {
-        // Обновляем калькулятор
-        refreshCalculatorLayout();
-        
-        if (myMap) {
-          try {
-            myMap.container.fitToViewport();
-          } catch (e) {
-            console.log('fitToViewport failed, will recreate map');
+
+      // Массив задержек для многократных попыток обновления
+      const attempts = [100, 300, 600, 1000, 1500];
+
+      attempts.forEach((delay, index) => {
+        setTimeout(() => {
+          // Принудительно перерисовываем калькулятор
+          refreshCalculatorLayout();
+
+          // Пытаемся подогнать карту
+          if (myMap) {
+            try {
+              myMap.container.fitToViewport();
+            } catch (e) {
+              console.log(`fitToViewport attempt ${index + 1} failed`);
+            }
           }
-          
-          setTimeout(() => {
-            if (myMap) {
+
+          // Если это последняя попытка и карта всё ещё не обновилась корректно — пересоздаём
+          if (index === attempts.length - 1 && myMap) {
+            setTimeout(() => {
               try {
                 myMap.container.fitToViewport();
-                setTimeout(() => {
-                  if (myMap && orientationChangeInProgress) {
-                    recreateMap();
-                  }
-                }, 800);
               } catch (e) {
                 recreateMap();
               }
-            }
-          }, 400);
-        }
+            }, 200);
+          }
+        }, delay);
+      });
+
+      // Дополнительный сброс флага через разумное время
+      setTimeout(() => {
         orientationChangeInProgress = false;
-      }, 500);
+      }, 2000);
     }
+
+    // Обработчик изменения ориентации (запускаем с небольшой задержкой)
+    window.addEventListener('orientationchange', function() {
+      setTimeout(handleOrientationChange, 50);
+    });
 
     // Обработчик изменения размера окна (с debounce)
     window.addEventListener('resize', function() {
@@ -1837,11 +1848,6 @@
         }
         refreshCalculatorLayout();
       }, 250);
-    });
-
-    // Обработчик изменения ориентации
-    window.addEventListener('orientationchange', function() {
-      setTimeout(handleOrientationChange, 100);
     });
 
     // Инициализация карты
@@ -1867,6 +1873,7 @@
           placemark.balloon.open();
           myMap.behaviors.disable('scrollZoom');
           
+          // Несколько попыток подгонки после загрузки
           setTimeout(function() { if (myMap) myMap.container.fitToViewport(); }, 200);
           setTimeout(() => { if (myMap) myMap.container.fitToViewport(); }, 600);
           setTimeout(() => { if (myMap) myMap.container.fitToViewport(); }, 1200);
