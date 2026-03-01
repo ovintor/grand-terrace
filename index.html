@@ -9,7 +9,7 @@
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="favicon_120x120.svg" sizes="120x120">
   <style>
-    /* Все стили без изменений (оптимизированы для мобильных) */
+    /* Все стили без изменений (оптимизированы для мобильных) + добавлен стиль для чекбокса лояльности */
     * {
       margin: 0;
       padding: 0;
@@ -1445,7 +1445,7 @@
         <div class="about-text">
           <p>Наш апартамент сочетает в себе современный дизайн, высокий комфорт и выгодное расположение в самом сердце города Севастополя. Просторное помещение с панорамными окнами и большая терраса открывают удивительный вид на главную Севастопольскую бухту.</p>
           <p>Мы тщательно подошли к созданию атмосферы отдыха и уюта, уделили внимание каждой детали, чтобы обеспечить нашим гостям незабываемые впечатления от проживания.</p>
-          <p>Убeги от повcеднеvноcти в aпapтaмeнт c cамой Большoй Teррaсой в Севастополе и видoм нa Ceвacтoпoльcкую буxту, cимвол гоpода Пaмятник зaтoпленным кopaблям! Добрo пожаловать в aпapтaмeнт "Большaя Tеpрaса" в Севастополе, набережная Адмирала Перелешина, 3. Мыс Хрустальный. Пребывание в апартаменте "Большая Терраса" Севастополь, - это Ваш идеальный побег на отдых!</p>
+          <p>Убeги от повcеднеvноcти в aпapтaмeнт c cамой Большoй Teррaсой в Севастополе и видoм нa Ceвacтoпoльcкую буxту, cимвол гоpода Пaмятник зaтопленным кopaблям! Добрo пожаловать в aпapтaмeнт "Большaя Tеpрaса" в Севастополе, набережная Адмирала Перелешина, 3. Мыс Хрустальный. Пребывание в апартаменте "Большая Терраса" Севастополь, - это Ваш идеальный побег на отдых!</p>
         </div>
         <div class="about-image">
           <div class="video-preview-container" id="videoPreview">
@@ -1622,6 +1622,13 @@
             </select>
             <small style="color: #666;">Максимум — 4 человека</small>
           </div>
+
+          <!-- Новый чекбокс для постоянных гостей -->
+          <div class="form-group" style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+            <input type="checkbox" id="loyaltyGuest" name="loyaltyGuest" style="width: 20px; height: 20px; accent-color: #c19a6b;">
+            <label for="loyaltyGuest" style="margin-bottom: 0; font-weight: normal; color: #555;">Я уже останавливался(ась) в апартаменте «Большая Терраса» (постоянный гость)</label>
+          </div>
+
           <button class="btn" id="calculateBtn">Рассчитать стоимость</button>
 
           <!-- Блок для вывода результата -->
@@ -2195,13 +2202,14 @@
         if (e.key === 'ArrowRight') showSlide(currentImageIndex + 1);
       });
 
-      // ====== Калькулятор стоимости ======
+      // ====== Калькулятор стоимости (обновлён с учётом скидок) ======
       const checkinInput = document.getElementById('calc_checkin');
       const checkoutInput = document.getElementById('calc_checkout');
       const guestsSelect = document.getElementById('calc_guests');
       const calculateBtn = document.getElementById('calculateBtn');
       const calcResult = document.getElementById('calcResult');
       const rulesSubmitBtn = document.getElementById('rulesSubmitBtn');
+      const loyaltyCheckbox = document.getElementById('loyaltyGuest'); // новый чекбокс
 
       // Установка минимальных дат
       const today = new Date().toISOString().split('T')[0];
@@ -2256,6 +2264,7 @@
         openRulesModalConfirm();
       });
 
+      // Обработчик кнопки "Рассчитать" внутри модального окна правил
       rulesSubmitBtn.addEventListener('click', function() {
         if (!rulesAgreement.checked) {
           rulesError.classList.add('visible');
@@ -2267,23 +2276,54 @@
         const checkin = new Date(checkinInput.value);
         const checkout = new Date(checkoutInput.value);
         const days = Math.ceil((checkout - checkin) / (1000 * 60 * 60 * 24));
-        
-        let total = 0;
+
+        // Базовая стоимость без скидки
+        let totalWithoutDiscount = 0;
         let currentDate = new Date(checkin);
         while (currentDate < checkout) {
-          total += getPriceForDate(currentDate);
+          totalWithoutDiscount += getPriceForDate(currentDate);
           currentDate.setDate(currentDate.getDate() + 1);
         }
 
+        // Определяем скидку за длительность
+        let durationDiscount = 0;
+        if (days >= 7) durationDiscount = 10;
+        else if (days >= 5) durationDiscount = 7;
+        else if (days >= 3) durationDiscount = 5;
+
+        // Проверка на постоянного гостя
+        const isLoyalty = loyaltyCheckbox.checked;
+        let finalDiscount = durationDiscount;
+
+        if (isLoyalty) {
+          if (days < 3) {
+            finalDiscount = 5;               // особое условие для 2 суток
+          } else {
+            finalDiscount = durationDiscount + 2;
+          }
+        }
+
+        // Применяем скидку
+        const discountAmount = Math.round(totalWithoutDiscount * finalDiscount / 100);
+        const totalWithDiscount = totalWithoutDiscount - discountAmount;
+
         const phoneLink = '<a href="tel:+79781439427" style="font-weight:700;">+7 (978) 143-94-27</a>';
+        let discountMessage = '';
+        if (finalDiscount > 0) {
+          discountMessage = `<p><strong>Скидка ${finalDiscount}%</strong> — ${discountAmount.toLocaleString()} руб.</p>`;
+        }
+
         calcResult.innerHTML = `
-          <p><strong>Предварительная стоимость:</strong> ${total.toLocaleString()} руб. (${days} суток).</p>
+          <p><strong>Предварительная стоимость (без скидки):</strong> ${totalWithoutDiscount.toLocaleString()} руб. (${days} суток).</p>
+          ${discountMessage}
+          <p><strong>Итоговая стоимость (с учетом скидки):</strong> ${totalWithDiscount.toLocaleString()} руб.</p>
           <p>Для бронирования и уточнения наличия позвоните нам по телефону ${phoneLink}.</p>
-          <p>При звонке уточните, что вы с сайта, и мы рассмотрим для вас <strong>индивидуальную скидку</strong>!</p>
+          <p>При звонке укажите, что вы с сайта, и если вы постоянный гость – не забудьте напомнить об этом для получения дополнительной скидки!</p>
         `;
         calcResult.classList.remove('hidden');
       });
 
+      // Клик по месяцу в календаре цен
       const monthBoxes = document.querySelectorAll('.month-box');
       monthBoxes.forEach(box => {
         box.addEventListener('click', function() {
@@ -2325,6 +2365,3 @@
   </script>
 </body>
 </html>
-
-
-
