@@ -9,7 +9,7 @@
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="favicon_120x120.svg" sizes="120x120">
   <style>
-    /* Все стили без изменений (оптимизированы для мобильных) */
+    /* Все стили без изменений (оптимизированы для мобильных) + добавлен стиль для чекбоксов */
     * {
       margin: 0;
       padding: 0;
@@ -1445,7 +1445,7 @@
         <div class="about-text">
           <p>Наш апартамент сочетает в себе современный дизайн, высокий комфорт и выгодное расположение в самом сердце города Севастополя. Просторное помещение с панорамными окнами и большая терраса открывают удивительный вид на главную Севастопольскую бухту.</p>
           <p>Мы тщательно подошли к созданию атмосферы отдыха и уюта, уделили внимание каждой детали, чтобы обеспечить нашим гостям незабываемые впечатления от проживания.</p>
-          <p>Убeги от повcеднеvноcти в aпapтaмeнт c cамой Большoй Teррaсой в Севастополе и видoм нa Ceвacтoпoльcкую буxту, cимвол гоpода Пaмятник зaтoпленным кopaблям! Добрo пожаловать в aпapтaмeнт "Большaя Tеpрaса" в Севастополе, набережная Адмирала Перелешина, 3. Мыс Хрустальный. Пребывание в апартаменте "Большая Терраса" Севастополь, - это Ваш идеальный побег на отдых!</p>
+          <p>Убeги от повcеднеvноcти в aпapтaмeнт c cамой Большoй Teррaсой в Севастополе и видoм нa Ceвacтoпoльcкую буxту, cимвол гоpода Пaмятник зaтопленным кopaблям! Добрo пожаловать в aпapтaмeнт "Большaя Tеpрaса" в Севастополе, набережная Адмирала Перелешина, 3. Мыс Хрустальный. Пребывание в апартаменте "Большая Терраса" Севастополь, - это Ваш идеальный побег на отдых!</p>
         </div>
         <div class="about-image">
           <div class="video-preview-container" id="videoPreview">
@@ -1622,6 +1622,30 @@
             </select>
             <small style="color: #666;">Максимум — 4 человека</small>
           </div>
+
+          <!-- Чекбокс для постоянных гостей -->
+          <div class="form-group" style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+            <input type="checkbox" id="loyaltyGuest" name="loyaltyGuest" style="width: 20px; height: 20px; accent-color: #c19a6b;">
+            <label for="loyaltyGuest" style="margin-bottom: 0; font-weight: normal; color: #555;">Я уже останавливался(ась) в апартаменте «Большая Терраса» (постоянный гость)</label>
+          </div>
+
+          <!-- Новый чекбокс для отзыва 5 звёзд -->
+          <div class="form-group" style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
+            <input type="checkbox" id="reviewGuest" name="reviewGuest" style="width: 20px; height: 20px; accent-color: #c19a6b;">
+            <label for="reviewGuest" style="margin-bottom: 0; font-weight: normal; color: #555;">Я оставлял отзыв с оценкой 5 звёзд на онлайн-агрегаторах (Яндекс.Карты, Google Maps, Суточно.ру и др.)</label>
+          </div>
+
+          <!-- Пояснение по скидкам -->
+          <div style="margin: 15px 0 5px; padding: 10px; background-color: #f0f7ff; border-radius: 6px; font-size: 0.95rem; border-left: 3px solid #c19a6b;">
+            <p style="margin-bottom: 5px;"><strong>Скидки при бронировании через этот сайт:</strong></p>
+            <ul style="margin-left: 20px; color: #555;">
+              <li>5% — для постоянных гостей (ранее останавливались у нас);</li>
+              <li>5% — если вы оставляли отзыв 5 звёзд на агрегаторах;</li>
+              <li>5% — при бронировании от 4 суток.</li>
+            </ul>
+            <p style="margin-top: 5px; font-style: italic;">Скидки суммируются. Максимальная скидка — 15%.</p>
+          </div>
+
           <button class="btn" id="calculateBtn">Рассчитать стоимость</button>
 
           <!-- Блок для вывода результата -->
@@ -2195,13 +2219,15 @@
         if (e.key === 'ArrowRight') showSlide(currentImageIndex + 1);
       });
 
-      // ====== Калькулятор стоимости ======
+      // ====== Калькулятор стоимости (обновлён с новыми условиями скидок) ======
       const checkinInput = document.getElementById('calc_checkin');
       const checkoutInput = document.getElementById('calc_checkout');
       const guestsSelect = document.getElementById('calc_guests');
       const calculateBtn = document.getElementById('calculateBtn');
       const calcResult = document.getElementById('calcResult');
       const rulesSubmitBtn = document.getElementById('rulesSubmitBtn');
+      const loyaltyCheckbox = document.getElementById('loyaltyGuest');
+      const reviewCheckbox = document.getElementById('reviewGuest'); // новый чекбокс
 
       // Установка минимальных дат
       const today = new Date().toISOString().split('T')[0];
@@ -2256,6 +2282,7 @@
         openRulesModalConfirm();
       });
 
+      // Обработчик кнопки "Рассчитать" внутри модального окна правил
       rulesSubmitBtn.addEventListener('click', function() {
         if (!rulesAgreement.checked) {
           rulesError.classList.add('visible');
@@ -2267,23 +2294,54 @@
         const checkin = new Date(checkinInput.value);
         const checkout = new Date(checkoutInput.value);
         const days = Math.ceil((checkout - checkin) / (1000 * 60 * 60 * 24));
-        
-        let total = 0;
+
+        // Базовая стоимость без скидки
+        let totalWithoutDiscount = 0;
         let currentDate = new Date(checkin);
         while (currentDate < checkout) {
-          total += getPriceForDate(currentDate);
+          totalWithoutDiscount += getPriceForDate(currentDate);
           currentDate.setDate(currentDate.getDate() + 1);
         }
 
+        // Скидки:
+        let discountPercent = 0;
+
+        // 1) Скидка за длительность (от 4 суток)
+        if (days >= 4) {
+          discountPercent += 5;
+        }
+
+        // 2) Постоянный гость
+        if (loyaltyCheckbox.checked) {
+          discountPercent += 5;
+        }
+
+        // 3) Отзыв 5 звёзд
+        if (reviewCheckbox.checked) {
+          discountPercent += 5;
+        }
+
+        // Применяем скидку
+        const discountAmount = Math.round(totalWithoutDiscount * discountPercent / 100);
+        const totalWithDiscount = totalWithoutDiscount - discountAmount;
+
         const phoneLink = '<a href="tel:+79781439427" style="font-weight:700;">+7 (978) 143-94-27</a>';
+        let discountMessage = '';
+        if (discountPercent > 0) {
+          discountMessage = `<p><strong>Скидка ${discountPercent}%</strong> — ${discountAmount.toLocaleString()} руб.</p>`;
+        }
+
         calcResult.innerHTML = `
-          <p><strong>Предварительная стоимость:</strong> ${total.toLocaleString()} руб. (${days} суток).</p>
+          <p><strong>Предварительная стоимость (без скидки):</strong> ${totalWithoutDiscount.toLocaleString()} руб. (${days} суток).</p>
+          ${discountMessage}
+          <p><strong>Итоговая стоимость (с учетом скидки):</strong> ${totalWithDiscount.toLocaleString()} руб.</p>
           <p>Для бронирования и уточнения наличия позвоните нам по телефону ${phoneLink}.</p>
-          <p>При звонке уточните, что вы с сайта, и мы рассмотрим для вас <strong>индивидуальную скидку</strong>!</p>
+          <p>При звонке укажите, что вы с сайта, и не забудьте подтвердить статус постоянного гостя или наличие отзыва для получения скидки.</p>
         `;
         calcResult.classList.remove('hidden');
       });
 
+      // Клик по месяцу в календаре цен
       const monthBoxes = document.querySelectorAll('.month-box');
       monthBoxes.forEach(box => {
         box.addEventListener('click', function() {
@@ -2325,6 +2383,3 @@
   </script>
 </body>
 </html>
-
-
-
